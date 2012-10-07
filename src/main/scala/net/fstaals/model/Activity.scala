@@ -1,24 +1,92 @@
 package net.fstaals.model
 
-import org.joda.time.DateTime
+import org.scala_tools.time.Imports._
 
-class Activity {
+import net.liftweb.mapper._
 
-  var name         = "unnamed"
-  var start        : DateTime
-  var end          : DateTime
-  var exercises    = List[Exercise]()
-  var activityFile = None
-  var sport        : Sport
-  var category     : Category
+class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
+
+  def getSingleton = Activity
+
+
+  /* ********** The fields Stored together with an Activity  ***************** */
+
+  // Define a many-to-one (foreign key) relationship to the User class
+  object owner            extends MappedLongForeignKey(this, User) {
+    // add a database index for this column.
+    override def dbIndexed_? = true
+  }
+  object is_public         extends MappedBoolean(this) {
+    override def defaultValue = false
+  }
+  object name              extends MappedString(this,200)
+  object start             extends MappedDateTime(this)
+  object end               extends MappedDateTime(this)
+  object activityFilePath  extends MappedString(this,500)
+  object description       extends MappedTextarea(this, 2048) {
+    override def textareaRows  = 10
+    override def textareaCols  = 50
+  }
+
+  /* ********** The properties referenced from an Activity  ***************** */
+
+  // fields expressed by relations:
+  def exercises = Exercise.findAll(By(Exercise.activity, this.id))
+  // def sport     = Sport.getBy
+  // def category
+
+  // tags is many to many
+  object tags              extends MappedManyToMany(ActivityTags, ActivityTags.activity,
+                                                    ActivityTags.tag, Tag)
+
+  /* ********** other methods  ***************** */
+
+  // get the activityFile itself
+  // def activityFile = ActivityFile(activityFilePath)
 
 }
 
+object Activity extends Activity with LongKeyedMetaMapper[Activity] {
 
-class Exercise {
-  var name  = "unnamed"
-  var rpe  : RPE
-  var description = ""
-  var start : DateTime
-  var end   : DateTime
 }
+
+class Exercise extends LongKeyedMapper[Exercise] with IdPK {
+
+  def getSingleton = Exercise
+
+
+  /* ********** The fields Stored together with an Exercise  ***************** */
+
+  object name              extends MappedString(this,200)
+  object start             extends MappedDateTime(this)
+  object end               extends MappedDateTime(this)
+  object rpe               extends MappedInt(this)
+  object description       extends MappedTextarea(this, 2048) {
+    override def textareaRows  = 10
+    override def textareaCols  = 50
+  }
+
+  /* ********** The properties referenced from an Exercise  ***************** */
+
+  // Define a many-to-one (foreign key) relationship to the Activity class
+  object activity          extends MappedLongForeignKey(this, Activity) {
+    // add a database index for this column.
+    override def dbIndexed_? = true
+  }
+
+  // fields expressed by relations:
+  // def PlannedExercise
+
+
+  /* ********** other methods  ***************** */
+
+}
+
+object Exercise extends Exercise with LongKeyedMetaMapper[Exercise]
+
+
+// class Exercise( val name : String
+//               , var rpe  : Option[UserProfile.RPE]
+//               , val description : String
+//               , val start : DateTime
+//               , val end   : DateTime)

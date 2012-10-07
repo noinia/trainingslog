@@ -1,11 +1,10 @@
-package code 
-package snippet 
+package net.fstaals.snippet
 
 import scala.xml.{NodeSeq, Text}
 import net.liftweb.util._
 import net.liftweb.common._
 import java.util.Date
-import code.lib._
+import net.fstaals.lib._
 import Helpers._
 
 class HelloWorld {
@@ -20,4 +19,3 @@ class HelloWorld {
    def howdy = "#time *" #> date.toString
    */
 }
-

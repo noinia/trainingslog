@@ -1,6 +1,6 @@
 package net.fstaals.model
 
-import org.joda.time.Date
+import org.scala_tools.time.Imports._
 
 object UserProfile {
   type RPE = Int
