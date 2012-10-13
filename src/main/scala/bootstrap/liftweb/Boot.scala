@@ -20,6 +20,8 @@ import net.liftmodules.JQueryModule
  * to modify lift's environment
  */
 class Boot {
+
+
   def boot {
     if (!DB.jndiJdbcConnAvailable_?) {
       val vendor =
@@ -41,16 +43,6 @@ class Boot {
 
     // where to search snippet
     LiftRules.addToPackages("net.fstaals")
-
-    // Build SiteMap
-    def sitemap = SiteMap(
-      Menu.i("Home") / "index" >> User.AddUserMenusAfter, // the simple way to declare a menu
-
-
-      // more complex because this menu allows anything in the
-      // /static path to be visible
-      Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content"))
-    )
 
     def sitemapMutators = User.sitemapMutator
 
@@ -84,4 +76,19 @@ class Boot {
     // Make a transaction span the whole HTTP request
     S.addAround(DB.buildLoanWrapper)
   }
+
+
+  // Build SiteMap
+  def sitemap = SiteMap(
+    Menu.i("Home") / "index" >> User.AddUserMenusAfter
+  , Menu.i("Activities") / "activities"
+  , Menu.i("Activity") / "activity" / "index" submenus (
+      Menu.i("add") / "activity"/ "add"
+    ) >> Hidden
+    // more complex because this menu allows anything in the
+    // /static path to be visible
+  , Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content"))
+  )
+
+
 }

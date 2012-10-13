@@ -19,6 +19,7 @@ case class ActivityFile(val path : String) {
     }
   }
 
+  def hasData = activityData.isDefined
 
   // load the data. If something goes wrong, throw an exception.
   def loadData() = {

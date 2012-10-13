@@ -1,0 +1,36 @@
+
+#menu {
+    display: block;
+    background-color: #3b3b3b;
+    font-size: 14px;
+    color: white;
+}
+
+.menu a {
+    color: #cc3334;
+}
+
+#menu ul {
+    display: block;
+    list-style-type: none;
+    padding: 3px 3px 3px 3px;
+    margin-left: auto;
+    margin-right: auto;
+    clear: both;
+}
+
+#menu li {
+    display: inline;
+    clear: both;
+    margin-left: 50px;
+    padding: 3px 3px 3px 3px;
+    text-align: center;
+}
+
+#menu li a {
+    color: white;
+}
+
+#menu li a:hover {
+    color: #cc3334;
+}
