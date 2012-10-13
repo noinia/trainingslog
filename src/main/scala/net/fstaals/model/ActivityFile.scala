@@ -9,6 +9,7 @@ import org.scala_tools.time.Imports._
 case class ActivityFile(val path : String) {
 
   var activityData : Option[EVExercise] = None
+  var trajectory   : Trajectory = _
 
   // load the data, if something goes wrong simply ignore it.
   def load() {
@@ -23,8 +24,10 @@ case class ActivityFile(val path : String) {
 
   // load the data. If something goes wrong, throw an exception.
   def loadData() = {
-    val parser = ExerciseParserFactory.getParser(path)
-    activityData = Some(parser.parseExercise(path))
+    val parser   = ExerciseParserFactory.getParser(path)
+    val rawData  = parser.parseExercise(path)
+    activityData = Some(rawData)
+    trajectory   = Trajectory.fromEVSamples(rawData.getSampleList().toList)
   }
 
   def start() = activityData map {_.getDate()}
@@ -44,6 +47,5 @@ case class ActivityFile(val path : String) {
   def temperature() = activityData map {_.getTemperature()}
 
 //  def laps() = activityData map {_.getLapList().toList()}
-
 
 }
