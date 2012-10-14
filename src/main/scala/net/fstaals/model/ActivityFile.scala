@@ -4,11 +4,14 @@ import de.saring.exerciseviewer.parser.ExerciseParser
 import de.saring.exerciseviewer.data.EVExercise
 import de.saring.exerciseviewer.parser.ExerciseParserFactory
 
+import org.joda.time.DateTime
+import org.joda.time.Duration
 import org.scala_tools.time.Imports._
 
 case class ActivityFile(val path : String) {
 
-  var activityData : Option[EVExercise] = None
+  private var activityData : Option[EVExercise] = None
+
   var trajectory   : Trajectory = _
 
   // load the data, if something goes wrong simply ignore it.
@@ -30,19 +33,25 @@ case class ActivityFile(val path : String) {
     trajectory   = Trajectory.fromEVSamples(rawData.getSampleList().toList)
   }
 
-  def start() = activityData map {_.getDate()}
+  def start : Option[DateTime]  = activityData map {ev => new DateTime(ev.getDate())}
 
-//  def end() =
-
-  def distance() = speed map {_.getDistance()}
-
-  def speed() = activityData map {_.getSpeed}
+  def end   : Option[DateTime]  = start map {
+    // this trajectory should not be empty
+    val dur = Duration.millis(trajectory.endPoint.timestamp)
+    _ + dur
+  }
 
 //  def heartRate() = activityData map {_
 
-  def altitude() = activityData map {_.getAltitude()}
+  def avgSpeed : Option[Double] = activityData map {_.getSpeed().getSpeedAVG()}
 
-  def cadence() = activityData map {_.getCadence()}
+  def maxSpeed : Option[Double] = activityData map {_.getSpeed().getSpeedMax()}
+
+  def distance : Option[Int]    = activityData map {_.getSpeed().getDistance()}
+
+  def altitude : Option[Int]    = activityData map {_.getAltitude()}
+
+  def cadence : Option[Short]   = activityData map {_.getCadence()}
 
   def temperature() = activityData map {_.getTemperature()}
 
