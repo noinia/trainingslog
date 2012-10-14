@@ -1,4 +1,4 @@
-package net.fstaals.snippet
+package net.fstaals.tl.snippet
 
 import scala.xml.{NodeSeq, Text}
 import net.liftweb.util._
@@ -7,8 +7,7 @@ import net.liftweb.http._
 import Helpers._
 
 
-import net.fstaals.lib._
-import net.fstaals.model._
+import net.fstaals.tl.model._
 
 
 object AddActivity {

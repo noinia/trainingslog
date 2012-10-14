@@ -1,4 +1,4 @@
-package net.fstaals.model
+package net.fstaals.tl.model
 
 import de.saring.exerciseviewer.parser.ExerciseParser
 import de.saring.exerciseviewer.data._

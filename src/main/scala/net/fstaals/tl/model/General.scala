@@ -1,4 +1,4 @@
-package net.fstaals.model
+package net.fstaals.tl.model
 
 import net.liftweb.mapper._
 

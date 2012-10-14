@@ -1,8 +1,9 @@
-package net.fstaals.snippet
+package net.fstaals.tl.snippet
 
 import net.liftweb.common._
-import net.fstaals.model._
 import scala.xml.{NodeSeq, Text}
+
+import net.fstaals.tl.model._
 
 trait UserSnippet {
 

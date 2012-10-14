@@ -1,11 +1,12 @@
-package net.fstaals.snippet
+package net.fstaals.tl.snippet
 
 import scala.xml.{NodeSeq, Text}
 import net.liftweb.util._
 import net.liftweb.common._
 import java.util.Date
-import net.fstaals.lib._
+
 import Helpers._
+import net.fstaals.tl.model._
 
 class ActivityPage {
 

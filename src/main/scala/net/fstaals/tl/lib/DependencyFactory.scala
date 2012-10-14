@@ -1,4 +1,4 @@
-package net.fstaals.lib
+package net.fstaals.tl.lib
 
 import net.liftweb._
 import http._

@@ -11,7 +11,7 @@ import sitemap._
 import Loc._
 import mapper._
 
-import net.fstaals.model._
+import net.fstaals.tl.model._
 import net.liftmodules.JQueryModule
 
 
@@ -42,7 +42,7 @@ class Boot {
                         User, Activity, Exercise, Sport, Tag, ActivityTags)
 
     // where to search snippet
-    LiftRules.addToPackages("net.fstaals")
+    LiftRules.addToPackages("net.fstaals.tl")
 
     def sitemapMutators = User.sitemapMutator
 

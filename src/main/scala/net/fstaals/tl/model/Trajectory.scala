@@ -1,4 +1,4 @@
-package net.fstaals.model
+package net.fstaals.tl.model
 
 import scala.collection.SortedMap
 import de.saring.exerciseviewer.data._

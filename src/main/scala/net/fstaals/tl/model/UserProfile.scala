@@ -1,4 +1,4 @@
-package net.fstaals.model
+package net.fstaals.tl.model
 
 import org.scala_tools.time.Imports._
 
