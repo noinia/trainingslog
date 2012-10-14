@@ -8,9 +8,9 @@ import common._
 import http._
 import js.jquery.JQueryArtifacts
 import sitemap._
-import Loc._
 import mapper._
 
+import net.fstaals.tl.TLSiteMap
 import net.fstaals.tl.model._
 import net.liftmodules.JQueryModule
 
@@ -25,10 +25,10 @@ class Boot {
   def boot {
     if (!DB.jndiJdbcConnAvailable_?) {
       val vendor =
-	new StandardDBVendor(Props.get("db.driver") openOr "org.h2.Driver",
-			     Props.get("db.url") openOr
-			     "jdbc:h2:lift_proto.db;AUTO_SERVER=TRUE",
-			     Props.get("db.user"), Props.get("db.password"))
+    new StandardDBVendor(Props.get("db.driver") openOr "org.h2.Driver",
+                         Props.get("db.url") openOr
+                         "jdbc:h2:lift_proto.db;AUTO_SERVER=TRUE",
+                         Props.get("db.user"), Props.get("db.password"))
 
       LiftRules.unloadHooks.append(vendor.closeAllConnections_! _)
 
@@ -48,7 +48,7 @@ class Boot {
 
     // set the sitemap.  Note if you don't want access control for
     // each page, just comment this line out.
-    LiftRules.setSiteMapFunc(() => sitemapMutators(sitemap))
+    LiftRules.setSiteMapFunc(() => sitemapMutators(TLSiteMap.sitemap))
 
     //Init the jQuery module, see http://liftweb.net/jquery for more information.
     LiftRules.jsArtifacts = JQueryArtifacts
@@ -78,17 +78,7 @@ class Boot {
   }
 
 
-  // Build SiteMap
-  def sitemap = SiteMap(
-    Menu.i("Home") / "index" >> User.AddUserMenusAfter
-  , Menu.i("Activities") / "activities"
-  , Menu.i("Activity") / "activity" / "index" submenus (
-      Menu.i("add") / "activity"/ "add"
-    ) >> Hidden
-    // more complex because this menu allows anything in the
-    // /static path to be visible
-  , Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content"))
-  )
+
 
 
 }
