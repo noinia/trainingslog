@@ -4,7 +4,7 @@ import net.liftweb.mapper._
 
 case class Color(val name: String)
 
-class Tag extends LongKeyedMapper[Tag] with IdPK with ManyToMany {
+class Tag extends LongKeyedMapper[Tag] with IdPK with ManyToMany  {
   def getSingleton = Tag
 
   object tag  extends MappedString(this, 20)

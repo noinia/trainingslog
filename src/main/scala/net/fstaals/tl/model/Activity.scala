@@ -48,6 +48,15 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
 
 object Activity extends Activity with LongKeyedMetaMapper[Activity] {
 
+  implicit def jodaDTtoDT(d : DateTime) = d.toDate()
+  implicit def dtToJodaDt(d: java.util.Date) = new DateTime(d)
+
+  override def fieldOrder = List(name, is_public, start, end, description)
+
+  def fromActivityFile(af: ActivityFile) = create.activityFilePath(af.path)
+                                                 .start(af.start.getOrElse(DateTime.now))
+                                                 .end(af.end.getOrElse(DateTime.now))
+
 }
 
 class Exercise extends LongKeyedMapper[Exercise] with IdPK {
