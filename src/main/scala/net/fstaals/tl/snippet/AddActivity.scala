@@ -10,7 +10,7 @@ import Helpers._
 import net.fstaals.tl.model._
 
 
-object AddActivity {
+object SyncActivities extends UserSnippet {
 
   def render = {
     var af : ActivityFile = ActivityFile("dummy")
@@ -33,46 +33,13 @@ object AddActivity {
     "type=submit" #> SHtml.onSubmitUnit(process)
   }
 
-  def add(af : ActivityFile) {
-    S.notice("Path: " + af.toString)
-    S.redirectTo("/")
+  def add(af : ActivityFile) = User.currentUser match {
+    case Full(u) => {
+      val a = Activity.fromActivityFile(af).owner(u)
+
+      S.redirectTo("/")
+    }
+    case _       => noUserMsg
   }
 
 }
-
-
-
-
-
-// class AddActivity extends UserSnippet {
-
-//   var path = ""
-
-//   def add = withUser (_add _)
-
-//   def _add(u: User, xhtml : NodeSeq) : NodeSeq = {
-//     def process() {
-
-//     }
-
-
-//     val af = load()
-
-//     bind("activity",xhtml,
-//          "raw" -> <span>{af.toString}</span>
-//        )
-//   }
-
-
-
-
-//   def load() {
-
-//     val af = ActivityFile(path)
-//     af.load()
-
-//     // val a = Activity.create
-//     af
-//   }
-
-// }

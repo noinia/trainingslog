@@ -16,7 +16,7 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
     // add a database index for this column.
     override def dbIndexed_? = true
   }
-  object is_public         extends MappedBoolean(this) {
+  object isPublic         extends MappedBoolean(this) {
     override def defaultValue = false
   }
   object name              extends MappedString(this,200)
@@ -51,7 +51,7 @@ object Activity extends Activity with LongKeyedMetaMapper[Activity] {
   implicit def jodaDTtoDT(d : DateTime) = d.toDate()
   implicit def dtToJodaDt(d: java.util.Date) = new DateTime(d)
 
-  override def fieldOrder = List(name, is_public, start, end, description)
+  override def fieldOrder = List(name, isPublic, start, end, description)
 
   def fromActivityFile(af: ActivityFile) = create.activityFilePath(af.path)
                                                  .start(af.start.getOrElse(DateTime.now))

@@ -17,110 +17,73 @@ object TLSiteMap {
   def sitemap = SiteMap(
     Menu.i("Home")       / "index"
   , Menu.i("Activities") / "activities"
-  , Menu.param[IDParam]("Activity","Activity",asID, p => p.id.toString) / "activity"
-  , Menu.i("Foo")   / "activity" / "flop" >> User.AddUserMenusAfter submenus (
-      Menu.i("Synchronize Device") / "activity" / "sync"
-    , Menu.i("add")                / "activity" / "add" >> Hidden
+  // Handling an activity
+  , Menu(ModelParamLoc[Activity]("Activity",
+                                 new Link(List("activivity")),
+                                 "Activity",
+                                 List("activity"),
+                                 Activity,
+                                 activityIsViewable _,
+                                 List(User.AddUserMenusAfter, Hidden)),
+          Menu.i("view/edit") / "activity"
+        , Menu.i("Synchronize Device") / "activity" / "sync"
+        , Menu.i("add")                / "activity" / "add"
     )
-    // more complex because this menu allows anything in the
-    // /static path to be visible
-  // , Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content"))
+
+  // Error pages
+  , Menu.i("nosuch")   / "nosuch"    >> Hidden //TODO, see if I can use noSuchPathPath
+                                               // to define this
+  , Menu.i("noaccess") / "noaccess"  >> Hidden
   )
 
+  val noSuchPath   = List("nosuch")
+  val noAccessPath = List("noaccess")
 
-  case class IDParam(id: Long)
-  def asID(s: String) = asLong(s) map IDParam
-
-  def ifInDB[T <: LongKeyedMapper[T]](singleton : LongKeyedMetaMapper[T]) = {
-
-    def test(b: Box[IDParam]) : Boolean = b match {
-      case Full(IDParam(id)) => singleton.find(id).isDefined
-      case _                 => false
-    }
-
-    IfValue(test,S ? "Failed to find the requested object." )
-  }
+  // Access control stuff
+  def activityIsViewable(a: Activity) =
+    a.isPublic.get || Full(a.owner.get) == User.currentUser
 
 }
 
 
 // For parameters that depend on stuff in the database
-abstract class ModelParam[-T]
-case object NoSuch                    extends ModelParam[Any]
-case object NoAccess                  extends ModelParam[Any]
+abstract class ModelParam[+T]
+case object NoSuch                    extends ModelParam[Nothing]
+case object NoAccess                  extends ModelParam[Nothing]
 case class FullModel[T](val model: T) extends ModelParam[T]
+
 
 
 
 case class ModelParamLoc[T <: LongKeyedMapper[T]]( val name: String
                                                  , val link: Link[ModelParam[T]]
                                                  , val text: LinkText[ModelParam[T]]
-                                                 , val defaultValue : Box[ModelParam[T]]
+                                                 , val path: List[String]
                                                  , val singleton : LongKeyedMetaMapper[T]
-                                                 , val canAccess : T => Boolean
+                                                 , val canAccess : T => Boolean =
+                                                   {x : T => true}
                                                  , val params : List[LocParam[ModelParam[T]]]) extends Loc[ModelParam[T]]  {
 
 
+  val defaultValue = Empty
+
+  // match this LOC matches the path if the rqPath is exactly
+  // path + <id>
+  def matchIDPath(rqPath : List[String]) =
+    rqPath.nonEmpty && rqPath.init == path && (rqPath.lastOption flatMap asLong).isDefined
+
   override def rewrite = Full({
-    case RewriteRequest(ParsePath(List("activity", id), _, _, _), _, _) => {
+    case RewriteRequest(ParsePath(rqpath, _, _, _), _, _)  if matchIDPath(rqpath) => {
+      val id   = rqpath.last
+
       singleton.find(id) match {
         case Full(model) if canAccess(model) =>
-          (RewriteResponse(List("activity")), FullModel(model))
+          (RewriteResponse(path), FullModel(model))
         case Full(_)                         =>
-          (RewriteResponse(List("activity")), NoAccess)
+          (RewriteResponse(TLSiteMap.noAccessPath), NoAccess)
         case _                               =>
-          (RewriteResponse(List("activity")), NoSuch)
+          (RewriteResponse(TLSiteMap.noSuchPath), NoSuch)
       }
     }})
 
-
-
 }
-
-
-
-
-
-// class ModelParamLoc[T](val path       : List[String],
-//                        val singleton  : LongKeyedMetaMapper[T],
-//                        val accessable : T => Bool) extends Loc[ModelParam[T]] {
-//   override def rewrite = Full({
-//     case RewriteRequest(ParsePath(path + id, _, _, _), _, _) => {
-//       singleton.findAll(By(singleton.stringId,id)) match {
-//         case List(model) if accessable(model) => {
-//         (RewriteResponse("account" :: Nil),
-//          FullModel(model))
-//         }
-//         case List(_) => {
-//           (RewriteResponse("account" :: Nil),
-//            NoAccess)
-//         }
-//         case _ => {
-//           (RewriteResponse("account" :: Nil),
-//            NoSuch)
-//         }
-//     }
-//   }})
-
-// }
-
-
-
-
-// // abstract class ModelParam[T <: LongKeyedMapper[T]](val km: LongKeyedMetaMapper[T])
-// // case     class NoSuch[    T <: LongKeyedMapper[T]](km: LongKeyedMetaMapper[T]) extends ModelParam(km)
-
-
-
-// // case class NoAccess[T](km: LongKeyedMetaMapper[T]) extends ModelParam(km)
-// // case class FullModel[T <: LongKeyedMapper[T]](val model : T) extends ModelParam(model.getSingleton)
-
-// // class ModelParamLoc[T <: LongKeyedMapper[T]](path: List[String]) extends Loc[ModelParam[T]] {
-
-// //   override def rewrite = Full({
-// //     case RewriteRequest(ParsePath(path + id, _, _, _), _, _) => {
-// //       km.findAll()
-// //     }
-// //   })
-
-// // }

@@ -1,17 +1,22 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
-    <title>Home</title>
-  </head>
-  <body class="lift:content_id=main">
-    <div id="main" class="lift:surround?with=default;at=content">
-      <h2>Welcome to your project!</h2>
-      <p>
-    <span class="foo">
-      Welcome to your Lift app at <span id="time">Time goes here</span>
-    </span>
-      </p>
-    </div>
-  </body>
-</html>
+<lift:surround with="default" at="content">
+  <div class="lift:ActivitySnippet.summary">
+    <lift:surround with="block" at="blockcontent">
+      <div id="summary">Summary</div>
+    </lift:surround>
+  </div>
+  <div class="lift:ActivitySnippet.graphs">
+    <lift:surround with="block" at="blockcontent">
+      <div id="graphs">Graphs</div>
+    </lift:surround>
+  </div>
+  <div class="lift:ActivitySnippet.map">
+    <lift:surround with="block" at="blockcontent">
+      <div id="map">Map</div>
+    </lift:surround>
+  </div>
+  <div class="lift:ActivitySnippet.details">
+    <lift:surround with="block" at="blockcontent">
+      <div id="details">Details</div>
+    </lift:surround>
+  </div>
+</lift:surround>
