@@ -57,12 +57,12 @@ object TrajectoryPoint {
 
 }
 
-trait HasUnit[T] {
+trait HasUnit {
   def defaultUnit : String
   def unit = defaultUnit
-  def value : T
+  def strValue : String
 
-  def toStrWithUnit : String = value.toString ++ unit
+  def toStrWithUnit : String = strValue ++ " " ++ unit
 }
 
 object HasUnit {
@@ -77,37 +77,37 @@ object HasUnit {
 }
 
 
-case class HeartRate(val hr: Short) extends HasUnit[Short] {
+case class HeartRate(val hr: Short) extends HasUnit {
   def defaultUnit = "B/m"
-  def value = hr
+  def strValue    = hr.toString
 }
 
-case class Altitude(val a: Int) extends HasUnit[Int] {
+case class Altitude(val a: Int) extends HasUnit {
   def defaultUnit = "m"
-  def value = a
+  def strValue    = a.toString
 }
 
-case class Speed(val s: Double) extends HasUnit[Double] {
+case class Speed(val s: Double) extends HasUnit {
   def defaultUnit = "Km/h"
-  def value = s
+  def strValue    = s.toString
 }
 
-case class Distance(val m: Int) extends HasUnit[Int] {
-  def defaultUnit = "m"
-  def value = m
+case class Distance(val m: Int) extends HasUnit {
+  def defaultUnit = "Km"
+  def strValue    = (m + 0.0 / 1000).toString
 }
 
-case class Cadence(val c: Short) extends HasUnit[Short] {
+case class Cadence(val c: Short) extends HasUnit {
   def defaultUnit = "r/m"
-  def value = c
+  def strValue    = c.toString
 }
 
-case class Power(val p: Short) extends HasUnit[Short] {
+case class Power(val p: Short) extends HasUnit {
   def defaultUnit = "W"
-  def value = p
+  def strValue    = p.toString
 }
 
-case class Temperature(val t: Short) extends HasUnit[Short] {
+case class Temperature(val t: Short) extends HasUnit {
   def defaultUnit = "C" //TODO, the circle thingy
-  def value = t
+  def strValue    = t.toString
 }
