@@ -28,7 +28,7 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
   // will not have a description:
   object description       extends MappedTextarea(this, 2048) {
     override def textareaRows  = 10
-    override def textareaCols  = 50
+    override def textareaCols  = 100
   }
 
   /* ********** The properties referenced from an Activity  ***************** */

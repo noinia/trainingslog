@@ -30,8 +30,10 @@ class ActivitySnippet(pk: PK)
 
 
   private def toForm[T](x: Option[T]) = {
+    println(x)
     val s = (x map {_.toString}).getOrElse("")
-    <input type="text" readonly="readonly">s</input>
+    println("s: " ++ s)
+    <input type="text" readonly="readonly" value={s}/>
   }
 
 

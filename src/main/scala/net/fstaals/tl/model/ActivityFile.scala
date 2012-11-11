@@ -41,65 +41,67 @@ case class ActivityFile(val path : String) {
     val rawData  = parser.parseExercise(path)
     activityData = Some(rawData)
     trajectory   = Trajectory.fromEVSamples(rawData.getSampleList().toList)
-
-    println("Data loaded")
-    println(trajectory)
   }
 
-  def start : Option[DateTime]    = activityData map {e => new DateTime(e.getDate())}
+  def start : Option[DateTime]                  =
+    activityData map {e => new DateTime(e.getDate())}
 
   // unforutnately scala has no applicative
-  def end   : Option[DateTime]    = start flatMap {s =>
-    duration map (s+)
-  }
+  def end   : Option[DateTime]                  =
+    start flatMap {s => duration map (s+) }
 
-  def duration: Option[Duration]  = trajectory.endPointOption map {tp =>
-    Duration.millis(tp.timestamp)
-  }
+  def duration: Option[Duration]                =
+    trajectory.endPointOption map {tp => Duration.millis(tp.timestamp) }
 
-  def speed : Option[Speed]       = activityData map {e =>
-    Speed.fromESpeed(e.getSpeed())}
+  def speed : Option[ActivitySpeed]             =
+    activityData map {e => ActivitySpeed.fromESpeed(e.getSpeed())}
 
-  def distance : Option[Int]      = activityData map {_.getSpeed().getDistance()}
+  def distance : Option[Distance]               =
+    activityData map {a => Distance(a.getSpeed().getDistance())}
 
-  def altitude : Option[Altitude] =
-    activityData map {e => Altitude.fromEAltitude(e.getAltitude())}
+  def altitude : Option[ActivityAltitude]       =
+    activityData map {e => ActivityAltitude.fromEAltitude(e.getAltitude())}
 
-  def cadence : Option[Cadence]   =
-    activityData map {e => Cadence.fromECadence(e.getCadence())}
+  def cadence : Option[ActivityCadence]         =
+    activityData map {e => ActivityCadence.fromECadence(e.getCadence())}
 
-  def temperature : Option[Temperature] =
-    activityData map {e => Temperature.fromETemperature(e.getTemperature())}
+  def temperature : Option[ActivityTemperature] =
+    activityData map {e => ActivityTemperature.fromETemperature(e.getTemperature())}
 
 //  def laps() = activityData map {_.getLapList().toList()}
 
 }
 
-case class Speed(val avg: Double, val max: Double)
+case class ActivitySpeed(val avg: Speed, val max: Speed)
 
-object Speed {
-  def fromESpeed(e : ExerciseSpeed) = Speed(e.getSpeedAVG(), e.getSpeedMax())
+object ActivitySpeed {
+  def fromESpeed(e : ExerciseSpeed) =
+    ActivitySpeed(e.getSpeedAVG(), e.getSpeedMax())
 }
 
-case class Altitude(val avg: Int, val min: Int, val max: Int, val ascent : Int)
+case class ActivityAltitude(val avg: Altitude, val min: Altitude, val max: Altitude, val ascent : Altitude)
 
-object Altitude {
+object ActivityAltitude {
   def fromEAltitude(e: ExerciseAltitude) =
-    Altitude(e.getAltitudeAVG(),e.getAltitudeMin(), e.getAltitudeMax(), e.getAscent())
+    ActivityAltitude(e.getAltitudeAVG(),
+                     e.getAltitudeMin(), e.getAltitudeMax(), e.getAscent())
 }
 
-case class HeartRate(val avg: Short, val max: Short)
+case class ActivityHeartRate(val avg: HeartRate, val max: HeartRate)
 
-case class Cadence(val avg: Short, val max: Short)
+case class ActivityCadence(val avg: Cadence, val max: Cadence)
 
-object Cadence {
-  def fromECadence(e : ExerciseCadence) = Cadence(e.getCadenceAVG(), e.getCadenceMax())
+object ActivityCadence {
+  def fromECadence(e : ExerciseCadence) =
+    ActivityCadence(e.getCadenceAVG(), e.getCadenceMax())
 }
 
 
-case class Temperature(val avg: Short, val min: Short, val max: Short)
+case class ActivityTemperature(val avg: Temperature,
+                               val min: Temperature, val max: Temperature)
 
-object Temperature {
+object ActivityTemperature {
   def fromETemperature(e : ExerciseTemperature) =
-    Temperature(e.getTemperatureAVG(),e.getTemperatureMin(),e.getTemperatureMax())
+    ActivityTemperature(e.getTemperatureAVG(),
+                        e.getTemperatureMin(),e.getTemperatureMax())
 }
