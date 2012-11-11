@@ -46,12 +46,11 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
 
   lazy val af = ActivityFile.fromPath(activityFilePath.get)
 
-  def duration    = af flatMap {_.duration}
-  def speed       = af flatMap {_.speed}
-  def distance    = af flatMap {_.distance}
-  def cadence     = af flatMap {_.cadence}
-  def temperature = af flatMap {_.temperature}
-
+  def duration : Option[Period] = af flatMap {_.duration}
+  def speed                     = af flatMap {_.speed}
+  def distance                  = af flatMap {_.distance}
+  def cadence                   = af flatMap {_.cadence}
+  def temperature               = af flatMap {_.temperature}
 
 }
 

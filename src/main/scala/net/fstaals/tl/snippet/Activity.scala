@@ -7,8 +7,9 @@ import net.liftweb.http._
 
 import Helpers._
 import net.fstaals.tl.model._
+import net.fstaals.tl.view._
 import net.fstaals.tl._
-
+import org.joda.time.Period
 
 class ActivitySnippet(pk: PK)
       extends ModelSnippet[Activity](pk) with UserSnippet with StatefulSnippet {
@@ -29,9 +30,9 @@ class ActivitySnippet(pk: PK)
 
 
 
-  private def toForm[T](x: Option[T]) = {
+  private def toForm[T <: Show](x: Option[T]) = {
     println(x)
-    val s = (x map {_.toString}).getOrElse("")
+    val s = (x map {_.show}).getOrElse("")
     println("s: " ++ s)
     <input type="text" readonly="readonly" value={s}/>
   }
@@ -40,7 +41,7 @@ class ActivitySnippet(pk: PK)
   def summary = "#title"    #> activity.name._toForm    &
                 "#isPublic" #> activity.isPublic._toForm &
                 "#start"    #> activity.start._toForm      &
-                "#duration" #> toForm(activity.duration) &
+                "#duration" #> toForm(activity.duration map ShowablePeriod) &
                 "#distance" #> toForm(activity.distance) &
                 "#description" #> activity.description._toForm
 

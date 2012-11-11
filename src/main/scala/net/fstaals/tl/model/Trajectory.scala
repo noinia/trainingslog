@@ -2,6 +2,7 @@ package net.fstaals.tl.model
 
 import scala.collection.SortedMap
 import de.saring.exerciseviewer.data._
+import net.fstaals.tl.view._
 
 case class Trajectory(val points : SortedMap[Trajectory.Timestamp,TrajectoryPoint]) {
 
@@ -57,15 +58,7 @@ object TrajectoryPoint {
 
 }
 
-trait HasUnit {
-  def defaultUnit : String
-  def unit = defaultUnit
-  def strValue : String
-
-  def toStrWithUnit : String = strValue ++ " " ++ unit
-}
-
-object HasUnit {
+object TrajectoryData {
   implicit def shortToHr             = HeartRate
   implicit def shortToAlt(s:Short)   = Altitude(s.intValue)
   implicit def intToAlt              = Altitude
@@ -75,7 +68,6 @@ object HasUnit {
   implicit def shortToCadence        = Cadence
   implicit def shortToTemp           = Temperature
 }
-
 
 case class HeartRate(val hr: Short) extends HasUnit {
   def defaultUnit = "B/m"
@@ -94,7 +86,7 @@ case class Speed(val s: Double) extends HasUnit {
 
 case class Distance(val m: Int) extends HasUnit {
   def defaultUnit = "Km"
-  def strValue    = (m + 0.0 / 1000).toString
+  def strValue    = "%.2f".format((m+0.0)/1000)
 }
 
 case class Cadence(val c: Short) extends HasUnit {
