@@ -63,17 +63,28 @@ a:hover {
 .block {
     border: 1px solid #999999;
     margin-bottom: 20px;
+    clear: both;
+    overflow: hidden;
+    position: relative;
 }
 
-.block h1 {
+.blockheader h1 {
     background-color: #cccccc;
     font-size: 16px;
     color: #666666;
     padding-left: 40px;
-    padding-top: 5px;
     height: 30px;
     margin-top: 0px;
     margin-bottom: 0px;
+}
+
+.blockheader input {
+    border: 0;
+    background-color: #dddddd;
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 800px;
 }
 
 .blocktoggle {
@@ -91,6 +102,7 @@ a:hover {
     margin-top: 3px;
 }
 
+
 .blockarea {
     padding-left: 15px;
     padding-top: 10px;
@@ -98,6 +110,8 @@ a:hover {
     padding-bottom: 10px;
     display: block;
     background-color: #fafafa;
+    clear: both;
+    overflow: hidden;
 }
 
 .blockarea h1 {
@@ -105,4 +119,26 @@ a:hover {
     font-weight: normal;
     padding-left: 20px;
     padding-bottom: 10px;
+    margin-top: 0;
+}
+
+.blockarea label {
+    float: left;
+    clear: left;
+    width: 100px;
+}
+
+.blockarea input {
+    float: left;
+    clear: right;
+}
+
+.blockarea input[readonly="readonly"] {
+    border: 0;
+    background-color: transparent;
+}
+
+.blockarea textarea {
+    float: left;
+    clear: right;
 }

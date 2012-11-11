@@ -1,7 +1,8 @@
 package net.fstaals.tl.model
 
 import org.scala_tools.time.Imports._
-
+import net.liftweb.common._
+import scala.xml._
 import net.liftweb.mapper._
 
 class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
@@ -23,6 +24,8 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
   object start             extends MappedDateTime(this)
   object end               extends MappedDateTime(this)
   object activityFilePath  extends MappedString(this,500)
+  //TODO: make this into a separate table/class. since most activities
+  // will not have a description:
   object description       extends MappedTextarea(this, 2048) {
     override def textareaRows  = 10
     override def textareaCols  = 50
@@ -41,8 +44,14 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
 
   /* ********** other methods  ***************** */
 
-  // get the activityFile itself
-  // def activityFile = ActivityFile(activityFilePath)
+  lazy val af = ActivityFile.fromPath(activityFilePath.get)
+
+  def duration    = af flatMap {_.duration}
+  def speed       = af flatMap {_.speed}
+  def distance    = af flatMap {_.distance}
+  def cadence     = af flatMap {_.cadence}
+  def temperature = af flatMap {_.temperature}
+
 
 }
 
@@ -50,8 +59,6 @@ object Activity extends Activity with LongKeyedMetaMapper[Activity] {
 
   implicit def jodaDTtoDT(d : DateTime) = d.toDate()
   implicit def dtToJodaDt(d: java.util.Date) = new DateTime(d)
-
-  override def fieldOrder = List(name, isPublic, start, end, description)
 
   def fromActivityFile(af: ActivityFile) = create.activityFilePath(af.path)
                                                  .start(af.start.getOrElse(DateTime.now))

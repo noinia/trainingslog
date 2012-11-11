@@ -10,29 +10,45 @@ import net.fstaals.tl.model._
 import net.fstaals.tl._
 
 
-class ActivitySnippet(model : ModelParam[Activity])
-      extends ModelSnippet[Activity](model) with UserSnippet with StatefulSnippet {
+class ActivitySnippet(pk: PK)
+      extends ModelSnippet[Activity](pk) with UserSnippet with StatefulSnippet {
 
-  lazy val activity = getModel
+
+  def canAccess(a: Activity) = true // AccessControl.activityIsViewable(a)
+
+  def singleton = Activity
+
+  val activity = getModel
 
   def dispatch = {
-    case "summary" => editSummary
+    case "summary" => summary
     case "graphs"  => graphs
     case "map"     => map
     case "details" => details
   }
 
 
-  def title = "#activityName *" #> "foo"
 
-  // def summary = "#activityName *" #> "foo"
+  private def toForm[T](x: Option[T]) = {
+    val s = (x map {_.toString}).getOrElse("")
+    <input type="text" readonly="readonly">s</input>
+  }
 
-  def editSummary = "#summary" #> Activity.toForm(activity)
 
-  def graphs = "#activityName *" #> "foo"
+  def summary = "#title"    #> activity.name._toForm    &
+                "#isPublic" #> activity.isPublic._toForm &
+                "#start"    #> activity.start._toForm      &
+                "#duration" #> toForm(activity.duration) &
+                "#distance" #> toForm(activity.distance) &
+                "#description" #> activity.description._toForm
 
-  def map = "#activityName *" #> "foo"
+  def graphs  = "#title"    #> "Graphs" &
+                "#graphs"   #> "graphs"
 
-  def details = "#activityName *" #> "foo"
+  def map     = "#title"    #> "Map" &
+                "#map"      #> "map"
+
+  def details = "#title"    #> "Details" &
+                "#details"  #> "details"
 
 }

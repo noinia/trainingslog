@@ -5,9 +5,12 @@ import de.saring.exerciseviewer.data._
 
 case class Trajectory(val points : SortedMap[Trajectory.Timestamp,TrajectoryPoint]) {
 
-  def startPoint = points.head._2
+  def startPoint = startPointOption.get
 
-  def endPoint   = points.last._2
+  def endPoint   = endPointOption.get
+
+  def startPointOption = points.headOption map {_._2}
+  def endPointOption   = points.lastOption map {_._2}
 
 }
 
@@ -41,8 +44,8 @@ case class TrajectoryPoint(
 object TrajectoryPoint {
   def fromExerciseSample(es : ExerciseSample) =
     TrajectoryPoint ( es.getTimestamp()
-                    , Option(es.getPosition().getLatitude())
-                    , Option(es.getPosition().getLongitude())
+                    , Option(es.getPosition()) map {_.getLatitude() }
+                    , Option(es.getPosition()) map {_.getLongitude()}
                     , Option(es.getHeartRate())
                     , Option(es.getAltitude())
                     , Option(es.getSpeed())

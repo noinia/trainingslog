@@ -17,8 +17,7 @@ object SyncActivities extends UserSnippet {
 
     def load(path: String) {
       af = ActivityFile(path)
-      S.notice("Path: "+path)
-      af.load()
+      af.loadData()
     }
 
     def process() = {
@@ -35,9 +34,20 @@ object SyncActivities extends UserSnippet {
 
   def add(af : ActivityFile) = User.currentUser match {
     case Full(u) => {
+
+      assert(af.hasData)
+
+
       val a = Activity.fromActivityFile(af).owner(u)
 
-      S.redirectTo("/")
+      a.validate match {
+            case Nil => {
+              a.save
+              S.notice("Entry added!")
+              S.redirectTo(a.id.get.toString)
+            }
+            case x => S.error(x)
+      }
     }
     case _       => noUserMsg
   }

@@ -1,0 +1,32 @@
+<lift:surround with="default" at="content">
+  <form class="lift:ActivitySnippet.summary">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
+      <lift:bind-at name="blockcontent">
+        <label>Public:</label>  <div id="isPublic"></div>
+        <label>Duration:</label><div id="duration"></div>
+        <label>Distance:</label><div id="distance"></div>
+        <label>Description:</label><div id="description"/></div>
+      </lift:bind-at>
+    </lift:surround>
+  </form>
+
+  <div class="lift:ActivitySnippet.graphs">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
+      <lift:bind-at name="blockcontent"><div  id="graphs">Graphs</div></lift:bind-at>
+    </lift:surround>
+  </div>
+  <div class="lift:ActivitySnippet.map">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
+      <lift:bind-at name="blockcontent"><div  id="map">Map</div></lift:bind-at>
+    </lift:surround>
+  </div>
+  <div class="lift:ActivitySnippet.details">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
+      <lift:bind-at name="blockcontent"><div  id="details">Details</div></lift:bind-at>
+    </lift:surround>
+  </div>
+</lift:surround>

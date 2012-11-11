@@ -8,6 +8,16 @@ import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.scala_tools.time.Imports._
 
+object ActivityFile {
+
+  def fromPath(path: String) = {
+    val f = ActivityFile(path)
+    f.load()
+    if (f.hasData) Some(f) else None
+  }
+
+}
+
 case class ActivityFile(val path : String) {
 
   private var activityData : Option[EVExercise] = None
@@ -31,17 +41,21 @@ case class ActivityFile(val path : String) {
     val rawData  = parser.parseExercise(path)
     activityData = Some(rawData)
     trajectory   = Trajectory.fromEVSamples(rawData.getSampleList().toList)
+
+    println("Data loaded")
+    println(trajectory)
   }
 
   def start : Option[DateTime]    = activityData map {e => new DateTime(e.getDate())}
 
-  def end   : Option[DateTime]    = start map {
-    // this trajectory should not be empty
-    val dur = Duration.millis(trajectory.endPoint.timestamp)
-    _ + dur
+  // unforutnately scala has no applicative
+  def end   : Option[DateTime]    = start flatMap {s =>
+    duration map (s+)
   }
 
-//  def heartRate() = activityData map {_
+  def duration: Option[Duration]  = trajectory.endPointOption map {tp =>
+    Duration.millis(tp.timestamp)
+  }
 
   def speed : Option[Speed]       = activityData map {e =>
     Speed.fromESpeed(e.getSpeed())}

@@ -1,8 +1,10 @@
 package net.fstaals.tl.snippet
 
 import net.liftweb.common._
+import net.liftweb.mapper._
 import scala.xml.{NodeSeq, Text}
 import net.liftweb.http._
+
 
 import net.fstaals.tl.model._
 import net.fstaals.tl._
@@ -27,8 +29,21 @@ trait UserSnippet {
 }
 
 
-abstract class ModelSnippet[T](var model : ModelParam[T]) {
+abstract class ModelSnippet[T <: LongKeyedMapper[T]](val pk : PK) {
 
-  def getModel : T = model match {case FullModel(x) => x}
+  def getModel : T = {
+      singleton.find(pk.id) match {
+        case Full(model) if canAccess(model) =>
+          model
+        case Full(_)                         =>
+          S.redirectTo("/noaccess")
+        case _                               =>
+          S.redirectTo("/nosuch")
+      }
+
+  }
+
+  def canAccess(x : T) : Boolean
+  def singleton : LongKeyedMetaMapper[T]
 
 }

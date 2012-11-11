@@ -1,9 +1,11 @@
 <div class="block">
+  <div class="blockheader">
   <div class="blocktoggle">
     <img src="/images/buttons/collapse.png" class="" alt="" />
   </div>
-  <h1><span id="title">The title will get bound here</span></h1>
+    <h1><lift:bind name="title"/></h1>
+  </div>
   <div class="blockarea">
-    <span id="blockcontent">The block content will get bound here</span>
+    <lift:bind name="blockcontent"/>
   </div>
 </div>
