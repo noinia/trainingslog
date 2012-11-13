@@ -72,7 +72,9 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
 
   /* ********** Access Control  ***************** */
 
-  def isViewable = isPublic.get || isEditable
+//  def isViewable = isPublic.get || isEditable
+  def isViewable = true
+
 
   def isEditable = (User.currentUser map {_.id}) === owner.get
 

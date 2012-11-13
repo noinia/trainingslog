@@ -26,12 +26,13 @@ object TLSiteMap {
   def sitemap = SiteMap(
     Menu.i("Home")       / "index"
   , Menu.i("Activities") / "activities"
-  // Handling an activity
+  // The activity page
   , Menu.params[Activity]("Activity", "activivity", objParser(Activity) _, idEncoder _)
         / "activity" / "view"
         >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
         >> User.AddUserMenusAfter
         >> Hidden
+  , Menu.i("Synchronize Activies") / "activity" / "synchronize" >> Hidden
     submenus (
         Menu.i("Synchronize Device") / "activity" / "sync"
       , Menu.i("add")                / "activity" / "add"

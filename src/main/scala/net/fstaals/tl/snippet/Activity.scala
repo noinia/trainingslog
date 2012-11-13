@@ -106,7 +106,15 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
                 "#addNewExercise" #> (new AddExercise(activity.newExercise)).render
 
   def main = {
-    "#addExercise" #> "foo" // SHtml.a(Text("Add Exercise"),
+    def save() {
+      println("SAVE BUTTON PRESSED")
+    }
+
+    "#addExercise" #> "foo" &
+    "#save"        #> SHtml.onSubmitUnit(save)
+
+
+// SHtml.a(Text("Add Exercise"),
                             //   showAddNewExercise)
   }
 
