@@ -14,7 +14,15 @@ class Tag extends LongKeyedMapper[Tag] with IdPK with ManyToMany  {
 
 }
 
-object Tag extends Tag with LongKeyedMetaMapper[Tag]
+object Tag extends Tag with LongKeyedMetaMapper[Tag] {
+
+  def apply(s: String) = create.tag(s)
+
+  def fromString(s: String) : List[Tag] = s.split(" ").toList map apply
+
+  def showTags(ts: Seq[Tag]) = ts mkString ", "
+
+}
 
 // The relation between activities and Tags
 
@@ -24,7 +32,12 @@ class ActivityTags extends LongKeyedMapper[ActivityTags] with IdPK {
   object tag      extends MappedLongForeignKey(this, Tag)
 }
 
-object ActivityTags extends ActivityTags with LongKeyedMetaMapper[ActivityTags]
+object ActivityTags extends ActivityTags with LongKeyedMetaMapper[ActivityTags] {
+
+  def tag(a: Activity, t: Tag) = create.activity(a).tag(t).save
+
+
+}
 
 
 class Sport extends LongKeyedMapper[Sport] with IdPK {

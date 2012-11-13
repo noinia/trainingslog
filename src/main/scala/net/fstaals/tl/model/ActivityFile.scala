@@ -64,12 +64,21 @@ case class ActivityFile(val path : String) {
     activityData map {e => ActivityAltitude.fromEAltitude(e.getAltitude())}
 
   def cadence : Option[ActivityCadence]         =
-    activityData map {e => ActivityCadence.fromECadence(e.getCadence())}
+    activityData flatMap {e => Option(e.getCadence())} map ActivityCadence.fromECadence
 
   def temperature : Option[ActivityTemperature] =
     activityData map {e => ActivityTemperature.fromETemperature(e.getTemperature())}
 
 //  def laps() = activityData map {_.getLapList().toList()}
+
+  def heartRate : Option[ActivityHeartRate] =
+    activityData map {e => {
+      val avg = e.getHeartRateAVG()
+      val max = e.getHeartRateMax()
+      ActivityHeartRate(avg,max)
+    }}
+
+  def power : Option[ActivityPower]= None
 
 }
 
@@ -80,12 +89,13 @@ object ActivitySpeed {
     ActivitySpeed(e.getSpeedAVG(), e.getSpeedMax())
 }
 
-case class ActivityAltitude(val avg: Altitude, val min: Altitude, val max: Altitude, val ascent : Altitude)
+case class ActivityAltitude(val avg: Altitude, val min: Altitude, val max: Altitude, val gain : Altitude)
 
 object ActivityAltitude {
   def fromEAltitude(e: ExerciseAltitude) =
     ActivityAltitude(e.getAltitudeAVG(),
-                     e.getAltitudeMin(), e.getAltitudeMax(), e.getAscent())
+                     e.getAltitudeMin(), e.getAltitudeMax(),
+                     e.getAscent())
 }
 
 case class ActivityHeartRate(val avg: HeartRate, val max: HeartRate)
@@ -96,6 +106,9 @@ object ActivityCadence {
   def fromECadence(e : ExerciseCadence) =
     ActivityCadence(e.getCadenceAVG(), e.getCadenceMax())
 }
+
+
+case class ActivityPower(val avg: Power, val max: Power)
 
 
 case class ActivityTemperature(val avg: Temperature,

@@ -1,10 +1,16 @@
 package net.fstaals.tl.view
 
+import net.liftweb.common._
 import org.joda.time.Period
 import org.scala_tools.time.Imports._
 
 trait Show {
   def show : String
+}
+
+object Show {
+  def show[T <: Show](x: Option[T]) = x map {_.show} getOrElse ""
+  def show[T <: Show](x: Box[T])    = x map {_.show} openOr ""
 }
 
 

@@ -1,32 +1,121 @@
 <lift:surround with="default" at="content">
-  <form class="lift:ActivitySnippet.summary">
+  <form class="lift:ActivitySnippet.main">
+    <div id="controls">
+    </div>
+  </form>
+  <form class="lift:ActivitySnippet.summary" id="summary">
     <lift:surround with="block">
       <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
       <lift:bind-at name="blockcontent">
-        <label>Public:</label>  <div id="isPublic"></div>
-        <label>Duration:</label><div id="duration"></div>
-        <label>Distance:</label><div id="distance"></div>
-        <label>Description:</label><div id="description"/></div>
+          <div class="subblock" id="general">
+            <h1>General</h1>
+            <label>Owner:</label>              <div id="owner"></div>
+            <label>Public:</label>             <div id="isPublic"></div>
+            <label>Duration:</label>           <div id="duration"></div>
+            <label>Distance:</label>           <div id="distance"></div>
+            <label>Tags:</label>               <div id="tags"></div>
+          </div>
+
+          <div class="subblock" id="timing">
+            <h1>Timing</h1>
+            <label>Time:</label>                <div id="duration"></div>
+            <label>Moving Time:</label>         <div id="movingTime"></div>
+            <label>Avg Speed:</label>           <div id="avgSpeed"></div>
+            <label>Avg Moving Speed:</label>    <div id="avgMovingSpeed"></div>
+            <label>Max Speed:</label>           <div id="maxSpeed"></div>
+          </div>
+
+          <div class="subblock" id="heartRate">
+            <h1>Heart Rate</h1>
+            <label>Zone 1</label>               <div id="hrZone"></div>
+            <label>Avg HR:</label>              <div id="avgHR"></div>
+            <label>Max HR:</label>              <div id="maxHR"></div>
+          </div>
+
+          <div class="subblock" id="power">
+            <h1>Power</h1>
+            <label>Zone 1</label>               <div id="hrZone"></div>
+            <label>Avg Power:</label>           <div id="avgPower"></div>
+            <label>Max Power:</label>           <div id="maxPower"></div>
+          </div>
+
+          <div class="subblock" id="elevation">
+            <h1>Elevation</h1>
+            <label>Elevation Gain:</label>      <div id="elevationGain"></div>
+            <label>Elevation Loss:</label>      <div id="elevationLoss"></div>
+            <label>Min Elevation:</label>       <div id="minElevation"></div>
+            <label>Max Elevation:</label>       <div id="maxElevation"></div>
+          </div>
+
+          <div class="subblock" id="cadence">
+            <h1>Cadence</h1>
+
+            <label>Min Cadence:</label>         <div id="minCad"></div>
+            <label>Max Cadence:</label>         <div id="maxCad"></div>
+          </div>
+
+          <div class="subblock" id="temperature">
+            <h1>Temperature:</h1>
+
+            <label>Avg Temperature:</label>     <div id="avgTemp"></div>
+            <label>Min Temperature:</label>     <div id="minTemp"></div>
+            <label>Max Temperature:</label>     <div id="maxTemp"></div>
+          </div>
+
+        <div class="bigsubblock">
+          <h1>Exercises</h1>
+          <div id="addExercise">Add Exercise</div>
+        </div>
+
+        <div class="bigsubblock">
+          <label>Description:</label><div id="description"></div>
+        </div>
+
+        <div class="acceptbutton">
+          <input type="image" value="Save" id="save"
+                 src="/images/buttons/accept.png">
+          Save
+        </div>
       </lift:bind-at>
     </lift:surround>
   </form>
+  <div class="lift:ActivitySnippet.graphs" id="graphs">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
+      <lift:bind-at name="blockcontent">
+        Graphs
+      </lift:bind-at>
+    </lift:surround>
+  </div>
+  <div class="lift:ActivitySnippet.map" id="map">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
+      <lift:bind-at name="blockcontent">
+        Map
+      </lift:bind-at>
+    </lift:surround>
+  </div>
+  <form class="lift:ActivitySnippet.details" id="details">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
+      <lift:bind-at name="blockcontent">
+        <h1>Exercises</h1>
 
-  <div class="lift:ActivitySnippet.graphs">
-    <lift:surround with="block">
-      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
-      <lift:bind-at name="blockcontent"><div  id="graphs">Graphs</div></lift:bind-at>
+        <div class="exercise">
+          No exercises.
+        </div>
+
+        <div id="addNewExercise">
+          <label>Start:</label><div id="start"></div>
+          <label>End:</label><div id="end"></div>
+          <label>Description:</label><div id="description"></div>
+          <div class="acceptbutton">
+            <input type="image" value="Save" id="save"
+                   src="/images/buttons/accept.png">
+            Add Exercise
+          </div>
+        </div>
+      </lift:bind-at>
     </lift:surround>
-  </div>
-  <div class="lift:ActivitySnippet.map">
-    <lift:surround with="block">
-      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
-      <lift:bind-at name="blockcontent"><div  id="map">Map</div></lift:bind-at>
-    </lift:surround>
-  </div>
-  <div class="lift:ActivitySnippet.details">
-    <lift:surround with="block">
-      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
-      <lift:bind-at name="blockcontent"><div  id="details">Details</div></lift:bind-at>
-    </lift:surround>
-  </div>
+  </form>
 </lift:surround>

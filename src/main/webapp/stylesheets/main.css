@@ -85,6 +85,7 @@ a:hover {
     margin-top: 0;
     margin-bottom: 0;
     width: 800px;
+    height: 90%;
 }
 
 .blocktoggle {
@@ -120,17 +121,26 @@ a:hover {
     padding-left: 20px;
     padding-bottom: 10px;
     margin-top: 0;
+    font-size: 14px;
 }
 
 .blockarea label {
     float: left;
     clear: left;
     width: 100px;
+    font-weight: normal;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .blockarea input {
     float: left;
     clear: right;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    max-width: 80px;
 }
 
 .blockarea input[readonly="readonly"] {
@@ -141,4 +151,42 @@ a:hover {
 .blockarea textarea {
     float: left;
     clear: right;
+}
+
+.subblock {
+    border: 1px solid black;
+    overflow: hidden;
+    min-width: 185px;
+    max-width: 230px;
+    min-height: 150px;
+    float: left;
+    clear: none;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+/* .row { */
+/*     margin-left: auto; */
+/*     margin-right: auto; */
+/*     overflow: hidden; */
+/*     margin-bottom: 10px; */
+/*     width: 780px; */
+/* } */
+
+.bigsubblock {
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid black;
+    overflow: hidden;
+    clear: both;
+    width: 800px;
+}
+
+.hidden {
+    display: none;
 }

@@ -70,7 +70,7 @@ object TrajectoryData {
 }
 
 case class HeartRate(val hr: Short) extends HasUnit {
-  def defaultUnit = "B/m"
+  def defaultUnit = "bpm"
   def strValue    = hr.toString
 }
 
@@ -81,7 +81,7 @@ case class Altitude(val a: Int) extends HasUnit {
 
 case class Speed(val s: Double) extends HasUnit {
   def defaultUnit = "Km/h"
-  def strValue    = s.toString
+  def strValue    = "%.2f".format(s)
 }
 
 case class Distance(val m: Int) extends HasUnit {
@@ -102,4 +102,8 @@ case class Power(val p: Short) extends HasUnit {
 case class Temperature(val t: Short) extends HasUnit {
   def defaultUnit = "C" //TODO, the circle thingy
   def strValue    = t.toString
+}
+
+case class FilteredTrajectory(val pieces : List[Trajectory]) {
+
 }

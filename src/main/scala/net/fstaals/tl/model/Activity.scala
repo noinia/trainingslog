@@ -1,6 +1,7 @@
 package net.fstaals.tl.model
 
 import org.scala_tools.time.Imports._
+
 import net.liftweb.common._
 import scala.xml._
 import net.liftweb.mapper._
@@ -51,6 +52,24 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
   def distance                  = af flatMap {_.distance}
   def cadence                   = af flatMap {_.cadence}
   def temperature               = af flatMap {_.temperature}
+  def heartRate                 = af flatMap {_.heartRate}
+  def elevation                 = af flatMap {_.altitude}
+  def power                     = af flatMap {_.power}
+
+  def addTag(t: Tag) = ActivityTags.tag(this,t)
+
+  def newExercise = {
+    // new exercise starts after the last exercise
+    val s = (List[Long](0) ++ (exercises map {_.end.get})) max
+    val e = Exercise.create.activity(this).start(s)
+
+    // new exercise lasts until the end of the activity (if we can set it)
+    duration map {_.millis} match {
+      case Some(t) => e.end(t)
+      case _       => e
+    }
+  }
+
 
 }
 
@@ -73,12 +92,14 @@ class Exercise extends LongKeyedMapper[Exercise] with IdPK {
   /* ********** The fields Stored together with an Exercise  ***************** */
 
   object name              extends MappedString(this,200)
-  object start             extends MappedDateTime(this)
-  object end               extends MappedDateTime(this)
-  object rpe               extends MappedInt(this)
+  object start             extends MappedLong(this)  // time since start, in miliseconds
+  object end               extends MappedLong(this)  // time since end , in miliseconds
+  object rpe               extends MappedInt(this) {
+    override def dbNotNull_? = false
+  }
   object description       extends MappedTextarea(this, 2048) {
     override def textareaRows  = 10
-    override def textareaCols  = 50
+    override def textareaCols  = 100
   }
 
   /* ********** The properties referenced from an Exercise  ***************** */

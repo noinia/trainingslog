@@ -16,8 +16,10 @@ class User extends MegaProtoUser[User] {
   def allActivities = Activity.findAll(By(Activity.owner, this.id))
 
 
+
   /* ********** other methods  ***************** */
 
+  def fullName = firstName.get ++ " " ++ lastName.get
 
 }
 
