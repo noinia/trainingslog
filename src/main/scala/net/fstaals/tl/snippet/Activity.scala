@@ -11,17 +11,8 @@ import net.fstaals.tl.view._
 import net.fstaals.tl._
 import org.joda.time.Period
 
-import Show._
+class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulSnippet {
 
-class ActivitySnippet(pk: PK)
-      extends ModelSnippet[Activity](pk) with UserSnippet with StatefulSnippet {
-
-
-  def canAccess(a: Activity) = true // AccessControl.activityIsViewable(a)
-
-  def singleton = Activity
-
-  val activity = getModel
   var editMode = false
 
   def dispatch = {
@@ -110,25 +101,31 @@ class ActivitySnippet(pk: PK)
 
   def map     = "#title"    #> "Map"
 
-  def details = "#title"      #> "Details" &
-                ".exercise *" #> <h3>{activity.exercises map {_.name}}</h3>
-
+  def details = "#title"          #> "Details" &
+                ".exercise *"     #> <h3>{activity.exercises map {_.name}}</h3>  &
+                "#addNewExercise" #> (new AddExercise(activity.newExercise)).render
 
   def main = {
-    def showAddNewExercise() = {
+    "#addExercise" #> "foo" // SHtml.a(Text("Add Exercise"),
+                            //   showAddNewExercise)
+  }
 
-    }
+}
 
-    "#save"        #> SHtml.onSubmitUnit(save) &
-    "#addExercise" #> SHtml.a(Text("Add Exercise"),
-                              showAddNewExercise) &
-    "#addNewExercise" #> Exercise.toForm(Exercise.create)
+class AddExercise(val e: Exercise) {
+
+  def render = {
+
+    "#name"        #> e.name._toForm           &
+    "#start"       #> e.start._toForm          &
+    "#end"         #> e.end._toForm            &
+    "#description" #> e.description._toForm    &
+    "#save"        #> SHtml.onSubmitUnit(save)
   }
 
   def save() = {
     println("save button pressed.")
+    println(e.name.get)
   }
-
-
 
 }

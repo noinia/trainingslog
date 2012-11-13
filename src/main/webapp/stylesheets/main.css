@@ -47,6 +47,10 @@ a:hover {
     margin-bottom: 30px;
 }
 
+.acceptbutton {
+    display: block;
+}
+
 .acceptbutton:hover {
     cursor: pointer;
     background-color: #cce7ff;
@@ -151,6 +155,11 @@ a:hover {
 .blockarea textarea {
     float: left;
     clear: right;
+}
+
+
+.blockarea .controls {
+    clear: both;
 }
 
 .subblock {

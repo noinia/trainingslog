@@ -29,21 +29,21 @@ trait UserSnippet {
 }
 
 
-abstract class ModelSnippet[T <: LongKeyedMapper[T]](val pk : PK) {
+// abstract class ModelSnippet[T <: LongKeyedMapper[T]](val pk : PK) {
 
-  def getModel : T = {
-      singleton.find(pk.id) match {
-        case Full(model) if canAccess(model) =>
-          model
-        case Full(_)                         =>
-          S.redirectTo("/noaccess")
-        case _                               =>
-          S.redirectTo("/nosuch")
-      }
+//   def getModel : T = {
+//       singleton.find(pk.id) match {
+//         case Full(model) if canAccess(model) =>
+//           model
+//         case Full(_)                         =>
+//           S.redirectTo("/noaccess")
+//         case _                               =>
+//           S.redirectTo("/nosuch")
+//       }
 
-  }
+//   }
 
-  def canAccess(x : T) : Boolean
-  def singleton : LongKeyedMetaMapper[T]
+//   def canAccess(x : T) : Boolean
+//   def singleton : LongKeyedMetaMapper[T]
 
-}
+// }

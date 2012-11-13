@@ -12,40 +12,29 @@ import net.liftweb.common._
 
 import net.fstaals.tl.model._
 
-case class PK(id: Long)
-
 object TLSiteMap {
 
   def idParser(xs: List[String]) = try {
-    Full(PK(xs.head.toLong))
+    Full(xs.head.toLong)
   } catch {case _ => Empty}
-  def idEncoder(k: PK)  = List(k.id.toString)
+
+  def idEncoder[T <: IdPK](x : T) = List(x.id.get.toString)
+
+  def objParser[T <: LongKeyedMapper[T]](x: LongKeyedMetaMapper[T])(xs: List[String]) : Box[T] = idParser(xs) flatMap x.find
+
 
   def sitemap = SiteMap(
     Menu.i("Home")       / "index"
   , Menu.i("Activities") / "activities"
   // Handling an activity
-  , Menu.params[PK]("Activity", "activivity",
-                    idParser _, idEncoder _)
-                    / "activity" / "view" >> User.AddUserMenusAfter >> Hidden submenus (
-          Menu.i("Synchronize Device") / "activity" / "sync"
-        , Menu.i("add")                / "activity" / "add"
+  , Menu.params[Activity]("Activity", "activivity", objParser(Activity) _, idEncoder _)
+        / "activity" / "view"
+        >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
+        >> User.AddUserMenusAfter
+        >> Hidden
+    submenus (
+        Menu.i("Synchronize Device") / "activity" / "sync"
+      , Menu.i("add")                / "activity" / "add"
     )
-
-  // Error pages
-  , Menu.i("nosuch")   / "nosuch"    >> Hidden //TODO, see if I can use noSuchPathPath
-                                               // to define this
-  , Menu.i("noaccess") / "noaccess"  >> Hidden
   )
-
-  val noSuchPath   = List("nosuch")
-  val noAccessPath = List("noaccess")
-
-}
-
-
-object AccessControl {
-  def activityIsViewable(a: Activity) =
-    a.isPublic.get || (User.currentUser map {_.id}) === a.owner.get
-
 }

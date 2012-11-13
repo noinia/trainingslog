@@ -1,6 +1,6 @@
 <lift:surround with="default" at="content">
   <form class="lift:ActivitySnippet.main">
-    <div id="controls">
+    <div id="controls" class="controls">
     </div>
   </form>
   <form class="lift:ActivitySnippet.summary" id="summary">
@@ -9,7 +9,7 @@
       <lift:bind-at name="blockcontent">
           <div class="subblock" id="general">
             <h1>General</h1>
-            <label>Owner:</label>              <div id="owner"></div>
+            <label>User:</label>               <div id="owner"></div>
             <label>Public:</label>             <div id="isPublic"></div>
             <label>Duration:</label>           <div id="duration"></div>
             <label>Distance:</label>           <div id="distance"></div>
@@ -106,13 +106,17 @@
         </div>
 
         <div id="addNewExercise">
-          <label>Start:</label><div id="start"></div>
-          <label>End:</label><div id="end"></div>
-          <label>Description:</label><div id="description"></div>
-          <div class="acceptbutton">
-            <input type="image" value="Save" id="save"
-                   src="/images/buttons/accept.png">
-            Add Exercise
+          <h2>Add Exercise</h2>
+          <label>Name:</label>          <div id="name"></div>
+          <label>Start:</label>         <div id="start"></div>
+          <label>End:</label>           <div id="end"></div>
+          <label>Description:</label>   <div id="description"></div>
+          <div class="controls">
+            <div class="acceptbutton">
+              <input type="image" value="Save" id="save"
+                     src="/images/buttons/accept.png">
+              Add Exercise
+            </div>
           </div>
         </div>
       </lift:bind-at>
