@@ -24,7 +24,7 @@ a:hover {
 
 
 #container {
-
+    position: relative;
 }
 
 
@@ -33,6 +33,7 @@ a:hover {
 }
 
 #footer {
+    clear: both;
     background-color: #3b3b3b;
     text-align: center;
     vertical-align: center;
@@ -45,7 +46,22 @@ a:hover {
     padding-top: 3px;
     margin-top: 10px;
     margin-bottom: 30px;
+
 }
+
+#messages {
+    background-color: #ffaaaa;
+    border: 1px solid #ff5555;
+    width: 300px;
+    min-height: 50px;
+    z-index: 10;
+    position: absolute;
+    right: 0;
+    float: right;
+    clear: none;
+}
+
+
 
 .acceptbutton {
     display: block;
