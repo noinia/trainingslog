@@ -33,17 +33,28 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     <input type="text" readonly="readonly" value={x.show}/>
 
 
+
   def summary =
     general & timing & heartRate & power & elevation & cadence & temperature
 
-  def general = "#title"           #> activity.name._toForm                           &
-                "#owner"           #> toForm(activity.owner.obj map {_.fullName})     &
-                "#isPublic"        #> activity.isPublic._toForm                       &
-                "#start"           #> activity.start                                  &
-                "#duration *"      #> toForm(activity.duration map ShowablePeriod)    &
-                "#distance"        #> toForm(activity.distance)                       &
-                "#tags"            #> "?"                                             &
-                "#description"     #> activity.description._toForm
+  def general = "#title"       #> activity.name._toForm                           &
+                "#owner"       #> toForm(activity.owner.obj map {_.fullName})     &
+                "#isPublic"    #> activity.isPublic._toForm                       &
+                "#start"       #> activity.start                                  &
+                "#duration *"  #> toForm(activity.duration map ShowablePeriod)    &
+                "#distance"    #> toForm(activity.distance)                       &
+                "#description" #> activity.description._toForm                    &
+                tags
+
+  def tags = {
+    val allTags : List[Tag] = Tag.myTags
+    var unusedTags          = allTags
+    var actTags : List[Tag] = activity.tags.all
+
+    // "#tags"            #>                                              &
+    "#actTag *"        #> (actTags map {_.tag.get})                 &
+    "option *" #> (unusedTags map {_.tag.get})
+  }
 
 
   def timing = {
@@ -117,6 +128,9 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 // SHtml.a(Text("Add Exercise"),
                             //   showAddNewExercise)
   }
+
+
+
 
 }
 

@@ -13,7 +13,13 @@
             <label>Public:</label>             <div id="isPublic"></div>
             <label>Duration:</label>           <div id="duration"></div>
             <label>Distance:</label>           <div id="distance"></div>
-            <label>Tags:</label>               <div id="tags"></div>
+            <label>Tags:</label>               <input list="unusedTags" name="newTag">
+                                               <datalist id="unusedTags">
+                                                 <option id="unusedTag"></option>
+                                               </datalist>
+                                               <ul id="actTags">
+                                                 <li id="actTag"></li>
+                                               </ul>
           </div>
 
           <div class="subblock" id="timing">

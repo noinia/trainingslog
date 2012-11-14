@@ -39,6 +39,7 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
   // def sport     = Sport.getBy
   // def category
 
+
   // tags is many to many
   object tags              extends MappedManyToMany(ActivityTags, ActivityTags.activity,
                                                     ActivityTags.tag, Tag)
@@ -55,8 +56,6 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
   def heartRate                 = af flatMap {_.heartRate}
   def elevation                 = af flatMap {_.altitude}
   def power                     = af flatMap {_.power}
-
-  def addTag(t: Tag) = ActivityTags.tag(this,t)
 
   def newExercise = {
     // new exercise starts after the last exercise
