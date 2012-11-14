@@ -1,4 +1,7 @@
 @import url('menu.css');
+@import url('activity.css');
+@import url('tags.css');
+
 
 body {
     font-family: arial, Verdana, "lucida console", sans-serif;
@@ -53,7 +56,6 @@ a:hover {
     background-color: #ffaaaa;
     border: 1px solid #ff5555;
     width: 300px;
-    min-height: 50px;
     z-index: 10;
     position: absolute;
     right: 0;
@@ -88,14 +90,23 @@ a:hover {
     position: relative;
 }
 
-.blockheader h1 {
+.blockheader {
     background-color: #cccccc;
+    padding-top: 3px;
+    padding-bottom: 0px;
+    vertical-align: center;
+}
+
+.blockheader h1 {
     font-size: 16px;
     color: #666666;
     padding-left: 40px;
     height: 30px;
-    margin-top: 0px;
+    margin-top: 5px;
     margin-bottom: 0px;
+    padding-top: 0;
+    padding-bottom: 0;
+    vertical-align: center;
 }
 
 .blockheader input {
@@ -137,11 +148,11 @@ a:hover {
 
 .blockarea h1 {
     background-color: transparent;
-    font-weight: normal;
-    padding-left: 20px;
+    font-weight: strong;
     padding-bottom: 10px;
     margin-top: 0;
-    font-size: 14px;
+    font-size: 13px;
+    clear: both;
 }
 
 .blockarea label {
@@ -178,39 +189,6 @@ a:hover {
     clear: both;
 }
 
-.subblock {
-    border: 1px solid black;
-    overflow: hidden;
-    min-width: 185px;
-    max-width: 230px;
-    min-height: 150px;
-    float: left;
-    clear: none;
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-bottom: 10px;
-    padding-top: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-bottom: 5px;
-}
-
-/* .row { */
-/*     margin-left: auto; */
-/*     margin-right: auto; */
-/*     overflow: hidden; */
-/*     margin-bottom: 10px; */
-/*     width: 780px; */
-/* } */
-
-.bigsubblock {
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid black;
-    overflow: hidden;
-    clear: both;
-    width: 800px;
-}
 
 .hidden {
     display: none;

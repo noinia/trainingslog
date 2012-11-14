@@ -37,5 +37,6 @@ object TLSiteMap {
         Menu.i("Synchronize Device") / "activity" / "sync"
       , Menu.i("add")                / "activity" / "add"
     )
+  , Menu.i("Tags")  / "tags"
   )
 }
