@@ -8,6 +8,8 @@ import java.sql.Types
 import java.lang.reflect.Method
 
 import net.liftweb.mapper._
+
+import net.fstaals.tl.model.HhMmSs
 import net.liftweb.util._
 import net.liftweb.common._
 import java.util.Date
@@ -62,20 +64,26 @@ abstract class MappedDuration[T <: Mapper[T]](val fieldOwner: T) extends MappedF
       case (n: Number) :: _         => this.set(toDuration(n.longValue))
       case Some(n: Number)          => this.set(toDuration(n.longValue))
       case Full(n: Number)          => this.set(toDuration(n.longValue))
+      case s: String                => this.set(toDuration(s))
+      case (s: String) :: _         => this.set(toDuration(s))
+      case x :: _                   => this.setFromAny(x)
       case Empty | Failure(_, _, _) => this.set(defaultValue)
       case None                     => this.set(defaultValue)
-      case (s: String) :: _         => this.set(toDuration(s))
-      case s :: _                   => this.setFromAny(s)
       case null                     => this.set(defaultValue)
-      case s: String                => this.set(toDuration(s))
       case o                        => this.set(toDuration(o))
     }
   }
 
   private def setFromLong(x : Long) = this.set(toDuration(x))
 
-  private def toDuration(x : Long) : Duration = new Duration(x)
-  private def toDuration(v : Any)  : Duration = toDuration(v.toString.toLong)
+  private def toDuration(s : String) : Duration = HhMmSs.parse(s) match {
+    case Some(d) => d
+    case _       => defaultValue
+  }
+  private def toDuration(x : Long)   : Duration = new Duration(x)
+  private def toDuration(v : Any)    : Duration = toDuration(v.toString.toLong)
+
+
 
   private def st(in: Duration) {
     data = in

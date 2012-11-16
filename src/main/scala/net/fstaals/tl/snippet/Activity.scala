@@ -155,8 +155,8 @@ class AddExercise(val e: Exercise) {
   def render = {
 
     "#name"        #> e.name._toForm           &
-    "#start"       #> e.start._toForm          &
-    "#end"         #> e.end._toForm            &
+    "#start"       #> HhMmSs(e.start.get)      &
+    "#end"         #> HhMmSs(e.end.get)        &
     "#description" #> e.description._toForm    &
     "#save"        #> SHtml.onSubmitUnit(save)
   }
