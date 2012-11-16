@@ -4,9 +4,9 @@ import de.saring.exerciseviewer.parser.ExerciseParser
 import de.saring.exerciseviewer.data._
 import de.saring.exerciseviewer.parser.ExerciseParserFactory
 
-import net.fstaals.tl.model.TrajectoryData._
+import net.fstaals.tl.model.UnitTypes._
 import org.joda.time.DateTime
-import org.joda.time.Period
+import org.joda.time.Duration
 import org.scala_tools.time.Imports._
 
 object ActivityFile {
@@ -51,14 +51,14 @@ case class ActivityFile(val path : String) {
   def end   : Option[DateTime]                  =
     start flatMap {s => duration map (s+) }
 
-  def duration: Option[Period]                =
-    trajectory.endPointOption map {tp => Period.millis(tp.timestamp.intValue) }
+  def duration: Option[Duration]                =
+    trajectory.endPointOption map {tp => new Duration(tp.timestamp.intValue) }
 
   def speed : Option[ActivitySpeed]             =
     activityData map {e => ActivitySpeed.fromESpeed(e.getSpeed())}
 
   def distance : Option[Distance]               =
-    activityData map {a => Distance(a.getSpeed().getDistance())}
+    activityData flatMap {a => Option(a.getSpeed()) map {_.getDistance()}}
 
   def altitude : Option[ActivityAltitude]       =
     activityData map {e => ActivityAltitude.fromEAltitude(e.getAltitude())}

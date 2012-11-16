@@ -7,7 +7,6 @@ import net.liftweb.http._
 
 import Helpers._
 import net.fstaals.tl.model._
-import net.fstaals.tl.view._
 import net.fstaals.tl._
 import org.joda.time.Period
 
@@ -26,12 +25,11 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
   def toForm(x: Box[String]) =
     <input type="text" readonly="readonly" value={x openOr ""}/>
 
-  def toForm[T <: Show](x: Option[T]) =
-    <input type="text" readonly="readonly" value={Show.show(x)}/>
+  // def toForm[T <: Show](x: Option[T]) =
+  //   <input type="text" readonly="readonly" value={Show.show(x)}/>
 
-  def toForm[T <: Show](x: T) =
-    <input type="text" readonly="readonly" value={x.show}/>
-
+  // def toForm[T <: Show](x: T) =
+  //   <input type="text" readonly="readonly" value={x.show}/>
 
 
   def summary =
@@ -41,8 +39,8 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
                 "#owner"       #> toForm(activity.owner.obj map {_.fullName})     &
                 "#isPublic"    #> activity.isPublic._toForm                       &
                 "#start"       #> activity.start                                  &
-                "#duration *"  #> toForm(activity.duration map ShowablePeriod)    &
-                "#distance"    #> toForm(activity.distance)                       &
+                "#duration *"  #> HhMmSs(activity.duration)                       &
+                "#distance *"  #> Km(activity.distance)                           &
                 "#description" #> activity.description._toForm                    &
                 tags
 
@@ -51,46 +49,64 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     var unusedTags          = allTags
     var actTags : List[Tag] = activity.tags.all
 
+    def load(s: String) = {
+
+    }
+
+    def add() = {
+
+    }
+
+    // <ul id="actTags">
+    // <li id="actTag"></li>
+    // </ul>
+    // <datalist id="unusedTags">
+    // <option id="unusedTag"></option>
+    // </datalist>
+    // <input list="unusedTags"
+    // name="newTag">
+    // <button id="addTag">Add</button>
+
     // "#tags"            #>                                              &
-    "#actTag *"        #> (actTags map {_.tag.get})                 &
+    "#actTag *"#> (actTags map {_.tag.get})                 &
     "option *" #> (unusedTags map {_.tag.get})
   }
 
 
   def timing = {
     val s = activity.speed
-    "#movingTime"      #> "?" &
-    "#avgSpeed"        #> toForm(s map {_.avg}) &
-    "#avgMovingSpeed"  #> "?" &
-    "#maxSpeed"        #> toForm(s map {_.max})
+    "#movingTime *"     #> "?" &
+    "#avgSpeed *"       #> Kmh(s map {_.avg}) &
+    "#avgMovingSpeed *" #> "?" &
+    "#maxSpeed *"       #> Kmh(s map {_.max})
   }
 
   def heartRate = orHide(activity.heartRate)("#heartRate") {hr=>
-    "#avgHR" #> toForm(hr.avg)  &
-    "#maxHR" #> toForm(hr.max)
+    "#avgHR *" #> Bpm(hr.avg)  &
+    "#maxHR *" #> Bpm(hr.max)
   }
 
   def power = orHide(activity.power)("#power") {p =>
-    "#avgPower"  #> toForm(p.avg) &
-    "#maxPower"  #> toForm(p.max)
+    "#avgPower *"  #> Watt(p.avg) &
+    "#maxPower *"  #> Watt(p.max)
   }
 
   def elevation = orHide(activity.elevation)("elevation") {e=>
-    "#elevationGain"   #> toForm(e.gain) &
-    "#elevationLoss"   #> toForm(None) &
-    "#minElevation"    #> toForm(e.min) &
-    "#maxElevation"    #> toForm(e.max)
+    "#elevationGain *"   #> Alt(e.gain) &
+    "#elevationLoss *"   #> Alt(None)   &
+    "#minElevation *"    #> Alt(e.min)  &
+    "#maxElevation *"    #> Alt(e.max)
   }
 
   def cadence = orHide(activity.cadence)("#cadence") {c=>
-    "#avgCad" #> toForm(c.avg) &
-    "#maxCad" #> toForm(c.max)
+    "#avgCad *" #> Rpm(c.avg) &
+    "#maxCad *" #> Rpm(c.max)
   }
 
   def temperature = orHide(activity.temperature)("#temperature") {t=>
-    "#avgTemp" #> toForm(t.avg) &
-    "#minTemp" #> toForm(t.min) &
-    "#maxTemp" #> toForm(t.max)
+    "#avgTemp *" #> Celcius(t.avg) &
+    "#minTemp *" #> Celcius(t.min) &
+    "#maxTemp *" #> Celcius(t.max)
   }
 
   def orHide[T](x: Option[T])(cssSel: String)(f: T => CssSel) = x match {

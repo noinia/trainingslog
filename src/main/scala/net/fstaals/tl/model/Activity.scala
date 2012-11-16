@@ -1,10 +1,12 @@
 package net.fstaals.tl.model
 
-import org.scala_tools.time.Imports._
-
 import net.liftweb.common._
 import scala.xml._
 import net.liftweb.mapper._
+import net.fstaals.tl.mapper._
+
+import org.joda.time.{Duration, DateTime}
+import org.scala_tools.time.Imports._
 
 class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
 
@@ -48,7 +50,7 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
 
   lazy val af = ActivityFile.fromPath(activityFilePath.get)
 
-  def duration : Option[Period] = af flatMap {_.duration}
+  def duration                  = af flatMap {_.duration}
   def speed                     = af flatMap {_.speed}
   def distance                  = af flatMap {_.distance}
   def cadence                   = af flatMap {_.cadence}
@@ -59,12 +61,12 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
 
   def newExercise = {
     // new exercise starts after the last exercise
-    val s = (List[Long](0) ++ (exercises map {_.end.get})) max
+    val s = ((Duration.ZERO) :: (exercises map {_.end.get})) maxBy {_.millis}
     val e = Exercise.create.activity(this).start(s)
 
     // new exercise lasts until the end of the activity (if we can set it)
     duration map {_.millis} match {
-      case Some(t) => e.end(t)
+      case Some(t) => e.end(new Duration(t))
       case _       => e
     }
   }
@@ -98,8 +100,8 @@ class Exercise extends LongKeyedMapper[Exercise] with IdPK {
   /* ********** The fields Stored together with an Exercise  ***************** */
 
   object name              extends MappedString(this,200)
-  object start             extends MappedLong(this)  // time since start, in miliseconds
-  object end               extends MappedLong(this)  // time since end , in miliseconds
+  object start             extends MappedDuration(this)  // time since start
+  object end               extends MappedDuration(this)  // time since end
   object rpe               extends MappedInt(this) {
     override def dbNotNull_? = false
   }

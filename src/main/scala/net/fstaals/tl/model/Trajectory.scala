@@ -2,7 +2,7 @@ package net.fstaals.tl.model
 
 import scala.collection.SortedMap
 import de.saring.exerciseviewer.data._
-import net.fstaals.tl.view._
+import net.fstaals.tl.model.UnitTypes._
 
 case class Trajectory(val points : SortedMap[Trajectory.Timestamp,TrajectoryPoint]) {
 
@@ -46,62 +46,16 @@ object TrajectoryPoint {
     TrajectoryPoint( es.getTimestamp()
                    , Option(es.getPosition())    map {_.getLatitude() }
                    , Option(es.getPosition())    map {_.getLongitude()}
-                   , Option(es.getHeartRate())   map HeartRate
-                   , Option(es.getAltitude())    map {s => Altitude(s.intValue)}
-                   , Option(es.getSpeed())       map {f => Speed(f.doubleValue)}
-                   , Option(es.getCadence())     map Cadence
+                   , Option(es.getHeartRate())
+                   , Option(es.getAltitude())
+                   , Option(es.getSpeed())
+                   , Option(es.getCadence())
                    , None // power
-                   , Option(es.getTemperature()) map Temperature
-                   , Option(es.getDistance())    map Distance
+                   , Option(es.getTemperature())
+                   , Option(es.getDistance())
                    )
 
 
-}
-
-object TrajectoryData {
-  implicit def shortToHr             = HeartRate
-  implicit def shortToAlt(s:Short)   = Altitude(s.intValue)
-  implicit def intToAlt              = Altitude
-  implicit def doubleToSpeed         = Speed
-  implicit def floatToSpeed(f:Float) = Speed (f.doubleValue)
-  implicit def intToDistance         = Distance
-  implicit def shortToCadence        = Cadence
-  implicit def shortToTemp           = Temperature
-}
-
-case class HeartRate(val hr: Short) extends HasUnit {
-  def defaultUnit = "bpm"
-  def strValue    = hr.toString
-}
-
-case class Altitude(val a: Int) extends HasUnit {
-  def defaultUnit = "m"
-  def strValue    = a.toString
-}
-
-case class Speed(val s: Double) extends HasUnit {
-  def defaultUnit = "Km/h"
-  def strValue    = "%.2f".format(s)
-}
-
-case class Distance(val m: Int) extends HasUnit {
-  def defaultUnit = "Km"
-  def strValue    = "%.2f".format((m+0.0)/1000)
-}
-
-case class Cadence(val c: Short) extends HasUnit {
-  def defaultUnit = "r/m"
-  def strValue    = c.toString
-}
-
-case class Power(val p: Short) extends HasUnit {
-  def defaultUnit = "W"
-  def strValue    = p.toString
-}
-
-case class Temperature(val t: Short) extends HasUnit {
-  def defaultUnit = "C" //TODO, the circle thingy
-  def strValue    = t.toString
 }
 
 case class FilteredTrajectory(val pieces : List[Trajectory]) {
