@@ -8,35 +8,32 @@ import net.liftweb.http._
 import Helpers._
 import net.fstaals.tl.model._
 import net.fstaals.tl._
-import org.joda.time.Period
+import org.joda.time.Duration
 
 class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulSnippet {
 
-  var editMode = false
+  var inEditMode = false
 
   def dispatch = {
-    case "summary" => summary
-    case "graphs"  => graphs
-    case "map"     => map
-    case "details" => details
-    case "main"    => main
+    case "summary"  => summary
+    case "graphs"   => graphs
+    case "map"      => map
+    case "details"  => details
+    case "controls" => controls
   }
 
-  def toForm(x: Box[String]) =
-    <input type="text" readonly="readonly" value={x openOr ""}/>
-
-  // def toForm[T <: Show](x: Option[T]) =
-  //   <input type="text" readonly="readonly" value={Show.show(x)}/>
-
-  // def toForm[T <: Show](x: T) =
-  //   <input type="text" readonly="readonly" value={x.show}/>
+  def save() = {
+    println("save activity")
+    println(activity.name)
+  }
 
 
   def summary =
-    general & timing & heartRate & power & elevation & cadence & temperature
+    general & timing & heartRate & power & elevation & cadence & temperature &
+    "#save" #> SHtml.onSubmitUnit(save)
 
   def general = "#title"       #> activity.name._toForm                           &
-                "#owner"       #> toForm(activity.owner.obj map {_.fullName})     &
+                "#owner *"     #> (activity.owner.obj map {_.fullName} openOr "") &
                 "#isPublic"    #> activity.isPublic._toForm                       &
                 "#start"       #> activity.start                                  &
                 "#duration *"  #> HhMmSs(activity.duration)                       &
@@ -130,22 +127,9 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 
   def details = "#title"          #> "Details" &
                 ".exercise *"     #> <h3>{activity.exercises map {_.name}}</h3>  &
-                "#addNewExercise" #> (new AddExercise(activity.newExercise)).render
+                (new AddExercise(activity.newExercise)).render
 
-  def main = {
-    def save() {
-      println("SAVE BUTTON PRESSED")
-    }
-
-    "#addExercise" #> "foo" &
-    "#save"        #> SHtml.onSubmitUnit(save)
-
-
-// SHtml.a(Text("Add Exercise"),
-                            //   showAddNewExercise)
-  }
-
-
+  def controls = "#controls *" #> "none yet"
 
 
 }
@@ -154,16 +138,29 @@ class AddExercise(val e: Exercise) {
 
   def render = {
 
-    "#name"        #> e.name._toForm           &
-    "#start"       #> HhMmSs(e.start.get)      &
-    "#end"         #> HhMmSs(e.end.get)        &
-    "#description" #> e.description._toForm    &
-    "#save"        #> SHtml.onSubmitUnit(save)
+    "#name"          #> e.name._toForm                       &
+    "#start [value]" #> HhMmSs(e.start.get)                  &
+    "#start"         #> SHtml.onSubmit(load(e.start := _) _) &
+    "#end [value]"   #> HhMmSs(e.end.get)                    &
+    "#end"           #> SHtml.onSubmit(load(e.end := _) _)   &
+    "#rpe"           #> e.rpe._toForm                        &
+    "#description"   #> e.description._toForm                &
+    "#save"          #> SHtml.onSubmitUnit(save)
   }
 
-  def save() = {
-    println("save button pressed.")
-    println(e.name.get)
+  def load(f : Duration => Duration)(s: String) = HhMmSs.parse(s) match {
+    case Some(d) => {f(d)}
+    case _       => {}
+  }
+
+  def save() = e.validate match {
+    case Nil => { println(e.name.get)
+                  println(HhMmSs(e.start.get))
+                  println(HhMmSs(e.end.get))
+                  println(e.rpe.get)
+                  println(e.description.get)
+                }
+    case xs  => {S.error(xs)}
   }
 
 }

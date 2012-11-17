@@ -1,5 +1,5 @@
 <lift:surround with="default" at="content">
-  <form class="lift:ActivitySnippet.main">
+  <form class="lift:ActivitySnippet.controls">
     <div id="controls" class="controls">
     </div>
   </form>
@@ -71,9 +71,9 @@
           <label>Description:</label><div id="description"></div>
         </div>
 
-        <div class="acceptbutton">
-          <input type="image" value="Save" id="save"
-                 src="/images/buttons/accept.png">
+        <div class="acceptbutton" onClick="summary.submit()">
+          <img src="/images/buttons/accept.png" alt="">
+          <input type="hidden" id="save" valu="">
           Save
         </div>
       </lift:bind-at>
@@ -108,14 +108,15 @@
         <div id="addNewExercise">
           <h2>Add Exercise</h2>
           <label>Name:</label>          <div id="name"></div>
-          <label>Start:</label>         <div id="start"></div>
-          <label>End:</label>           <div id="end"></div>
+          <label>Start:</label>         <input type="text" id="start">
+          <label>End:</label>           <input type="text" id="end">
+          <label>RPE:</label>           <div id="rpe"></div>
           <label>Description:</label>   <div id="description"></div>
           <div class="controls">
-            <div class="acceptbutton">
-              <input type="image" value="Save" id="save"
-                     src="/images/buttons/accept.png">
-              Add Exercise
+            <div class="acceptbutton" onClick="details.submit()">
+              <img src="/images/buttons/accept.png" alt="">
+              <input type="hidden" id="save" valu="">
+              Save
             </div>
           </div>
         </div>

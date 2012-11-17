@@ -2,6 +2,7 @@ package net.fstaals.tl.model
 
 import net.liftweb.common._
 import scala.xml._
+import net.liftweb.util._
 import net.liftweb.mapper._
 import net.fstaals.tl.mapper._
 
@@ -104,6 +105,14 @@ class Exercise extends LongKeyedMapper[Exercise] with IdPK {
   object end               extends MappedDuration(this)  // time since end
   object rpe               extends MappedInt(this) {
     override def dbNotNull_? = false
+
+    override def defaultValue = 5
+
+    override def validate = {
+      val err = FieldError(this,"RPE should be in range 1..10")
+      (if (1 to 10 contains get) Nil else List(err)) ++ super.validate
+    }
+
   }
   object description       extends MappedTextarea(this, 2048) {
     override def textareaRows  = 10
