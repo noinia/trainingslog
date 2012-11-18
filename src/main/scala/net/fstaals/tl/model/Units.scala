@@ -63,7 +63,7 @@ object Alt extends Showable[Altitude] with Parseable[Altitude] {
 }
 
 object Kmh extends Showable[Speed] with Parseable[Speed] {
-  def unit                        = "Km/h"
+  def unit                        = "km/h"
   override def strValue(x: Speed) = "%.2f".format(x)
   def parse(s: String) = Parseable.toDouble(s dropRight 4)
 }

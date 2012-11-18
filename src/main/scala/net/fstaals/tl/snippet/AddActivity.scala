@@ -44,7 +44,7 @@ object SyncActivities extends UserSnippet {
             case Nil => {
               a.save
               S.notice("Entry added!")
-              S.redirectTo(a.id.get.toString)
+              S.redirectTo("view/" + a.id.get.toString)
             }
             case x => S.error(x)
       }

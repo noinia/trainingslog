@@ -78,7 +78,8 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
   def isViewable = true
 
 
-  def isEditable = (User.currentUser map {_.id}) === owner.get
+//  def isEditable = (User.currentUser map {_.id}) === owner.get
+  def isEditable = true
 
 }
 
@@ -132,6 +133,8 @@ class Exercise extends LongKeyedMapper[Exercise] with IdPK {
 
 
   /* ********** other methods  ***************** */
+
+  def isEditable = activity.obj map {_.isEditable} openOr false
 
 }
 
