@@ -12,8 +12,9 @@ import mapper._
 
 import net.fstaals.tl.TLSiteMap
 import net.fstaals.tl.model._
-import net.liftmodules.JQueryModule
 
+import net.liftmodules.JQueryModule
+import net.liftmodules.widgets.flot._
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -54,6 +55,9 @@ class Boot {
     LiftRules.jsArtifacts = JQueryArtifacts
     JQueryModule.InitParam.JQuery=JQueryModule.JQuery172
     JQueryModule.init()
+
+    // use flot
+    Flot.init
 
     //Show the spinny image when an Ajax call starts
     LiftRules.ajaxStart =

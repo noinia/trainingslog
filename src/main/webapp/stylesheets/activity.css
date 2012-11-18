@@ -42,3 +42,9 @@
     clear: both;
     width: 800px;
 }
+
+
+#graph_area {
+    width:600px;
+    height:400px;
+}

@@ -4,6 +4,7 @@ import scala.xml.{NodeSeq, Text}
 import net.liftweb.util._
 import net.liftweb.common._
 import net.liftweb.http._
+import net.liftmodules.widgets.flot._
 
 import Helpers._
 import net.fstaals.tl.model._
@@ -20,6 +21,7 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     case "map"      => map
     case "details"  => details
     case "controls" => controls
+    case "sine"     => sine // TEST
   }
 
   def save() = {
@@ -121,6 +123,18 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 
 
   def graphs  = "#title"    #> "Graphs"
+
+
+  def sine(xhtml: NodeSeq) = {
+    val data_values: List[(Double,Double)] = for (i <- List.range (0, 140, 5))
+        yield (i / 10.0, Math.sin(i / 10.0) )
+
+    val data_to_plot = new FlotSerie() {
+        override val data = data_values
+    }
+
+    Flot.render ( "graph_area", List(data_to_plot), new FlotOptions {}, Flot.script(xhtml))
+  }
 
 
   def map     = "#title"    #> "Map"
