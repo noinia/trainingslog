@@ -15,13 +15,15 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 
   var inEditMode = false
 
+  lazy val activityGraphs = new ActivityGraphs(activity)
+
   def dispatch = {
-    case "summary"  => summary
-    case "graphs"   => graphs
-    case "map"      => map
-    case "details"  => details
-    case "controls" => controls
-    case "sine"     => sine
+    case "summary"    => summary
+    case "graphs"     => graphs
+    case "map"        => map
+    case "details"    => details
+    case "controls"   => controls
+    case "plotGraphs" => plotGraphs
   }
 
   def save() = {
@@ -124,18 +126,7 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 
   def graphs  = "#title"    #> "Graphs"
 
-  def sine = (new ActivityGraphs(activity)).speed("graphArea") _
-
-  // def sine(xhtml: NodeSeq) = {
-  //   val data_values: List[(Double,Double)] = for (i <- List.range (0, 140, 5))
-  //       yield (i / 10.0, Math.sin(i / 10.0) )
-
-  //   val data_to_plot = new FlotSerie() {
-  //       override val data = data_values
-  //   }
-
-  //   Flot.render ( "graph_area", List(data_to_plot), new FlotOptions {}, Flot.script(xhtml))
-  // }
+  def plotGraphs = activityGraphs.speed("graphArea") _
 
 
   def map     = "#title"    #> "Map"

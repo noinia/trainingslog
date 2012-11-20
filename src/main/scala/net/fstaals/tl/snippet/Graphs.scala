@@ -4,6 +4,9 @@ import scala.collection.SortedMap
 
 import scala.xml.NodeSeq
 
+import org.joda.time.Duration
+import org.scala_tools.time.Imports._
+
 import net.liftweb.util._
 import net.liftweb.common._
 import net.liftweb.http._
@@ -24,9 +27,9 @@ class ActivityGraphs(val a: Activity) {
   }
 
   def toLong(x: Any) = x match {
-    case y : Long   => y.doubleValue
-    case y : Double => y
-    case y : Short  => y.doubleValue
+    case y : Double   => y
+    case y : Number   => y.doubleValue
+    case y : Duration => y.millis.doubleValue
   }
 
   lazy val speedByTime =
