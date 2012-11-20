@@ -38,5 +38,6 @@ object TLSiteMap {
       , Menu.i("add")                / "activity" / "add"
     )
   , Menu.i("Tags")  / "tags"
+  , Menu.i("HR Zones") / "hrzones"
   )
 }

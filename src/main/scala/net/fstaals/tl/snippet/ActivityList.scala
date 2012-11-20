@@ -12,7 +12,7 @@ class ActivityList extends UserSnippet {
   def activities = withUser (_activities _)
 
   def _activities(u: User, xhtml : NodeSeq) : NodeSeq = {
-    val entries : NodeSeq = u.allActivities match {
+    val entries : NodeSeq = u.activities match {
       case Nil  => Text("No activities")
       case acts => acts flatMap { a =>
         bind("activity",xhtml,

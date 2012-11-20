@@ -22,8 +22,7 @@ trait Parseable[T] {
 }
 
 object Parseable {
-
-  def opt[T](t : => T) = try { Some(t) } catch { case _  => None }
+  import net.fstaals.tl.helpers.Helpers._
 
   def toInt(s: String)    = opt(s.trim.toInt)
   def toLong(s: String)   = opt(s.trim.toLong)
