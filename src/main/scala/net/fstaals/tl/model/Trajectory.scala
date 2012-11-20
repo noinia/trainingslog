@@ -4,7 +4,27 @@ import scala.collection.SortedMap
 import de.saring.exerciseviewer.data._
 import net.fstaals.tl.model.UnitTypes._
 
-case class Trajectory(val points : SortedMap[Trajectory.Timestamp,TrajectoryPoint]) {
+import Trajectory._
+
+object Trajectory {
+
+  type Timestamp = Long
+  type VertexList = SortedMap[Trajectory.Timestamp,TrajectoryPoint]
+
+  def fromEVSamples(xs : List[ExerciseSample]) =
+    fromSeq(xs map TrajectoryPoint.fromExerciseSample)
+
+  def fromSeq(xs: Seq[TrajectoryPoint]) = Trajectory(
+    SortedMap.empty[Timestamp,TrajectoryPoint] ++ (xs map {p => (p.timestamp,p)}))
+
+}
+
+case class Trajectory(val points : VertexList) extends TrajectoryLike
+
+
+trait TrajectoryLike {
+
+  def points : VertexList
 
   def startPoint = startPointOption.get
 
@@ -13,20 +33,27 @@ case class Trajectory(val points : SortedMap[Trajectory.Timestamp,TrajectoryPoin
   def startPointOption = points.headOption map {_._2}
   def endPointOption   = points.lastOption map {_._2}
 
+  // this is almost groupBy, but not quite since we need to split each group
+  // into contiguous pieces as well.
+  def segment[B](f : TrajectoryPoint => B) : Map[B,SegmentedTrajectory] = {
+
+    val empty = SegmentedTrajectory(Nil)
+
+    def group(xs: List[TrajectoryPoint]) : Map[B,SegmentedTrajectory] = xs match {
+      case Nil     => Map()
+      case y :: ys => { val k         = f(y)
+                        val (zs,rest) = ys span {x => k == f(x)}
+                        val m         = group(rest)
+
+                        m + (k -> (m.getOrElse(k,empty) :+ (y::zs)))
+                      }
+    }
+
+    group(points.values.toList)
+  }
+
+
 }
-
-object Trajectory {
-  type Timestamp = Long
-
-  def fromEVSamples(xs : List[ExerciseSample]) =
-    Trajectory(xs map {s => {val p = TrajectoryPoint.fromExerciseSample(s)
-                             (p.timestamp,p)}})
-
-  def apply(xs : Seq[(Timestamp,TrajectoryPoint)]) =
-    new Trajectory(SortedMap.empty[Timestamp,TrajectoryPoint] ++ xs)
-
-}
-
 
 case class TrajectoryPoint(
     val timestamp   : Long                  // time since start in miliseconds
@@ -58,6 +85,31 @@ object TrajectoryPoint {
 
 }
 
-case class FilteredTrajectory(val pieces : List[Trajectory]) {
+
+
+// trait Segmentable
+
+case class SegmentedTrajectory(val pieces : List[Trajectory]) extends TrajectoryLike {
+
+  def :+ (xs : List[TrajectoryPoint]) =
+    SegmentedTrajectory(Trajectory.fromSeq(xs) :: pieces)
+
+  def ++ (xs: SegmentedTrajectory) =
+    SegmentedTrajectory(pieces ++ xs.pieces)
+
+
+  def points = pieces map {_.points} reduceRight {_++_}
+
+  override def segment[B](f: TrajectoryPoint => B) = {
+
+    def updateWith[K,V](xs : Map[K,V], k: K, v: V, f : (V,V) => V) : Map[K,V] =
+      xs + (k -> ((xs.get(k) map {f(_,v)}).getOrElse(v)))
+
+    def union(xs : Map[B,SegmentedTrajectory], ys: Map[B,SegmentedTrajectory]) =
+      xs.foldRight(ys)({case ((k,v),a) =>
+        updateWith(a,k,v,(b:SegmentedTrajectory, c:SegmentedTrajectory) => c ++ b)})
+
+    pieces.foldRight(Map[B,SegmentedTrajectory]())({case (t,a)  => union(t.segment(f),a)})
+  }
 
 }
