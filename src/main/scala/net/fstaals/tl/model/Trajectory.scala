@@ -8,8 +8,9 @@ import Trajectory._
 
 object Trajectory {
 
-  type Timestamp = Long
-  type VertexList = SortedMap[Trajectory.Timestamp,TrajectoryPoint]
+  type Timestamp  = Long
+  type SM[T]      = SortedMap[Timestamp,T]
+  type VertexList = SortedMap[Timestamp,TrajectoryPoint]
 
   def fromEVSamples(xs : List[ExerciseSample]) =
     fromSeq(xs map TrajectoryPoint.fromExerciseSample)
@@ -52,6 +53,8 @@ trait TrajectoryLike {
     group(points.values.toList)
   }
 
+  def select[T](f : TrajectoryPoint => Option[T]) : SM[T] =
+    points flatMap {case (t,p) => f(p) map {(t,_)}}
 
 }
 

@@ -60,6 +60,8 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
   def elevation                 = af flatMap {_.altitude}
   def power                     = af flatMap {_.power}
 
+  def trajectory                = af map {_.trajectory}
+
   def newExercise = {
     // new exercise starts after the last exercise
     val s = ((Duration.ZERO) :: (exercises map {_.end.get})) maxBy {_.millis}

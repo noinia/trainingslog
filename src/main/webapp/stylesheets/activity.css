@@ -41,10 +41,21 @@
     overflow: hidden;
     clear: both;
     width: 800px;
+    margin-bottom: 10px;
 }
 
+#graphIndicator {
+    width: 150px;
+    height: 400px;
+    float: left;
+    clear: none;
+    border: 1px solid black;
+}
 
-#graph_area {
-    width:600px;
+#graphArea {
+    width: 900px;
     height:400px;
+    float: right;
+    clear: right;
+    border: 1px solid black;
 }
