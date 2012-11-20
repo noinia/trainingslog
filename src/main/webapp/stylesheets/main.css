@@ -67,11 +67,14 @@ a:hover {
 
 .acceptbutton {
     display: block;
+    width: 150px;
+    border: 1px solid #aaffaa;
+    background-color: #deffde;
 }
 
 .acceptbutton:hover {
     cursor: pointer;
-    background-color: #cce7ff;
+    background-color: #bbffbb;
 }
 
 .acceptbutton img {
