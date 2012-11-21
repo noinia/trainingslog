@@ -37,10 +37,15 @@ class ActivityGraphs(val a: Activity) {
     })
   }
 
+  def combineFst[A,B](t : (Option[A],Option[B])) = t match {
+    case (Some(a),Some(_)) => Some(a)
+    case _                 => None
+  }
+
   def graphsBy[X](k : TrajectoryPoint => Option[X], xL : Showable[X])(implicit ord: Ordering[X]) = {
     val tr = a.trajectory
     type T = TrajectoryPoint
-    List(
+    val graphs = List(
       tr map {FlotGraph(_,k,(p:T) => p.heartRate,   xL, Bpm,     "Heart Rate",  "#d22132")}
     , tr map {FlotGraph(_,k,(p:T) => p.speed,       xL, Kmh,     "Speed",       "#3669da")}
     , tr map {FlotGraph(_,k,(p:T) => p.altitude,    xL, Alt,     "Altitude",    "#228400")}
@@ -48,6 +53,10 @@ class ActivityGraphs(val a: Activity) {
     , tr map {FlotGraph(_,k,(p:T) => p.cadence,     xL, Rpm,     "Cadence",     "#ff4422")}
     , tr map {FlotGraph(_,k,(p:T) => p.temperature, xL, Celcius, "Temperature", "#565656")}
     )
+
+    val globals = List(a.heartRate,a.speed,a.elevation,a.power,a.cadence,a.temperature)
+
+    graphs zip globals map combineFst
   }
 
   def render(graphArea: String)(xhtml: NodeSeq) =
