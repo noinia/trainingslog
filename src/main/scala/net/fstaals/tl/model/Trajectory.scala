@@ -53,8 +53,11 @@ trait TrajectoryLike {
     group(points.values.toList)
   }
 
-  def select[T](f : TrajectoryPoint => Option[T]) : SM[T] =
-    points flatMap {case (t,p) => f(p) map {(t,_)}}
+  def select[K,V](k: TrajectoryPoint => Option[K])(f : TrajectoryPoint => Option[V])(implicit ord: Ordering[K]) : SortedMap[K,V] =
+    SortedMap.empty[K,V] ++ (points flatMap {case (_,p) => (k(p),f(p)) match {
+      case (Some(x),Some(y)) => Some((x,y))
+      case _                 => None
+    }})
 
 }
 

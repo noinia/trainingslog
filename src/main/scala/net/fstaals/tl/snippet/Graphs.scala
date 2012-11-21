@@ -25,7 +25,10 @@ class ActivityGraphs(val a: Activity) {
     def unit = ""
   }
 
-  val graphs = graphsBy.flatten map {_.flotSerie}
+  val byTime : TrajectoryPoint => Option[Timestamp] = tp => Some(tp.timestamp)
+
+  val graphs =
+    graphsBy(byTime, simpleTS).flatten map {_.flotSerie}
 
   val globalOptions = new FlotOptions {
     override val legend = Full(new FlotLegendOptions {
@@ -34,42 +37,72 @@ class ActivityGraphs(val a: Activity) {
     })
   }
 
-  def select[T](f: TrajectoryPoint => Option[T]) =
-    a.trajectory map {tr => tr.select(f)} flatten
-
-  def ifDef[A,B](x : Option[A])(y : B) : Option[B] =
-    if (x.isDefined) Some(y) else None
-
-  def graphsBy = // (xL: Showable[X]) =
-    List( ifDef(a.heartRate)   (new HRGraph(select(_.heartRate),            simpleTS))
-        , ifDef(a.speed)       (new SpeedGraph(select(_.speed),             simpleTS))
-        , ifDef(a.elevation)   (new AltitudeGraph(select(_.altitude),       simpleTS))
-        , ifDef(a.power)       (new PowerGraph(select(_.power),             simpleTS))
-        , ifDef(a.cadence)     (new CadenceGraph(select(_.cadence),         simpleTS))
-        , ifDef(a.temperature) (new TemperatureGraph(select(_.temperature), simpleTS))
-        )
+  def graphsBy[X](k : TrajectoryPoint => Option[X], xL : Showable[X])(implicit ord: Ordering[X]) = {
+    val tr = a.trajectory
+    type T = TrajectoryPoint
+    List(
+      tr map {FlotGraph(_,k,(p:T) => p.heartRate,   xL, Bpm,     "Heart Rate",  "#d22132")}
+    , tr map {FlotGraph(_,k,(p:T) => p.speed,       xL, Kmh,     "Speed",       "#3669da")}
+    , tr map {FlotGraph(_,k,(p:T) => p.altitude,    xL, Alt,     "Altitude",    "#228400")}
+    , tr map {FlotGraph(_,k,(p:T) => p.power,       xL, Watt,    "Power",       "#770077")}
+    , tr map {FlotGraph(_,k,(p:T) => p.cadence,     xL, Rpm,     "Cadence",     "#ff4422")}
+    , tr map {FlotGraph(_,k,(p:T) => p.temperature, xL, Celcius, "Temperature", "#565656")}
+    )
+  }
 
   def render(graphArea: String)(xhtml: NodeSeq) =
     Flot.render(graphArea, graphs,
                 globalOptions, Flot.script(xhtml))
 
-  // def graph(graphArea: String, graphs: List[FlotSerie])
-
-
 }
 
+
+object FlotGraph {
+
+  def apply[X,Y]( tr : Trajectory
+                , k  : TrajectoryPoint => Option[X]
+                , f  : TrajectoryPoint => Option[Y]
+                , xLabeller : Showable[X]
+                , yLabeller : Showable[Y]
+                , label     : String
+                , color     : String)(implicit ord: Ordering[X]) : FlotGraph[X,Y] =
+    apply(tr, k, f, xLabeller, yLabeller, Full(label), Full(color))
+
+
+  def apply[X,Y]( tr : Trajectory
+                , k  : TrajectoryPoint => Option[X]
+                , f  : TrajectoryPoint => Option[Y]
+                , xLabeller : Showable[X]
+                , yLabeller : Showable[Y]
+                , label     : Box[String]
+                , color     : Box[String])(implicit ord: Ordering[X]) : FlotGraph[X,Y] =
+    new FlotGraph(tr.select(k)(f), xLabeller, yLabeller, label, color)
+
+}
 
 class FlotGraph[X,Y]( val data      : Iterable[(X,Y)]
                     , val xLabeller : Showable[X]
                     , val yLabeller : Showable[Y]
+                    , val label     : Box[String]
+                    , val color     : Box[String]
                     ) {
 
-  def flotData : List[(Double,Double)] =
+  lazy val flotData : List[(Double,Double)] =
     data map {case (x,y) => (toDouble(x),toDouble(y))} toList
 
-  def flotSerie = new FlotSerie() {
-    override val data = flotData
+  println(label ++ ": " ++ flotData.take(10))
+
+  def flotSerie = {
+    val l = label
+    val c = color
+    new FlotSerie() {
+      override val data = flotData
+      override val label = l
+      override val color = c map {s => Left(s)}
+    }
   }
+
+  def isEmpty = flotData.isEmpty
 
   def toDouble(x: Any) = x match {
     case y : Double   => y
@@ -77,86 +110,4 @@ class FlotGraph[X,Y]( val data      : Iterable[(X,Y)]
     case y : Duration => y.millis.doubleValue
   }
 
-}
-
-class HRGraph[X]( data : Iterable[(X,HeartRate)]
-                , xLabeller : Showable[X]
-                , yLabeller : Showable[HeartRate] = Bpm
-                )
-      extends FlotGraph[X,HeartRate](data, xLabeller, yLabeller) {
-
-  override def flotSerie = new FlotSerie() {
-    override val data  = flotData
-    override val label = Full("Heart Rate")
-    override val color = Full(Left("#d22132"))
-  }
-}
-
-class SpeedGraph[X]( data : Iterable[(X,Speed)]
-                   , xLabeller : Showable[X]
-                   , yLabeller : Showable[Speed] = Kmh
-                  )
-      extends FlotGraph[X,Speed](data, xLabeller, yLabeller) {
-
-  override def flotSerie = new FlotSerie() {
-    override val data  = flotData
-    override val label = Full("Speed")
-    override val color = Full(Left("#3669da"))
-  }
-}
-
-class AltitudeGraph[X]( data : Iterable[(X,Altitude)]
-                      , xLabeller : Showable[X]
-                      , yLabeller : Showable[Altitude] = Alt
-                      )
-      extends FlotGraph[X,Altitude](data, xLabeller, yLabeller) {
-
-  override def flotSerie = new FlotSerie() {
-    override val data  = flotData
-    override val label = Full("Altitude")
-    override val color = Full(Left("#228400"))
-  }
-}
-
-
-class PowerGraph[X]( data : Iterable[(X,Power)]
-                   , xLabeller : Showable[X]
-                   , yLabeller : Showable[Power] = Watt
-                   )
-      extends FlotGraph[X,Power](data, xLabeller, yLabeller) {
-
-  override def flotSerie = new FlotSerie() {
-    override val data  = flotData
-    override val label = Full("Power")
-    override val color = Full(Left("#770077"))
-  }
-}
-
-
-class CadenceGraph[X]( data : Iterable[(X,Cadence)]
-                     , xLabeller : Showable[X]
-                     , yLabeller : Showable[Cadence] = Rpm
-                     )
-      extends FlotGraph[X,Cadence](data, xLabeller, yLabeller) {
-
-  override def flotSerie = new FlotSerie() {
-    override val data  = flotData
-    override val label = Full("Cadence")
-    override val color = Full(Left("#ff4422"))
-  }
-}
-
-
-
-class TemperatureGraph[X]( data : Iterable[(X,Temperature)]
-                         , xLabeller : Showable[X]
-                         , yLabeller : Showable[Temperature] = Celcius
-                         )
-      extends FlotGraph[X,Temperature](data, xLabeller, yLabeller) {
-
-  override def flotSerie = new FlotSerie {
-    override val data  = flotData
-    override val label = Full("Temperature")
-    override val color = Full(Left("#565656"))
-  }
 }
