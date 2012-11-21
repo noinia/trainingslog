@@ -23,7 +23,7 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     case "map"        => map
     case "details"    => details
     case "controls"   => controls
-    case "plotGraphs" => plotGraphs
+    case "plotGraphs" => activityGraphs.render("graphArea")
   }
 
   def save() = {
@@ -122,12 +122,7 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     "#newexercise" #> SHtml.onSubmitUnit(showNewEx)
   }
 
-
-
   def graphs  = "#title"    #> "Graphs"
-
-  def plotGraphs = activityGraphs.speed("graphArea") _
-
 
   def map     = "#title"    #> "Map"
 

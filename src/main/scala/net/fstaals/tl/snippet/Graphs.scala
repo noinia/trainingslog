@@ -25,7 +25,13 @@ class ActivityGraphs(val a: Activity) {
     def unit = ""
   }
 
+  val graphs = graphsBy.flatten map {_.flotSerie}
+
   val globalOptions = new FlotOptions {
+    override val legend = Full(new FlotLegendOptions {
+      override val container = Full("graphLegend")
+      override val noColumns = Full(graphs.length)
+    })
   }
 
   def select[T](f: TrajectoryPoint => Option[T]) =
@@ -43,9 +49,7 @@ class ActivityGraphs(val a: Activity) {
         , ifDef(a.temperature) (new TemperatureGraph(select(_.temperature), simpleTS))
         )
 
-  val graphs = graphsBy.flatten map {_.flotSerie}
-
-  def speed(graphArea: String )(xhtml: NodeSeq) =
+  def render(graphArea: String)(xhtml: NodeSeq) =
     Flot.render(graphArea, graphs,
                 globalOptions, Flot.script(xhtml))
 
@@ -150,7 +154,7 @@ class TemperatureGraph[X]( data : Iterable[(X,Temperature)]
                          )
       extends FlotGraph[X,Temperature](data, xLabeller, yLabeller) {
 
-  override def flotSerie = new FlotSerie() {
+  override def flotSerie = new FlotSerie {
     override val data  = flotData
     override val label = Full("Temperature")
     override val color = Full(Left("#565656"))
