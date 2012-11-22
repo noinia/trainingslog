@@ -95,21 +95,23 @@ a:hover {
 
 .blockheader {
     background-color: #cccccc;
-    padding-top: 3px;
-    padding-bottom: 0px;
-    vertical-align: center;
+    padding-left: 10px;
+    height: 30px;
+    width: 100%;
+    vertical-align: middle;
+    display: table-cell;
 }
 
 .blockheader h1 {
+    height: 100%;
     font-size: 16px;
     color: #666666;
     padding-left: 40px;
-    height: 30px;
-    margin-top: 5px;
-    margin-bottom: 0px;
+    /* height: 30px; */
+    /* margin-top: 5px; */
+    /* margin-bottom: 0px; */
     padding-top: 0;
     padding-bottom: 0;
-    vertical-align: center;
 }
 
 .blockheader input {
@@ -125,18 +127,21 @@ a:hover {
 .blocktoggle {
     float: left;
     clear: left;
+    width: 20px;
+    height: 20px;
 }
 
 .blocktoggle:hover {
     cursor: pointer;
 }
 
-.blocktoggle img {
-    border: 0px;
-    margin-left: 10px;
-    margin-top: 3px;
+div.collapse {
+    background: url("/images/buttons/toggle.png") 0 0;
 }
 
+div.expand {
+    background: url("/images/buttons/toggle.png") -20px 0;
+}
 
 .blockarea {
     padding-left: 15px;
