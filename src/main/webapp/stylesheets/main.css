@@ -98,8 +98,12 @@ a:hover {
     padding-left: 10px;
     height: 30px;
     width: 100%;
-    vertical-align: middle;
+    display: table;
+}
+
+.vertical-align {
     display: table-cell;
+    vertical-align: middle;
 }
 
 .blockheader h1 {
@@ -107,9 +111,7 @@ a:hover {
     font-size: 16px;
     color: #666666;
     padding-left: 40px;
-    /* height: 30px; */
-    /* margin-top: 5px; */
-    /* margin-bottom: 0px; */
+    margin-bottom: 0px;
     padding-top: 0;
     padding-bottom: 0;
 }
@@ -148,7 +150,6 @@ div.expand {
     padding-top: 10px;
     padding-right: 15px;
     padding-bottom: 10px;
-    display: block;
     background-color: #fafafa;
     clear: both;
     overflow: hidden;
