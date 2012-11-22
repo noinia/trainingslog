@@ -64,24 +64,43 @@ a:hover {
 }
 
 
+/* Buttons */
 
-.acceptbutton {
+.button {
     display: block;
     width: 150px;
-    border: 1px solid #aaffaa;
-    background-color: #deffde;
+    float: right;
+    margin-right: 30px;
 }
 
-.acceptbutton:hover {
+.button:hover {
     cursor: pointer;
-    background-color: #bbffbb;
 }
 
-.acceptbutton img {
+.button img {
     margin-left: 5px;
     margin-right: 5px;
     vertical-align: text-bottom;
 }
+
+.accept {
+    border: 1px solid #aaffaa;
+    background-color: #deffde;
+}
+
+.accept:hover {
+    background-color: #bbffbb;
+}
+
+.cancel {
+    border: 1px solid #ff5555;
+    background-color: #ffaaaa;
+}
+
+.cancel:hover {
+    background-color: #ffdddd;
+}
+
 
 /* Blocks */
 
