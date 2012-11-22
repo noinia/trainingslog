@@ -21,9 +21,10 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     case "summary"    => summary
     case "graphs"     => graphs
     case "map"        => map
-    case "details"    => details
+    case "exercises"  => exercises
     case "controls"   => controls
     case "plotGraphs" => activityGraphs.render("graphArea")
+    case "laps"       => laps
   }
 
   def save() = {
@@ -126,14 +127,13 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 
   def map     = "#title"    #> "Map"
 
-  def details =
-    "#title"          #> "Details" &
-    "#numex"          #> activity.exercises.length &
-    "#exercises *"    #> (activity.exercises map {e =>
-                          (new ExerciseSnippet(e)).render }) &
-    (new AddExercise(activity.newExercise)).render
+  def exercises = "#exerciseList *" #> (activity.exercises map {e =>
+                                          (new ExerciseSnippet(e)).render }) &
+                  (new AddExercise(activity.newExercise)).render
 
   def controls = "#controls *" #> "none yet"
+
+  def laps = "#title" #> "laps"
 
 
 }

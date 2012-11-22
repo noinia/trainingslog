@@ -81,7 +81,7 @@
   </form>
   <div class="lift:ActivitySnippet.graphs" id="graphs">
     <lift:surround with="block">
-      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
+      <lift:bind-at name="title"  >Graphs</lift:bind-at>
       <lift:bind-at name="blockcontent">
 
         <div id="graphLegend">
@@ -97,19 +97,19 @@
   </div>
   <div class="lift:ActivitySnippet.map" id="map">
     <lift:surround with="block">
-      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
+      <lift:bind-at name="title"  >Map</lift:bind-at>
       <lift:bind-at name="blockcontent">
         Map
       </lift:bind-at>
     </lift:surround>
   </div>
-  <form class="lift:ActivitySnippet.details" id="details">
+  <form class="lift:ActivitySnippet.exercises" id="exercises">
     <lift:surround with="block">
-      <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
+      <lift:bind-at name="title"  >Exercises</lift:bind-at>
       <lift:bind-at name="blockcontent">
         <h1>Exercises</h1>
 
-        <div id="exercises">
+        <div id="exerciceList">
           <div class="exercise">
             <h1 class="name"></h1>
 
@@ -138,4 +138,12 @@
       </lift:bind-at>
     </lift:surround>
   </form>
+  <div class="lift:ActivitySnippet.laps" id="laps">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  >Laps</lift:bind-at>
+      <lift:bind-at name="blockcontent">
+        Map
+      </lift:bind-at>
+    </lift:surround>
+  </div>
 </lift:surround>

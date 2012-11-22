@@ -24,6 +24,9 @@ a:hover {
     cursor: pointer;
 }
 
+textarea {
+    resize: none;
+}
 
 
 #container {
@@ -71,6 +74,8 @@ a:hover {
     width: 150px;
     float: right;
     margin-right: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .button:hover {
@@ -157,11 +162,11 @@ a:hover {
     cursor: pointer;
 }
 
-div.collapse {
+.collapse {
     background: url("/images/buttons/toggle.png") 0 0;
 }
 
-div.expand {
+.expand {
     background: url("/images/buttons/toggle.png") -20px 0;
 }
 
@@ -211,6 +216,11 @@ div.expand {
 .blockarea textarea {
     float: left;
     clear: right;
+    width: 90%;
+    margin: auto;
+    display: block;
+    clear: both;
+    float: none;
 }
 
 
