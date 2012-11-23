@@ -53,7 +53,7 @@
     width: auto;
 }
 
-#graphIndicator {
+.indicator {
     margin-top: 0;
     width: 150px;
     height: 400px;
@@ -62,7 +62,7 @@
     border: 1px solid #c8c8c8;
 }
 
-#graphArea {
+.area {
     width: 900px;
     height:400px;
     float: right;
@@ -70,7 +70,15 @@
     border: 1px solid #c8c8c8;
 }
 
+#graphIndicator {
+
+}
+
+
+#graphArea {
+
+}
+
 #mapArea {
-    width: 900px;
-    height: 400px;
+
 }
