@@ -3,3 +3,5 @@
 /project/project
 *~
 *#*#
+/src/main/webapp/js/jquery-ui-map/demos
+/src/main/webapp/js/jquery-ui-map/README.txt

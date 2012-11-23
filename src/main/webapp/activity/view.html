@@ -97,9 +97,16 @@
   </div>
   <div class="lift:ActivitySnippet.map" id="map">
     <lift:surround with="block">
-      <lift:bind-at name="title"  >Map</lift:bind-at>
+      <lift:bind-at name="title">Map</lift:bind-at>
       <lift:bind-at name="blockcontent">
-        Map
+        <script src="http://maps.googleapis.com/maps/api/js?v=3.4&sensor=false"
+                type="text/javascript"></script>
+        <script src="/js/jquery-ui-map/ui/jquery.ui.map.js"
+                type="text/javascript"></script>
+        <script src="/js/map.js" type="text/javascript"></script>
+        <div id="mapArea"></div>
+        <div id="renderMap"></div>
+
       </lift:bind-at>
     </lift:surround>
   </div>

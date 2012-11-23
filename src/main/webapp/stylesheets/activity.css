@@ -69,3 +69,8 @@
     clear: right;
     border: 1px solid #c8c8c8;
 }
+
+#mapArea {
+    width: 900px;
+    height: 400px;
+}

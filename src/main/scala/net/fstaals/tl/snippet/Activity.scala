@@ -16,11 +16,12 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
   var inEditMode = false
 
   lazy val activityGraphs = new ActivityGraphs(activity)
+  lazy val activityMap    = new ActivityMap(activity)
 
   def dispatch = {
     case "summary"    => summary
     case "graphs"     => graphs
-    case "map"        => map
+    case "map"        => activityMap.render
     case "exercises"  => exercises
     case "controls"   => controls
     case "plotGraphs" => activityGraphs.render("graphArea")
@@ -124,8 +125,6 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
   }
 
   def graphs  = "#title"    #> "Graphs"
-
-  def map     = "#title"    #> "Map"
 
   def exercises = "#exerciseList *" #> (activity.exercises map {e =>
                                           (new ExerciseSnippet(e)).render }) &
