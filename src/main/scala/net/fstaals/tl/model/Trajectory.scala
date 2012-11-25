@@ -6,6 +6,9 @@ import net.fstaals.tl.model.UnitTypes._
 
 import Trajectory._
 
+import net.liftweb.http.js._
+import JE._
+
 object Trajectory {
 
   type Timestamp  = Long
@@ -21,7 +24,6 @@ object Trajectory {
 }
 
 case class Trajectory(val points : VertexList) extends TrajectoryLike
-
 
 trait TrajectoryLike {
 
@@ -59,6 +61,11 @@ trait TrajectoryLike {
       case _                 => None
     }})
 
+
+  def toGoogleMapsTrajectory =
+    JsArray(points.values.toList flatMap {_.toGoogleMapsLatLng})
+
+
 }
 
 case class TrajectoryPoint(
@@ -72,7 +79,19 @@ case class TrajectoryPoint(
   , val power       : Option[Power]        = None // in watts ?
   , val temperature : Option[Temperature]  = None // in degrees celcius
   , val distance    : Option[Distance]     = None // since start in meters
-)
+) {
+
+
+  // get a googleMaps LatLn js object representing this trajectory point
+  def toGoogleMapsLatLng : Option[JsExp] =
+    (latitude,longitude) match {
+      case (Some(lat),Some(long)) =>
+        Some(JsRaw("new google.maps.LatLng(%f,%f)".format(lat,long)))
+      case _                      => None
+    }
+
+
+}
 
 object TrajectoryPoint {
   def fromExerciseSample(es : ExerciseSample) =

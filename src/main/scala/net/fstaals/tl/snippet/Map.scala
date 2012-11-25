@@ -27,28 +27,14 @@ class ActivityMap(val a: Activity) {
 
   def render = "#renderMap" #> googleMap
 
-  def googleMap : NodeSeq = {
+  def googleMap : NodeSeq = a.trajectory match {
+    case Some(tr) => {
+      // setup some locations to display on the map
+      val locations = tr.toGoogleMapsTrajectory
 
-    // setup some locations to display on the map
-    val locations: List[JsObj] = List(makeLocation("loc1","40.744715", "-74.0046"),makeLocation("loc2","40.75684", "-73.9966"))
 
-    // where the magic happens
-    Script(Call("drawMap", "#mapArea", ajaxFunc(locations)))
-
+      Script(Call("drawMap", ElemById("mapArea"),locations))
+    }
+    case None     => Nil
   }
-
-  // converts a the location into a JSON Object
-  def makeLocation(title: String, lat: String, lng: String): JsObj = {
-    JsObj(("title", title),
-      ("lat", lat),
-      ("lng", lng))
-  }
-
-   // called by renderGoogleMap which passes the list of locations
-   // into the javascript function as json objects
-  def ajaxFunc(locobj: List[JsObj]) =
-    JsObj(("loc", JsArray(locobj: _*)))
-
-
-
 }
