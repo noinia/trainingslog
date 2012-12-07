@@ -94,6 +94,11 @@ object Activity extends Activity with LongKeyedMetaMapper[Activity] {
                                                  .start(af.start.getOrElse(DateTime.now))
                                                  .end(af.end.getOrElse(DateTime.now))
 
+
+  def publicActivities = findAll(By(Activity.isPublic,true))
+
+  def myActivities = User.currentUser.toList flatMap {u => findAll(By(owner,u))}
+
 }
 
 class Exercise extends LongKeyedMapper[Exercise] with IdPK {

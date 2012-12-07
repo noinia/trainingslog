@@ -9,18 +9,19 @@ import net.fstaals.tl.model._
 
 class ActivityList extends UserSnippet {
 
-  def activities = withUser (_activities _)
 
-  def _activities(u: User, xhtml : NodeSeq) : NodeSeq = {
-    val entries : NodeSeq = u.activities match {
-      case Nil  => Text("No activities")
-      case acts => acts flatMap { a =>
-        bind("activity",xhtml,
-             "name" -> <li>{a.name.is}</li>
-           ) }
-    }
-    bind("activity", xhtml, "entry" -> entries)
-  }
+  def visibleActivities = Activity.publicActivities ++ Activity.myActivities
+
+  def activities = "tr *" #> (visibleActivities map activity)
+
+
+  def activity(a: Activity) =
+    "a .name *"      #> a.name.get                           &
+    "a .name [href]" #> "/activity/view/%d".format(a.id.get) &
+    ".date *"        #> a.start.get.toString                 &
+    ".duration *"    #> HhMmSs(a.duration.get)               &
+    ".distance *"    #> Km(a.distance)
+
 
   // def activities(xhtml : NodeSeq) : NodeSeq = User.currentUser match {
   //   case Full(user) => {
