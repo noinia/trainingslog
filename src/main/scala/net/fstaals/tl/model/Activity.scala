@@ -70,7 +70,7 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
     // new exercise lasts until the end of the activity (if we can set it)
     duration map {_.millis} match {
       case Some(t) => e.end(new Duration(t))
-      case _       => e
+      case _       => e.end(e.start.get)
     }
   }
 
