@@ -5,8 +5,7 @@ import net.liftweb.common._
 import net.liftweb.http._
 
 import net.fstaals.tl.model._
-
-
+import net.fstaals.tl.widgets._
 
 class Tags extends UserSnippet with StatefulSnippet {
 
@@ -29,7 +28,16 @@ class Tags extends UserSnippet with StatefulSnippet {
     "li *"    #> (currentTags map {_.tag.get})
   }
 
+}
+
+class TagSelector( currentTags : List[Tag]
+                 , allTags     : List[Tag] = Tag.myTags) extends
+      AutoCompleteSelector[Tag]("#addTag", currentTags, allTags) {
 
 
+  override def stringRep(x: Tag) = x.tag.get
 
+  override def render = super.render & tagList
+
+  def tagList = "li *" #> (current map {_.tag.get})
 }

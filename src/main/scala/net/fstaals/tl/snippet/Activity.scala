@@ -47,34 +47,14 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
                 "#description" #> activity.description._toForm                    &
                 tags
 
+
   def tags = {
-    val allTags : List[Tag] = Tag.myTags
-    var unusedTags          = allTags
-    var actTags : List[Tag] = activity.tags.all
-
-    def load(s: String) = {
-
+    val ts = new TagSelector(activity.tags.all) {
+      override def add(t : Tag) = {activity.tags :+ t}
     }
 
-    def add() = {
-
-    }
-
-    // <ul id="actTags">
-    // <li id="actTag"></li>
-    // </ul>
-    // <datalist id="unusedTags">
-    // <option id="unusedTag"></option>
-    // </datalist>
-    // <input list="unusedTags"
-    // name="newTag">
-    // <button id="addTag">Add</button>
-
-    // "#tags"            #>                                              &
-    "#actTag *"#> (actTags map {_.tag.get})                 &
-    "option *" #> (unusedTags map {_.tag.get})
+    "#tags *" #> ts.render
   }
-
 
   def timing = {
     val s = activity.speed

@@ -2,3 +2,15 @@
     display: block;
 
 }
+
+.tagSelector {
+    display: block;
+    float :left;
+    clear: right;
+}
+
+.tagSelector ul {
+    display: block;
+    float: left;
+    clear: right;
+}

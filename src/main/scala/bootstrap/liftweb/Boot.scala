@@ -13,8 +13,11 @@ import mapper._
 import net.fstaals.tl.TLSiteMap
 import net.fstaals.tl.model._
 
+
 import net.liftmodules.JQueryModule
+
 import net.liftmodules.widgets.flot._
+import net.liftmodules.widgets.autocomplete.AutoComplete
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -58,6 +61,9 @@ class Boot {
 
     // use flot
     Flot.init
+
+    // autocomplete
+    AutoComplete.init
 
     //Show the spinny image when an Ajax call starts
     LiftRules.ajaxStart =
