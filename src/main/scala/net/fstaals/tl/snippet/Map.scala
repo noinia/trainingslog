@@ -1,7 +1,5 @@
 package net.fstaals.tl.snippet
 
-import scala.collection.SortedMap
-
 import scala.xml.NodeSeq
 
 import org.joda.time.Duration
