@@ -28,11 +28,11 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     case "laps"       => laps
   }
 
-  def save() = {
-    println("save activity")
-    println(activity.name)
+  def save() = activity.validate match {
+    case Nil if activity.isEditable => { activity.save ;S.notice("Saved.") }
+    case Nil                        => {S.error("Forbidden.")}
+    case xs                         => {S.error(xs)}
   }
-
 
   def summary =
     general & timing & heartRate & power & elevation & cadence & temperature &
@@ -50,7 +50,11 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 
   def tags = {
     val ts = new TagSelector(activity.tags.all) {
-      override def add(t : Tag) = {activity.tags :+ t}
+      override def add(t : Tag) = {
+        println("Adding tag" + t)
+        activity.tags += t
+        println(activity.tags.all)
+      }
     }
 
     "#tags *" #> ts.render

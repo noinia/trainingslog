@@ -20,6 +20,9 @@ class Tag extends LongKeyedMapper[Tag] with IdPK with ManyToMany  {
                                              ActivityTags.activity, Activity)
 
 
+  override def equals(o: Any) = o.isInstanceOf[Tag] &&
+    { val t = o.asInstanceOf[Tag] ; t.tag.get == tag.get && t.owner.get == owner.get }
+
 }
 
 object Tag extends Tag with LongKeyedMetaMapper[Tag] {

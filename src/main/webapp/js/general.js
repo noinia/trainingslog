@@ -25,29 +25,20 @@ $(document).ready(function() {
 
 
 // Stuff for autocompleting
-function autocomplete(selector, names) {
+function autocomplete(selector, names, handler) {
 
-  $(selector).autocomplete({
+  $(selector).keyup(function(e) {
+      var code = (e.keyCode ? e.keyCode : e.which);
+      if(code == 13) { //Enter keycode
+          return handler($(selector).val());
+      }
+  }).autocomplete({
   source: names,
   focus: function( event, ui ) {
     $( selector ).val( ui.item.label );
     return false;
-  }// ,
-  // select: function( event, ui ) {
-  //   $( selector ).val( ui.item.label );
-  //   var url= ui.item.organizationId.split('"');
-  //   //Here I redirect the page to the details url, passing the
-  //   //Lift variable obfuscated name
-  //   window.location=url[1];
-  //   return false;
+  }//,
+  // select : function(event, ui) {
+  //     handler(ui.item.value);
   // }
-})
-};
-// .data( "autocomplete" )._renderItem = function( ul, item ) {
-//   var itemDescription = self.buildItemDescription(item);
-//   return $( "<li></li>" )
-//     .data( "item.autocomplete", item )
-//     .append( itemDescription )
-//     .appendTo( ul );
-//   };
-// };
+})};

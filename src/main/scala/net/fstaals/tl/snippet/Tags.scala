@@ -32,12 +32,10 @@ class Tags extends UserSnippet with StatefulSnippet {
 
 class TagSelector( currentTags : List[Tag]
                  , allTags     : List[Tag] = Tag.myTags) extends
-      AutoCompleteSelector[Tag]("#addTag", currentTags, allTags) {
-
+      AutoCompleteSelector[Tag](".addTag", currentTags, allTags, Some("li")) {
 
   override def stringRep(x: Tag) = x.tag.get
 
-  override def render = super.render & tagList
+  override def newT(s: String) = Tag(s)
 
-  def tagList = "li *" #> (current map {_.tag.get})
 }

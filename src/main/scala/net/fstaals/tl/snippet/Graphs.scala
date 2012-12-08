@@ -104,8 +104,6 @@ class FlotGraph[X,Y]( val data      : Iterable[(X,Y)]
   lazy val flotData : List[(Double,Double)] =
     data map {case (x,y) => (toDouble(x),toDouble(y))} toList
 
-  println(label ++ ": " ++ flotData.take(10))
-
   def flotSerie = {
     val l = label
     val c = color
