@@ -24,7 +24,9 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
   object isPublic         extends MappedBoolean(this) {
     override def defaultValue = false
   }
-  object name              extends MappedString(this,200)
+  object name              extends MappedString(this,200) {
+    override def defaultValue = "Untitled Activity"
+  }
   object start             extends MappedDateTime(this)
   object end               extends MappedDateTime(this)
   object activityFilePath  extends MappedString(this,500)
