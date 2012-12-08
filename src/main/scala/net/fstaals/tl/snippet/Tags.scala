@@ -5,7 +5,7 @@ import net.liftweb.common._
 import net.liftweb.http._
 
 import net.fstaals.tl.model._
-import net.fstaals.tl.widgets._
+import net.fstaals.tl.widget._
 
 class Tags extends UserSnippet with StatefulSnippet {
 

@@ -1,4 +1,4 @@
-package net.fstaals.tl.widgets
+package net.fstaals.tl.widget
 
 import net.liftweb.util._
 import net.liftweb.common._
