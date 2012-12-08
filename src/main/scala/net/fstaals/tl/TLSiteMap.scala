@@ -28,7 +28,7 @@ object TLSiteMap {
           >> User.AddUserMenusAfter
   , Menu.i("Activity") / "activity" / "index"
          submenus (
-        Menu.params[Activity]("View", "activivity",
+        Menu.params[Activity]("View", "View",
                               objParser(Activity) _, idEncoder _)
           / "activity" / "view"
           >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
