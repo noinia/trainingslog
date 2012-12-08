@@ -118,8 +118,9 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 
   def graphs  = "#title"    #> "Graphs"
 
-  def exercises = "#exerciseList *" #> (activity.exercises map {e =>
-                                          (new ExerciseSnippet(e)).render }) &
+  def exercises = "#exerciseList *" #> (activity.exercises flatMap {e =>
+                    Templates(List("templates-hidden","exercise")) map
+                      (new ExerciseSnippet(e)).render}) &
                   newExercise
 
 
