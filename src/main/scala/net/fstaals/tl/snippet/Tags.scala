@@ -38,4 +38,8 @@ class TagSelector( currentTags : List[Tag]
 
   override def newT(s: String) = Tag(s)
 
+  def renderReadOnly = ".addTag" #> "" &
+                       "script"  #> "" &
+                       updateList
+
 }

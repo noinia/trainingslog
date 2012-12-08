@@ -1,6 +1,11 @@
 <lift:surround with="default" at="content">
   <form class="lift:ActivitySnippet.controls">
     <div id="controls" class="controls">
+        <div class="button" id="toggleEdit">
+          <img src="/images/buttons/accept.png" alt="">
+          <input type="hidden" name="toggleEdit" value="">
+          Toggle edit mode
+        </div>
     </div>
   </form>
   <form class="lift:ActivitySnippet.summary" id="summary">
@@ -10,7 +15,7 @@
           <div class="subblock" id="general">
             <h1>General</h1>
             <label>User:</label>               <div class="field" id="owner"></div>
-            <label>Public:</label>             <div id="isPublic"></div>
+            <label>Public:</label>             <div class="field" id="isPublic"></div>
             <label>Duration:</label>           <div class="field" id="duration"></div>
             <label>Distance:</label>           <div class="field" id="distance"></div>
             <label>Tags:</label>               <div id="tags"
@@ -78,9 +83,9 @@
           <label>Description:</label><div id="description"></div>
         </div>
 
-        <div class="accept button" onClick="summary.submit()">
+        <div class="accept button" onClick="summary.submit()" id="saveSummary">
           <img src="/images/buttons/accept.png" alt="">
-          <input type="hidden" id="save" valu="">
+          <input type="hidden" id="save" value="">
           Save
         </div>
       </lift:bind-at>

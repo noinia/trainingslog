@@ -5,6 +5,8 @@ import net.liftweb.util._
 import net.liftweb.common._
 import net.liftweb.http._
 import net.liftmodules.widgets.flot._
+import net.liftweb.mapper.MixableMappedField
+
 
 import Helpers._
 import net.fstaals.tl.model._
@@ -36,15 +38,22 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 
   def summary =
     general & timing & heartRate & power & elevation & cadence & temperature &
-    "#save" #> SHtml.onSubmitUnit(save)
+    saveButton
 
-  def general = "#title"       #> activity.name._toForm                           &
-                "#owner *"     #> (activity.owner.obj map {_.fullName} openOr "") &
-                "#isPublic"    #> activity.isPublic._toForm                       &
-                "#start"       #> activity.start                                  &
-                "#duration *"  #> HhMmSs(activity.duration)                       &
-                "#distance *"  #> Km(activity.distance)                           &
-                "#description" #> activity.description._toForm                    &
+
+  def saveButton = if (inEditMode) "#save" #> SHtml.onSubmitUnit(save)
+                   else            "#saveSummary" #> ""
+
+  def show(x: MixableMappedField) =
+    if (inEditMode) x.toForm else Full(x.asHtml)
+
+  def general = "#title"         #> show(activity.name)                             &
+                "#owner *"       #> (activity.owner.obj map {_.fullName} openOr "") &
+                "#isPublic *"    #> show(activity.isPublic)                         &
+                "#start"         #> activity.start                                  &
+                "#duration *"    #> HhMmSs(activity.duration)                       &
+                "#distance *"    #> Km(activity.distance)                           &
+                "#description *" #> show(activity.description)                      &
                 tags
 
 
@@ -56,8 +65,9 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
         println(activity.tags.all)
       }
     }
+    val render = if (inEditMode) ts.render else ts.renderReadOnly
 
-    "#tags *" #> ts.render
+    "#tags *" #> render
   }
 
   def timing = {
@@ -101,20 +111,25 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     case _       => (cssSel ++ " [class+]") #> "hidden"
   }
 
-  def newExercise = {
-    def showNewEx() = {
-      S.redirectTo("#addNewExercise")
-    }
-    "#newexercise" #> SHtml.onSubmitUnit(showNewEx)
-  }
+  def newExercise = if (inEditMode)
+                      (new AddExercise(activity.newExercise)).render
+                    else
+                      "#addNewExercise" #> ""
 
   def graphs  = "#title"    #> "Graphs"
 
   def exercises = "#exerciseList *" #> (activity.exercises map {e =>
                                           (new ExerciseSnippet(e)).render }) &
-                  (new AddExercise(activity.newExercise)).render
+                  newExercise
 
-  def controls = "#controls *" #> "none yet"
+
+  def controls = "#toggleEdit [onclick]" #> SHtml.ajaxInvoke(toggleEditMode)
+
+  def toggleEditMode() = {
+    inEditMode = !inEditMode
+    println(inEditMode)
+    S.redirectTo("/activity/view/%d".format(activity.id.get))
+  }
 
   def laps = "#title" #> "laps"
 
