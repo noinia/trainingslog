@@ -33,6 +33,10 @@ textarea {
     position: relative;
 }
 
+#header {
+    margin-bottom: 10px;
+}
+
 
 #main {
 

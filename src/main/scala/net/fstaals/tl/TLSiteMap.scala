@@ -25,7 +25,9 @@ object TLSiteMap {
 
   def sitemap = SiteMap(
     Menu.i("Home")       / "index"
-          >> User.AddUserMenusAfter
+  , Menu.i("User") / ""
+      >> PlaceHolder
+      >> User.AddUserMenusUnder
   , Menu.i("Activity") / "activity" / "index"
          submenus (
         Menu.params[Activity]("View", "View",
@@ -34,7 +36,7 @@ object TLSiteMap {
           >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
     )
   , Menu.i("Synchronize Device") / "activity" / "sync" submenus (
-        Menu.i("add")                / "activity" / "add"
+        Menu.i("Add")                / "activity" / "add"
     )
   , Menu.i("Tags")  / "tags"
   , Menu.i("HR Zones") / "hrzones"
