@@ -6,6 +6,9 @@ import net.liftweb.common._
 import net.liftweb.http._
 import Helpers._
 
+import js._
+import JsCmds._
+
 
 import net.fstaals.tl.model._
 
@@ -35,14 +38,14 @@ class SyncActivities extends {
   }
 
 
-  def newActivities      = "div *" #> listActs(newActs)
-  def existingActivities = "div *" #> listActs(existingActs)
+  def newActivities      = SHtml.memoize("div *" #> listActs(newActs))
+  def existingActivities = SHtml.memoize("div *" #> listActs(existingActs))
 
   def listActs(as: List[Activity]) = ".actList *" #> (as map {a =>
     "li *" #> a.name.get
   })
 
-  def failures = "div *" #> (fails map {"li *" #> _._1})
+  def failures = SHtml.memoize("div *" #> (fails map {"li *" #> _._1}))
 
   type AddActResult = Either[Either[(Path,Error),Activity],Activity]
   // Left(Left((path,error))) = error
@@ -75,11 +78,18 @@ class SyncActivities extends {
     existingActs = exs
     newActs      = nas
 
-    println(fails)
-    println(existingActs)
-    println(newActs)
-
     S.notice("#fails: %d, #existing: %d, #new: %d".format(fails.size,existingActs.size,newActs.size))
+
+    println(existingActs)
+    val tmp = existingActivities.applyAgain
+    println("MEMOOIZE:")
+    println(tmp)
+
+    SHtml.ajaxInvoke(() => {
+      SetHtml("newActivities",      newActivities.applyAgain) &
+      SetHtml("existingActivities", tmp)                      &
+      SetHtml("failures",           failures.applyAgain)
+    })
   }
 }
 

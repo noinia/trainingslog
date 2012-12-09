@@ -128,21 +128,23 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 
   def graphs  = "#title"    #> "Graphs"
 
-  def exercises = "#exerciseList *" #> (activity.exercises flatMap {e =>
-                    Templates(List("templates-hidden","exercise")) map
-                      (new ExerciseSnippet(e)).render}) &
-                  newExercise
+  def exercises = SHtml.memoize(
+    "#exerciseList *" #> (activity.exercises flatMap {e =>
+                           Templates(List("templates-hidden","exercise")) map
+                             (new ExerciseSnippet(e)).render}) &
+    newExercise)
 
 
-  def controls = "#toggleEdit [onclick]" #> SHtml.ajaxInvoke(toggleEditMode)
+  def controls = "#toggleEdit [onclick]" #> SHtml.ajaxInvoke(() => toggleEditMode)
 
-  def toggleEditMode() = {
+  def toggleEditMode = {
     inEditMode = !inEditMode
     println(inEditMode)
     val res = summary.applyAgain
     println(res)
 
-    SetHtml("summary",res)
+    SetHtml("summary",   res) &
+    SetHtml("exercises", exercises.applyAgain)
   }
 
 

@@ -3,13 +3,13 @@
     <lift:bind-at name="title"  >Synchronize from Directory</lift:bind-at>
     <lift:bind-at name="blockcontent">
       <form class="lift:SyncActivities.sync">
-        <input name="path">
+        <label>Directory</label><input name="path">
         <input type="submit" value="Submit">
       </form>
     </lift:bind-at>
   </lift:surround>
 
-  <div class="lift:SyncActivities.newActivities">
+  <div class="lift:SyncActivities.newActivities" id="newActivities">
     <lift:surround with="block">
       <lift:bind-at name="title"  >New Activities</lift:bind-at>
       <lift:bind-at name="blockcontent">
@@ -20,7 +20,7 @@
     </lift:surround>
   </div>
 
-  <div class="lift:SyncActivities.existingActivities">
+  <div class="lift:SyncActivities.existingActivities" id="existingActivities">
     <lift:surround with="block">
       <lift:bind-at name="title"  >Existing Activities</lift:bind-at>
       <lift:bind-at name="blockcontent">
@@ -31,7 +31,7 @@
     </lift:surround>
   </div>
 
-  <div classid="lift:SyncActivities.failures">
+  <div classid="lift:SyncActivities.failures" id="failures">
     <lift:surround with="block">
       <lift:bind-at name="title"  >Failures</lift:bind-at>
       <lift:bind-at name="blockcontent">
