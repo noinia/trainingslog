@@ -13,8 +13,7 @@ object ActivityFile {
 
   def fromPath(path: String) = {
     val f = ActivityFile(path)
-    f.load()
-    if (f.hasData) Some(f) else None
+    if (f.load) Some(f) else None
   }
 
 }
@@ -26,18 +25,19 @@ case class ActivityFile(val path : String) {
   var trajectory   : Trajectory = _
 
   // load the data, if something goes wrong simply ignore it.
-  def load() {
+  def load = {
     try {
-      loadData()
+      loadData
+      true
     } catch {
-      case e => {} // if something goes wrong ignore it.
+      case e => false
     }
   }
 
   def hasData = activityData.isDefined
 
   // load the data. If something goes wrong, throw an exception.
-  def loadData() = {
+  def loadData = {
     val parser   = ExerciseParserFactory.getParser(path)
     val rawData  = parser.parseExercise(path)
     activityData = Some(rawData)

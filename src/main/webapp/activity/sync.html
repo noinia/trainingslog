@@ -1,9 +1,45 @@
 <lift:surround with="default" at="content">
-  <lift:surround with="block" at="blockcontent">
-    <h2>Add Activity</h2>
-    <form class="lift:SyncActivities?form=post">
-      <input name="path">
-      <input type="submit" value="Submit">
-    </form>
+  <lift:surround with="block">
+    <lift:bind-at name="title"  >Synchronize from Directory</lift:bind-at>
+    <lift:bind-at name="blockcontent">
+      <form class="lift:SyncActivities.sync">
+        <input name="path">
+        <input type="submit" value="Submit">
+      </form>
+    </lift:bind-at>
   </lift:surround>
+
+  <div class="lift:SyncActivities.newActivities">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  >New Activities</lift:bind-at>
+      <lift:bind-at name="blockcontent">
+        <ul class="actList">
+          <li></li>
+        </ul>
+      </lift:bind-at>
+    </lift:surround>
+  </div>
+
+  <div class="lift:SyncActivities.existingActivities">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  >Existing Activities</lift:bind-at>
+      <lift:bind-at name="blockcontent">
+        <ul class="actList">
+          <li></li>
+        </ul>
+      </lift:bind-at>
+    </lift:surround>
+  </div>
+
+  <div classid="lift:SyncActivities.failures">
+    <lift:surround with="block">
+      <lift:bind-at name="title"  >Failures</lift:bind-at>
+      <lift:bind-at name="blockcontent">
+        <ul class="failList">
+          <li></li>
+        </ul>
+      </lift:bind-at>
+    </lift:surround>
+  </div>
+
 </lift:surround>

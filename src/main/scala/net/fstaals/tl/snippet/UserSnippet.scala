@@ -16,7 +16,7 @@ trait UserSnippet {
   def login(x : NodeSeq) = <h1>Not logged in</h1>
 
 
-  def noUserMsg = S.notice("error not logged in")
+  def noUserMsg = S.error("error not logged in")
 
   def withUser(f: (User,NodeSeq) => NodeSeq) : NSTrans = withUserOr(f)(login _)
 

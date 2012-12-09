@@ -13,6 +13,9 @@ import net.fstaals.tl.model._
 import net.fstaals.tl._
 import org.joda.time.Duration
 
+import js._
+import JsCmds._
+
 class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulSnippet {
 
   var inEditMode = false
@@ -21,7 +24,7 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
   lazy val activityMap    = new ActivityMap(activity)
 
   def dispatch = {
-    case "summary"    => summary
+    case "summary"    => summaryp
     case "graphs"     => graphs
     case "map"        => activityMap.render
     case "exercises"  => exercises
@@ -36,9 +39,16 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     case xs                         => {S.error(xs)}
   }
 
-  def summary =
+  def summaryp(xhtml: NodeSeq) = {
+    println(xhtml)
+
+    summary(xhtml)
+  }
+
+  def summary = SHtml.memoize(
     general & timing & heartRate & power & elevation & cadence & temperature &
     saveButton
+  )
 
 
   def saveButton = if (inEditMode) "#save" #> SHtml.onSubmitUnit(save)
@@ -129,8 +139,13 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
   def toggleEditMode() = {
     inEditMode = !inEditMode
     println(inEditMode)
-    S.redirectTo("/activity/view/%d".format(activity.id.get))
+    val res = summary.applyAgain
+    println(res)
+
+    SetHtml("summary",res)
   }
+
+
 
   def laps = "#title" #> "laps"
 

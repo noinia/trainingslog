@@ -29,7 +29,9 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
   }
   object start             extends MappedDateTime(this)
   object end               extends MappedDateTime(this)
-  object activityFilePath  extends MappedString(this,500)
+  object activityFilePath  extends MappedString(this,500) {
+    override def dbIndexed_? = true
+  }
   //TODO: make this into a separate table/class. since most activities
   // will not have a description:
   object description       extends MappedTextarea(this, 2048) {
@@ -100,6 +102,15 @@ object Activity extends Activity with LongKeyedMetaMapper[Activity] {
   def publicActivities = findAll(By(Activity.isPublic,true))
 
   def myActivities = User.currentUser.toList flatMap {u => findAll(By(owner,u))}
+
+  def existingFromPath(path: String) = find(By(Activity.activityFilePath,path))
+
+  def fromPath(path: String) = (User.currentUser,ActivityFile.fromPath(path)) match {
+    case (Full(u),Some(af)) => Full(fromActivityFile(af).owner(u))
+    case (_,None)           => Failure("Failed to load activity.")
+    case _                  => Failure("Not logged in.")
+  }
+
 
 }
 
