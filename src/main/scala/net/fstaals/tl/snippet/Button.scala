@@ -12,19 +12,29 @@ import JsCmds._
 import js.jquery._
 import JqJE._
 
-class Button( val text       : String
-            , val id         : String
-            , val buttonType : String = "regular"
-            , val action     : JsCmd  = Noop
-            , val img        : String = "/images/buttons/accept.png") {
+class Button( val text       : NodeSeq
+            , val id         : Option[String] = None
+            , val buttonType : String         = Button.defaultType
+            , val img        : String         = Button.defaultImg) {
 
+
+  // def this(txt: String, id: String,
+  //          buttonType: String = Button.defaultType,
+  //          img: String        = Button.defaultImg) =
+  //            this(Text(txt),id,buttonType,img)
 
   def selectors = ".text"                    #> text             &
                   "#button [class+]"         #> buttonType       &
-                  "#button [onclick]"        #> action.toJsCmd   &
                   "img [src]"                #> img              &
-                  "type=hidden [id]"         #> (id ++ "hidden") &
-                  "#button [id]"             #> id
+                  setIds
+
+  def setIds = id map {i =>
+      "type=hidden [id]"         #> (i ++ "hidden") &
+       "#button [id]"            #> i} getOrElse
+      // or else
+      "type=hidden [id] ^^"      #> "*" &
+      "#button [id] ^^"          #> "*"
+
 
   def render = "*" #> (Templates(List("templates-hidden","button")) map selectors)
 
@@ -32,10 +42,19 @@ class Button( val text       : String
 }
 
 object Button {
+  val defaultType = "regular"
+  val defaultImg  = "/images/buttons/accept.png"
+
+  def render(x: NodeSeq) = {
+    val s = x.head child
+    val i = x.head attribute "id" map {_.head text}
+
+    (new Button(s,i)).render(x)
+  }
+
 
 }
 
 object AcceptButton {
-
-  def apply(s: String, id: String) = new Button(s,id,"accept")
+  def apply(s: String, id: String) = new Button(Text(s),Some(id),"accept")
 }
