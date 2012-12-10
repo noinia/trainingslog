@@ -7,7 +7,7 @@ import net.liftweb.http._
 import net.fstaals.tl.model._
 import net.fstaals.tl.widget._
 
-class Tags extends UserSnippet with StatefulSnippet {
+class Tags extends StatefulSnippet {
 
   var currentTags : List[Tag] = Tag.myTags
 

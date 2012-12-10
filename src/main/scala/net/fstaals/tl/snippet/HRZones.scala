@@ -8,7 +8,7 @@ import net.fstaals.tl.model._
 import net.fstaals.tl.helpers.Helpers._
 
 
-class HRZones extends UserSnippet with StatefulSnippet {
+class HRZones extends StatefulSnippet {
 
   var currentZones : List[HRZone] = User.hrZones
   var z : Box[HRZone]             = HRZone.newZone

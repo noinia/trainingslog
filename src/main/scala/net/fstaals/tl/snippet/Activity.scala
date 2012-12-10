@@ -16,7 +16,7 @@ import org.joda.time.Duration
 import js._
 import JsCmds._
 
-class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulSnippet {
+class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   var inEditMode = false
 

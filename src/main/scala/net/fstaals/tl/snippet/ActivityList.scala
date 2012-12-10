@@ -7,7 +7,7 @@ import Helpers._
 
 import net.fstaals.tl.model._
 
-class ActivityList extends UserSnippet {
+class ActivityList {
 
 
   def visibleActivities = Activity.publicActivities ++ Activity.myActivities
