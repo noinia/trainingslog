@@ -39,19 +39,35 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     case xs                         => {S.error(xs)}
   }
 
+    // --------------------- Controls ------------------------------
+
+  def controls = "#toggleEdit [onclick]" #> SHtml.ajaxInvoke(() => toggleEditMode)
+
+  def toggleEditMode = {
+    inEditMode = !inEditMode
+    println(inEditMode)
+    val res = summary.applyAgain
+    println(res)
+
+    SetHtml("summary",   res) &
+    SetHtml("exercises", exercises.applyAgain)
+  }
+
+  // --------------------- Summary ------------------------------
+
   def summaryp(xhtml: NodeSeq) = {
     println(xhtml)
 
     summary(xhtml)
   }
 
-  def summary = SHtml.memoize(
+  def summary = SHtml.memoize {
     general & timing & heartRate & power & elevation & cadence & temperature &
     saveButton
-  )
+  }
 
 
-  def saveButton = if (inEditMode) "#save" #> SHtml.onSubmitUnit(save)
+  def saveButton = if (inEditMode) "#save"        #> SHtml.onSubmitUnit(save)
                    else            "#saveSummary" #> ""
 
   def show(x: MixableMappedField) =
@@ -69,11 +85,7 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
 
   def tags = {
     val ts = new TagSelector(activity.tags.all) {
-      override def add(t : Tag) = {
-        println("Adding tag" + t)
-        activity.tags += t
-        println(activity.tags.all)
-      }
+      override def add(t : Tag) = { activity.tags += t }
     }
     val render = if (inEditMode) ts.render else ts.renderReadOnly
 
@@ -121,12 +133,11 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
     case _       => (cssSel ++ " [class+]") #> "hidden"
   }
 
-  def newExercise = if (inEditMode)
-                      (new AddExercise(activity.newExercise)).render
-                    else
-                      "#addNewExercise" #> ""
+  // --------------------- Graphs ------------------------------
 
   def graphs  = "#title"    #> "Graphs"
+
+  // --------------------- Exercises ---------------------------
 
   def exercises = SHtml.memoize(
     "#exerciseList *" #> (activity.exercises flatMap {e =>
@@ -134,20 +145,12 @@ class ActivitySnippet(val activity: Activity) extends UserSnippet with StatefulS
                              (new ExerciseSnippet(e)).render}) &
     newExercise)
 
+  def newExercise = if (inEditMode)
+                      (new AddExercise(activity.newExercise)).render
+                    else
+                      "#addNewExercise ^^" #> ""
 
-  def controls = "#toggleEdit [onclick]" #> SHtml.ajaxInvoke(() => toggleEditMode)
-
-  def toggleEditMode = {
-    inEditMode = !inEditMode
-    println(inEditMode)
-    val res = summary.applyAgain
-    println(res)
-
-    SetHtml("summary",   res) &
-    SetHtml("exercises", exercises.applyAgain)
-  }
-
-
+  // --------------------- Laps ------------------------------
 
   def laps = "#title" #> "laps"
 
