@@ -6,7 +6,8 @@
         </div>
     </div>
   </form>
-  <form class="lift:ActivitySnippet.summary" id="summary">
+  <form class="lift:form.ajax" id="summaryForm">
+    <div class="lift:ActivitySnippet.summary" id="summary">
     <lift:surround with="block">
       <lift:bind-at name="title"  ><span id="title"  >Title</span> </lift:bind-at>
       <lift:bind-at name="blockcontent">
@@ -81,13 +82,18 @@
           <label>Description:</label><div id="description"></div>
         </div>
 
-        <div class="accept button" onClick="summary.submit()" id="saveSummary">
+        <div class="accept button" id="saveSummary">
+          <script>$("#saveSummary").click(function(e) {
+              $(this).closest("form").submit()
+            })</script>
+
           <img src="/images/buttons/accept.png" alt="">
           <input type="hidden" id="save" value="">
           Save
         </div>
       </lift:bind-at>
     </lift:surround>
+    </div>
   </form>
   <div class="lift:ActivitySnippet.graphs" id="graphs">
     <lift:surround with="block">
@@ -125,7 +131,7 @@
   <form class="lift:ActivitySnippet.exercises" id="exercises">
     <lift:surround with="block">
       <lift:bind-at name="title"  >Exercises</lift:bind-at>
-      <lift:bind-at name="blockcontent" eager_eval="true">
+      <lift:bind-at name="blockcontent">
         <h1>Exercises</h1>
 
         <div id="exerciseList">

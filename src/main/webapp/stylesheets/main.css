@@ -59,15 +59,32 @@ textarea {
 
 }
 
-#messages {
-    background-color: #ffaaaa;
-    border: 1px solid #ff5555;
+.messages {
     width: 300px;
     z-index: 10;
     position: absolute;
     right: 0;
     float: right;
     clear: none;
+}
+
+.messages ul {
+    list-style-type: none;
+}
+
+#lift__noticesContainer___notice {
+    background-color: #deffde;
+    border: 1px solid #aaffaa;
+}
+
+#lift__noticesContainer___warning {
+    background-color: #ffffbf;
+    border: 1px solid #f7ff6f;
+}
+
+#lift__noticesContainer___error {
+    background-color: #ffaaaa;
+    border: 1px solid #ff5555;
 }
 
 

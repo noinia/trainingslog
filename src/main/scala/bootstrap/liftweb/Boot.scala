@@ -85,6 +85,17 @@ class Boot {
 
     // Make a transaction span the whole HTTP request
     S.addAround(DB.buildLoanWrapper)
+
+    // make notice and warnings auto fade away
+    LiftRules.noticesAutoFadeOut.default.set( (notices: NoticeType.Value) => {
+        notices match {
+          case NoticeType.Notice  => Full((2 seconds, 2 seconds))
+          case NoticeType.Warning => Full((4 seconds, 2 seconds))
+          case NoticeType.Error   => Empty // don't fade
+        }
+     }
+    )
+
   }
 
 
