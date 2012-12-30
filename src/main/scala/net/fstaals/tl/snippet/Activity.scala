@@ -24,7 +24,7 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
   lazy val activityMap    = new ActivityMap(activity)
 
   def dispatch = {
-    case "summary"    => summaryp
+    case "summary"    => summary
     case "graphs"     => graphs
     case "map"        => activityMap.render
     case "exercises"  => exercises
@@ -33,10 +33,12 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
     case "laps"       => laps
   }
 
-  def save() = activity.validate match {
-    case Nil if activity.isEditable => { activity.save ;S.notice("Saved.") }
-    case Nil                        => {S.error("Forbidden.")}
-    case xs                         => {S.error(xs)}
+  def save() : JsCmd = activity.validate match {
+    case Nil if activity.isEditable => { activity.save
+                                         S.notice("Saved.")
+                                         toggleEditMode }
+    case Nil                        => {S.error("Forbidden.") }
+    case xs                         => {S.error(xs) }
   }
 
     // --------------------- Controls ------------------------------
@@ -45,27 +47,16 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   def toggleEditMode = {
     inEditMode = !inEditMode
-    println(inEditMode)
-    val res = summary.applyAgain
-    println(res)
-
-    SetHtml("summary",   res) &
+    SetHtml("summary",   summary.applyAgain) &
     SetHtml("exercises", exercises.applyAgain)
   }
 
   // --------------------- Summary ------------------------------
 
-  def summaryp(xhtml: NodeSeq) = {
-    println(xhtml)
-
-    summary(xhtml)
-  }
-
-  def summary = SHtml.memoize {
+  val summary = SHtml.memoize {
     general & timing & heartRate & power & elevation & cadence & temperature &
     saveButton
   }
-
 
   def saveButton = if (inEditMode) "#save"        #> SHtml.onSubmitUnit(save)
                    else            "#saveSummary" #> ""
@@ -139,7 +130,7 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   // --------------------- Exercises ---------------------------
 
-  def exercises = SHtml.memoize(
+  val exercises = SHtml.memoize(
     "#exerciseList *" #> (activity.exercises flatMap {e =>
                            Templates(List("templates-hidden","exercise")) map
                              (new ExerciseSnippet(e)).render}) &
