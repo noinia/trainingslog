@@ -9,6 +9,8 @@ import net.liftweb.util._
 import net.liftweb.common._
 import net.liftweb.http._
 
+import Helpers._
+
 import js.JsCmds._
 import js.JE.{JsRaw, JsArray}
 import js.JsCmds.JsCrVar

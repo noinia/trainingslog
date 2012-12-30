@@ -6,7 +6,7 @@ import net.liftweb.http._
 
 import net.fstaals.tl.model._
 import net.fstaals.tl.helpers.Helpers._
-
+import Helpers._
 
 class HRZones extends StatefulSnippet {
 

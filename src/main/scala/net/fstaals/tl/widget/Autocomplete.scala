@@ -4,6 +4,7 @@ import net.liftweb.util._
 import net.liftweb.common._
 import net.liftweb.http._
 
+import Helpers._
 
 import js._
 import JE._

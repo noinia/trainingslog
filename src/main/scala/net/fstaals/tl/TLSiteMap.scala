@@ -22,7 +22,6 @@ object TLSiteMap {
 
   def objParser[T <: LongKeyedMapper[T]](x: LongKeyedMetaMapper[T])(xs: List[String]) : Box[T] = idParser(xs) flatMap x.find
 
-
   def sitemap = SiteMap(
     Menu.i("Home")       / "index"
   , Menu.i("User") / ""
