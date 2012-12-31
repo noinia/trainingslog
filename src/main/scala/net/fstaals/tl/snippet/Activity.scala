@@ -43,11 +43,26 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
     // --------------------- Controls ------------------------------
 
-  def controls = "#toggleEdit [onclick]" #> SHtml.ajaxInvoke(() => toggleEditMode)
+  def controls = toggleEdit
+
+  def toggleEdit : CssSel =
+    "#toggleEdit [onclick]" #> SHtml.ajaxInvoke(() => toggleEditMode)
+
+  val enableEditButton = Button.button("Edit","toggleEdit")
+  val cancelEditButton = CancelButton.button("Cancel","toggleEdit")
+
+  def editModeText = (if (inEditMode)
+                       "*" #> cancelEditButton.render
+                     else
+                       "*" #> enableEditButton.render) andThen toggleEdit
 
   def toggleEditMode = {
     inEditMode = !inEditMode
-    SetHtml("summary",   summary.applyAgain) &
+
+    val dummy = SHtml.hidden(() => Noop)
+
+    Replace("toggleEdit", editModeText.apply(dummy)) & // the button replaces everything anyway
+    SetHtml("summary",   summary.applyAgain)       &
     SetHtml("exercises", exercises.applyAgain)
   }
 

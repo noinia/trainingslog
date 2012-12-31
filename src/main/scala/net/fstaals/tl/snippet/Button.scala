@@ -41,22 +41,36 @@ class Button( val text       : NodeSeq
   def render = "*" #> (Templates(List("templates-hidden","button")) map selectors)
 
 
+
 }
 
-object Button {
+trait MetaButton {
+
+  def button(s: String, id: Option[String]) : Button = new Button(Text(s),id)
+  def button(s: String, id: String)         : Button = button(s,Some(id))
+
+  def render(x: NodeSeq) = {
+    println(x)
+
+    val s = x.head.child.text
+    val i = x.head attribute "id" map {_.head text}
+
+    button(s,i).render(x)
+  }
+
+}
+
+
+object Button extends MetaButton {
   val defaultType = "regular"
   val defaultImg  = "/images/buttons/accept.png"
 
-  def render(x: NodeSeq) = {
-    val s = x.head child
-    val i = x.head attribute "id" map {_.head text}
-
-    (new Button(s,i)).render(x)
-  }
-
-
 }
 
-object AcceptButton {
-  def apply(s: String, id: String) = new Button(Text(s),Some(id),"accept")
+object AcceptButton extends MetaButton {
+  override def button(s: String, id: Option[String]) = new Button(Text(s),id,"accept")
+}
+
+object CancelButton extends MetaButton {
+  override def button(s: String, id: Option[String]) = new Button(Text(s),id,"cancel")
 }

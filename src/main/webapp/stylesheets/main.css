@@ -92,7 +92,7 @@ textarea {
 
 .button {
     display: block;
-    width: 150px;
+    min-width: 100px;
     float: right;
     margin-right: 30px;
     margin-top: 10px;
@@ -114,6 +114,10 @@ textarea {
     background-color: #efefef;
 }
 
+.regular:hover {
+    background-color: #ffffbf;
+}
+
 .accept {
     border: 1px solid #aaffaa;
     background-color: #deffde;
@@ -125,11 +129,11 @@ textarea {
 
 .cancel {
     border: 1px solid #ff5555;
-    background-color: #ffaaaa;
+    background-color: #ffdddd;
 }
 
 .cancel:hover {
-    background-color: #ffdddd;
+    background-color: #ffaaaa;
 }
 
 
