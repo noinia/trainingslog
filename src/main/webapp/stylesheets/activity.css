@@ -82,3 +82,7 @@
 #mapArea {
 
 }
+
+.description {
+    float: left;
+}

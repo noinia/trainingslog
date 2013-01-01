@@ -4,6 +4,8 @@ import net.liftweb.common._
 import scala.xml._
 import net.liftweb.util._
 import net.liftweb.mapper._
+import net.liftweb.textile._
+
 import net.fstaals.tl.mapper._
 
 import org.joda.time.{Duration, DateTime}
@@ -37,6 +39,8 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
   object description       extends MappedTextarea(this, 2048) {
     override def textareaRows  = 10
     override def textareaCols  = 100
+
+    override def asHtml = <div class="description">{TextileParser.toHtml(get)}</div>
   }
 
   /* ********** The properties referenced from an Activity  ***************** */
@@ -138,6 +142,8 @@ class Exercise extends LongKeyedMapper[Exercise] with IdPK {
   object description       extends MappedTextarea(this, 2048) {
     override def textareaRows  = 10
     override def textareaCols  = 100
+
+    override def asHtml = <div class="description">{TextileParser.toHtml(get)}</div>
   }
 
   /* ********** The properties referenced from an Exercise  ***************** */
