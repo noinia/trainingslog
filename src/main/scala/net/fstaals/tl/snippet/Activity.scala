@@ -145,16 +145,17 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   // --------------------- Exercises ---------------------------
 
-  val exercises = SHtml.memoize(
+  val exercises = SHtml.memoize {
     "#exerciseList *" #> (activity.exercises flatMap {e =>
                            Templates(List("templates-hidden","exercise")) map
                              (new ExerciseSnippet(e)).render}) &
-    newExercise)
+    newExercise
+  }
 
   def newExercise = if (inEditMode)
                       (new AddExercise(activity.newExercise)).render
                     else
-                      "#addNewExercise ^^" #> ""
+                      "#addNewExercise" #> ""
 
   // --------------------- Laps ------------------------------
 
@@ -171,7 +172,7 @@ class AddExercise(val e: Exercise) {
                "#end [value]"   #> HhMmSs(e.end.get)                    &
                "#end"           #> SHtml.onSubmit(load(e.end := _) _)   &
                "#rpe"           #> e.rpe._toForm                        &
-               "#description"   #> e.description._toForm                &
+               "#exdescr"       #> e.description._toForm                &
                "#save"          #> SHtml.onSubmitUnit(save)
 
   def load(f : Duration => Duration)(s: String) = HhMmSs.parse(s) match {
