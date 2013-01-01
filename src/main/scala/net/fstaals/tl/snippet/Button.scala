@@ -42,6 +42,7 @@ class Button( val text       : NodeSeq
 
 
 
+
 }
 
 trait MetaButton {
@@ -72,5 +73,6 @@ object AcceptButton extends MetaButton {
 }
 
 object CancelButton extends MetaButton {
-  override def button(s: String, id: Option[String]) = new Button(Text(s),id,"cancel")
+  override def button(s: String, id: Option[String]) =
+    new Button(Text(s),id,"cancel","/images/buttons/cancel.png")
 }
