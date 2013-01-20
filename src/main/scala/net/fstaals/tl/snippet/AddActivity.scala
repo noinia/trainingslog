@@ -15,7 +15,7 @@ import net.fstaals.tl.model._
 import java.io.File
 
 
-class SyncActivities extends {
+class SyncActivities {
 
   type Path  = String
   type Error = String
@@ -38,8 +38,8 @@ class SyncActivities extends {
   }
 
 
-  def newActivities      = SHtml.memoize("div *" #> listActs(newActs))
-  def existingActivities = SHtml.memoize("div *" #> listActs(existingActs))
+  val newActivities      = SHtml.memoize { "div *" #> listActs(newActs) }
+  val existingActivities = SHtml.memoize { "div *" #> listActs(existingActs) }
 
   def listActs(as: List[Activity]) = ".actList *" #> (as map {a =>
     "li *" #> a.name.get
