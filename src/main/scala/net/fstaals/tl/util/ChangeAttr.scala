@@ -8,12 +8,8 @@ import net.liftweb.common._
 import net.liftweb.http._
 
 
-
-
-object PrefixId {
-  /**  Helper object for manipulating attributes. In particular:
-   *   we can change (or well, currently only prepend something to)
-   *   the id of elements. I.e. we change something like:
+object ChangeAttr {
+  /**  Helper object for manipulating attributes. I.e. we change something like:
    *
    *   <foo id="foo"><bar id="bar"><baz>a</baz></bar></foo>
    *
@@ -51,19 +47,14 @@ object PrefixId {
   def mapMetaData(m: MetaData)(f: GenAttr => GenAttr): MetaData =
     chainMetaData(unchainMetaData(m).map(f))
 
-
-  // -------------------------
-  // Here is actually where we change the ID
-
-  def changeId(f: String => String)(g: GenAttr) : GenAttr = g match {
-    case GenAttr(_, "id",Text(v), _) => g.copy(value = Text(f(v)))
-    case _                           => g
+  // lift the function that changes the id into a genAttr
+  def liftGenAttr(key: String)(f: String => String)(g: GenAttr) = g match {
+    case GenAttr(_, k, Text(v), _) if k == key => g.copy(value = Text(f(v)))
+    case _                                     => g
   }
 
-
   // We builld a CSS Selector That manipulates the xml elements
-
-  def apply(s: String) = new CssSel {
+  def apply(attrName: String)(f: String => String) = new CssSel {
     def apply(xhtml: NodeSeq) = {
       val rr = new RewriteRule() {
         override def transform(n: Node): Seq[Node] = (n.attribute("id"),n) match {
@@ -72,7 +63,8 @@ object PrefixId {
                                   // if we have an id, update it, and recursively
                                   // process it's children
           case (Some(i),e : Elem) =>
-            e.copy( attributes = mapMetaData(e.attributes)(changeId(x => s+x) _)
+            e.copy( attributes =
+                      mapMetaData(e.attributes)(liftGenAttr(attrName)(f) _)
                   , child      = e.child flatMap transform
                   )
                                   // apparently we can also have different types of

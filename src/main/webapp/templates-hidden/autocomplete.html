@@ -1,9 +1,13 @@
-<div id="autocomplete">
-  <input type="text" list="list" id="input">
-  <button type="button" id="button">Add</button>
-  <datalist id="list">
+<div class="autocomplete">
+  <input type="text" list="list" id="input" prefixId="true">
+  <div class="addSymbol prefixId" id="button" title="Add">+</div>
+  <datalist id="list" prefixId="true">
   </datalist>
-  <ul id="currentitems">
-    <li></li>
-  </ul>
+  <table class="list">
+    <tr class="item">
+      <td class="edit" title="Edit"></td>
+      <td class="delete" title="Delete"></td>
+      <td class="value"></td>
+    </tr>
+  </table>
 </div>

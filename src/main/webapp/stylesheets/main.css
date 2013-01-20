@@ -137,6 +137,25 @@ textarea {
 }
 
 
+.addSymbol {
+    border: 1px solid #aaffaa;
+    border-radius: 8px;
+    background-color: #deffde;
+    width: 16px;
+    height: 16px;
+    float: left;
+    text-align: center;
+    margin: 2px 2px 2px 2px;
+    font-weight: strong;
+}
+
+.addSymbol:hover {
+    background-color: #bbffbb;
+    cursor: pointer;
+}
+
+
+
 /* Blocks */
 
 .block {
@@ -261,4 +280,35 @@ textarea {
 
 .hidden {
     display: none;
+}
+
+/* Autocomplete thingy */
+
+.autocomplete .list {
+    width: auto;
+    clear: left;
+}
+
+.autocomplete .edit {
+    background: url('/images/buttons/edit_off.png');
+    background-repeat: no-repeat;
+    width: 16px;
+}
+
+.autocomplete .edit:hover {
+    cursor: pointer;
+    background: url('/images/buttons/edit_on.png');
+    background-repeat: no-repeat;
+}
+
+.autocomplete .delete {
+    background: url('/images/buttons/delete_off.png');
+    background-repeat: no-repeat;
+    width: 16px;
+}
+
+.autocomplete .delete:hover {
+    cursor: pointer;
+    background: url('/images/buttons/delete_on.png');
+    background-repeat: no-repeat;
 }
