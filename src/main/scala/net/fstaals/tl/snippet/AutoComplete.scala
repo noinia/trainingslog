@@ -25,6 +25,8 @@ class TagSel {
 
   def render = (new Html5AutoComplete("foo", List(), all) {
     override def newT(s: String) = Some(s)
+
+    override def del(x: String) = { println("delete" + x)}
   }).render
 
 }
@@ -32,7 +34,6 @@ class TagSel {
 class Html5AutoComplete[T]( val prefixId : String
                           , var current  : List[T]
                           , var all      : List[T]) {
-
 
   // The element entered is not one of all, so generate a new elemnt
   // to be used.
@@ -72,10 +73,6 @@ class Html5AutoComplete[T]( val prefixId : String
     current ::= x
   }
 
-  private def delElem(x: T) = {
-    current = current filter {_ != x}
-    del(x)
-  }
 
   // function to execute when the user hits submit the current value
   def onSubmit(ac: IdMemoizeTransform)(s: String) : JsCmd = {
@@ -91,8 +88,9 @@ class Html5AutoComplete[T]( val prefixId : String
     ac.setHtml
   }
 
-  def onDelete(ac: IdMemoizeTransform)(s: String) : JsCmd = {
-
+  def onDelete(ac: IdMemoizeTransform)(x: T) : JsCmd = {
+    current = current filter {_ != x}
+    del(x)
     // refresh everything again
     ac.setHtml
   }
@@ -105,10 +103,13 @@ class Html5AutoComplete[T]( val prefixId : String
 
     "#button [onclick]" #> SHtml.ajaxCall(jsCalcValue, onSubmit(ac) _) &
     "#list"             #> dataList                                    &
-    ".item *"           #> (current map {".value *" #> stringRep(_)})  &
+    ".item *"           #> (current map renderItem(ac))                &
     prefixIds
   }}
 
+  def renderItem(ac: IdMemoizeTransform)(x: T) =
+    ".value *"          #> stringRep(x) &
+    ".delete [onclick]" #> SHtml.ajaxInvoke(() => onDelete(ac)(x))
 
   // prefixes the ids that should be prefixed (and removes the prefix attribute)
   def prefixIds = "prefixid=true"             #> ChangeAttr("id")(prefix _)    &
