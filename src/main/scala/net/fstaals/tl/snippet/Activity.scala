@@ -62,8 +62,8 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
     val dummy = SHtml.hidden(() => Noop)
 
     Replace("toggleEdit", editModeText.apply(dummy)) & // the button replaces everything anyway
-    SetHtml("summary",   summary.applyAgain)       &
-    SetHtml("exercises", exercises.applyAgain)
+    Replace("summary",   summary.applyAgain)       &
+    Replace("exercises", exercises.applyAgain)
   }
 
   // --------------------- Summary ------------------------------
@@ -91,7 +91,8 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   def tags = {
     val ts = new TagSelector(activity.tags.all) {
-      override def add(t : Tag) = { activity.tags += t }
+      override def add(t: Tag) = { activity.tags += t }
+      override def del(t: Tag) = { activity.tags -= t }
     }
     val render = if (inEditMode) ts.render else ts.renderReadOnly
 

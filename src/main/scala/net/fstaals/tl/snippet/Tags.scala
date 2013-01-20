@@ -5,43 +5,48 @@ import net.liftweb.common._
 import net.liftweb.http._
 
 import net.fstaals.tl.model._
-import net.fstaals.tl.widget._
+
 
 import Helpers._
 
 class Tags extends StatefulSnippet {
-
-  var currentTags : List[Tag] = Tag.myTags
 
   def dispatch = {
     case _ => render
   }
 
   def render = {
-    var t : Box[Tag] = Empty
+    val allTags = Tag.myTags
 
-    def add() = t.toList flatMap {_.validate} match {
-      case Nil => { t map {_.save} ; currentTags = (t ++ currentTags).toList }
-      case xs  => S.error(xs)
-    }
+    (new TagSelector(allTags,allTags) {
+      override def add(t: Tag) = t.validate match {
+        case Nil => { t.save ; S.notice("Saved")}
+        case xs  => S.error(xs)
+      }
 
-    "#newTag" #> SHtml.onSubmit(s => {t = Tag(s)}) &
-    "#addTag" #> SHtml.onSubmitUnit(add)           &
-    "li *"    #> (currentTags map {_.tag.get})
+      override def del(t: Tag) = {
+        t.delete_!
+        // TODO: Maybe we have to  cleanup the tag mapping tables as well
+        S.notice("Tag "+stringRep(t)+" deleted.")
+      }
+
+    }).render
+
   }
 
 }
 
 class TagSelector( currentTags : List[Tag]
                  , allTags     : List[Tag] = Tag.myTags) extends
-      AutoCompleteSelector[Tag](".addTag", currentTags, allTags, Some("li")) {
+      Html5AutoComplete[Tag]("addTag", currentTags, allTags) {
 
   override def stringRep(x: Tag) = x.tag.get
 
   override def newT(s: String) = Tag(s)
 
-  def renderReadOnly = ".addTag" #> "" &
-                       "script"  #> "" &
-                       updateList
+  def renderReadOnly = "*" #> <ul>
+                                { currentTags map {t => <li>{stringRep(t)}</li>} }
+                              </ul>
+
 
 }
