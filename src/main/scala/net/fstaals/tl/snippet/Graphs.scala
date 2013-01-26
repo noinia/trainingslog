@@ -21,52 +21,60 @@ import Trajectory._
 
 class ActivityGraphs(val a: Activity) {
 
+    // build the graphs
+  def activityGraphs[X](k : TrajectoryPoint => Option[X],
+                        xL : Showable[X])(implicit ord: Ordering[X]) = {
+    type T = TrajectoryPoint ; val tr = a.trajectory
+
+    List(
+        (a.heartRate,
+         tr map {FlotGraph(_,k,(p:T) => p.heartRate,   xL, Bpm,     "Heart Rate",  "#d22132")})
+      , (a.speed,
+         tr map {FlotGraph(_,k,(p:T) => p.speed,       xL, Kmh,     "Speed",       "#3669da")})
+      , (a.elevation,
+         tr map {FlotGraph(_,k,(p:T) => p.altitude,    xL, Alt,     "Altitude",    "#228400")})
+      , (a.power,
+         tr map {FlotGraph(_,k,(p:T) => p.power,       xL, Watt,    "Power",       "#770077")})
+      , (a.cadence,
+         tr map {FlotGraph(_,k,(p:T) => p.cadence,     xL, Rpm,     "Cadence",     "#ff4422")})
+      , (a.temperature,
+         tr map {FlotGraph(_,k,(p:T) => p.temperature, xL, Celcius, "Temperature", "#565656")})
+  )}
+
   object simpleTS extends Showable[Timestamp] {
     def unit = ""
   }
 
   val byTime : TrajectoryPoint => Option[Timestamp] = tp => Some(tp.timestamp)
 
-  val graphs =
-    graphsBy(byTime, simpleTS).flatten map {_.flotSerie}
+  val graphMode = "time"
 
-  val globalOptions = new FlotOptions {
-    override val legend = Full(new FlotLegendOptions {
-      override val container = Full("graphLegend")
-      override val noColumns = Full(graphs.length)
-    })
+  val graphs = graphsBy(byTime, simpleTS) zip (1 until 1000)
+
+  def globalOptions(xAxis : FlotAxisOptions, yAxes : Seq[FlotAxisOptions]) =
+    new FlotOptions {
+      override val legend = Full(new FlotLegendOptions {
+        override val container = Full("graphLegend")
+        override val noColumns = Full(graphs.length)
+      })
+      override val xaxis = Full(xAxis)
+      override val yaxes = Full(yAxes)
   }
 
+
   def graphsBy[X](k : TrajectoryPoint => Option[X], xL : Showable[X])(implicit ord: Ordering[X]) = {
-    val tr = a.trajectory
-    type T = TrajectoryPoint
-
-    // build the graphs
-    val graphs = List(
-      tr map {FlotGraph(_,k,(p:T) => p.heartRate,   xL, Bpm,     "Heart Rate",  "#d22132")}
-    , tr map {FlotGraph(_,k,(p:T) => p.speed,       xL, Kmh,     "Speed",       "#3669da")}
-    , tr map {FlotGraph(_,k,(p:T) => p.altitude,    xL, Alt,     "Altitude",    "#228400")}
-    , tr map {FlotGraph(_,k,(p:T) => p.power,       xL, Watt,    "Power",       "#770077")}
-    , tr map {FlotGraph(_,k,(p:T) => p.cadence,     xL, Rpm,     "Cadence",     "#ff4422")}
-    , tr map {FlotGraph(_,k,(p:T) => p.temperature, xL, Celcius, "Temperature", "#565656")}
-    )
-
     def combineFst[A,B](t : (Option[A],Option[B])) = t match {
-      case (Some(a),Some(_)) => Some(a)
+      case (Some(_),Some(b)) => Some(b)
       case _                 => None
     }
-
-
-    // the globals deterime if we should show the corresponding graph: if
-    // they are defined then we show the graph with the data, otherwise we don't
-    val globals = List(a.heartRate,a.speed,a.elevation,a.power,a.cadence,a.temperature)
-
-    graphs zip globals map combineFst
+    activityGraphs(k,xL) map combineFst flatten
   }
 
   def render(graphArea: String)(xhtml: NodeSeq) =
-    Flot.render(graphArea, graphs,
-                globalOptions, Flot.script(xhtml))
+    Flot.render(graphArea, graphs map {case (g,i) => g.flotSerie(i)},
+                globalOptions(new FlotAxisOptions {
+                  override val mode = Full(graphMode)
+                }, graphs map {t => t._1.axisOptions(t._2)}), Flot.script(xhtml))
 
 }
 
@@ -104,13 +112,14 @@ class FlotGraph[X,Y]( val data      : Iterable[(X,Y)]
   lazy val flotData : List[(Double,Double)] =
     data map {case (x,y) => (toDouble(x),toDouble(y))} toList
 
-  def flotSerie = {
+  def flotSerie(yAxisIdx: Int) = {
     val l = label
     val c = color
     new FlotSerie() {
       override val data = flotData
       override val label = l
       override val color = c map {s => Left(s)}
+      override val yaxis = Full(yAxisIdx)
     }
   }
 
@@ -121,5 +130,18 @@ class FlotGraph[X,Y]( val data      : Iterable[(X,Y)]
     case y : Number   => y.doubleValue
     case y : Duration => y.millis.doubleValue
   }
+
+  def axisOptions(yAxisId: Int) = new FlotAxisOptions {
+    override val min       = Full(flotData map {_._2} min) // TODO: subtract a bit
+    override val max       = Full(flotData map {_._2} max) // TODO: add a bit
+    override val tickColor = color
+    override val position  = Full(if (yAxisId % 2 == 1) "left" else "right")
+  }
+
+}
+
+case class FlotXAxis[X,Y](generator: TrajectoryPoint => Option[X],
+                          xL : Showable[X],
+                          options : FlotAxisOptions)(implicit ord: Ordering[X]) {
 
 }
