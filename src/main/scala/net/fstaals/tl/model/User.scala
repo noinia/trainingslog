@@ -36,6 +36,7 @@ object User extends User with MetaMegaProtoUser[User] {
 
   // comment this line out to require email validations
   override def skipEmailValidation = true
+
 }
 
 
@@ -49,14 +50,20 @@ class HRZone extends LongKeyedMapper[HRZone] with IdPK {
     // add a database index for this column.
     override def dbIndexed_? = true
   }
-  object lowerLimit extends MappedInt(this)
-  object upperLimit extends MappedInt(this)
+  object lowerLimit extends MappedInt(this) {
+    override def dbNotNull_? = true
+  }
+  object upperLimit extends MappedInt(this) {
+    override def dbNotNull_? = true
+  }
   object name       extends MappedString(this,50)
-  object color      extends MappedString(this,6)
+  object color      extends MappedString(this,6) {
+    //TODO: override the toForm stuff to get an input type=color
+  }
 
   override def validate = {
-    val err = FieldError(lowerLimit,"HRZone needs: lowerLimit <= upperLimit")
-    (if (lowerLimit.get <= upperLimit.get) Nil else List(err)) ++ super.validate
+    val err = FieldError(lowerLimit,"HRZone needs: lowerLimit < upperLimit")
+    (if (lowerLimit.get < upperLimit.get) Nil else List(err)) ++ super.validate
   }
 }
 
@@ -64,5 +71,7 @@ class HRZone extends LongKeyedMapper[HRZone] with IdPK {
 object HRZone extends HRZone with LongKeyedMetaMapper[HRZone] {
 
   def newZone = User.currentUser map {u => HRZone.create.owner(u)}
+
+  def myHrZones = User.currentUser.toList flatMap {u => findAll(By(owner,u))}
 
 }

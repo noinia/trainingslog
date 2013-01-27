@@ -7,14 +7,24 @@
       <label>Lower Limit:</label> <input id="lower" name="lower" type="number" min="0">
       <label>Upper Limit:</label> <input id="upper" name="upper" type="number" min="0">
       <input type="submit" value="Add" id="addZone">
-      <h1>Existing Tags</h1>
-      <table id="zones">
+      <h1>Heart Rate zones</h1>
+      <table>
+        <thead>
+        <tr>
+          <td class="name">Zone</td>
+          <td class="color">Color</td>
+          <td class="lower">Lower Limit</td>
+          <td class="upper">Upper Limit</td>
+        </tr>
+        </thead>
+        <tbody id="zones">
         <tr>
           <td class="name"></td>
           <td class="color"></td>
           <td class="lower"></td>
           <td class="upper"></td>
         </tr>
+        </tbody>
       </table>
     </form>
   </lift:surround>
