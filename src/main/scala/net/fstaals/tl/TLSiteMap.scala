@@ -33,9 +33,14 @@ object TLSiteMap {
                                 objParser(Activity) _, idEncoder _)
             / "activity" / "view"
             >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
+         // For testing purposes
          , Menu.params[Activity]("Graphs", "Graphs",
                               objParser(Activity) _, idEncoder _)
           / "activity" / "graphs"
+          >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
+         , Menu.params[Activity]("Summary", "Summary",
+                              objParser(Activity) _, idEncoder _)
+          / "activity" / "summary"
           >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
     )
   , Menu.i("Synchronize Device") / "activity" / "sync" submenus (
