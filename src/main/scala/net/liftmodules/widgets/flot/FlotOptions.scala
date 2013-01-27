@@ -152,6 +152,8 @@ trait FlotGridOptions extends BaseFlotOptions {
   def clickable: Box[Boolean] = Empty
   def hoverable: Box[Boolean] = Empty
   def coloredAreas: Box[String] = Empty // only (fn: plot area -> array of areas)
+  def markings: Box[FlotMarkings] = Empty
+
 
   def buildOptions =
   List(c("color", color),
@@ -169,6 +171,26 @@ trait FlotGridOptions extends BaseFlotOptions {
    coloredAreas: array of areas or (fn: plot area -> array of areas)
    */
 }
+
+trait FlotMarkings
+
+case class FlotMarkingAxis(axis: String, from: Double, to: Double) {
+
+}
+
+case class FlotMarking() extends FlotMarkings {
+  def axes: List[FlotMarkingAxis] = Nil
+  def color: Box[String] = Empty
+}
+
+
+// case class FlotMarkingFunction(f: FlotAxis => List[FlotMarkingAxis]) {
+
+// }
+
+
+
+
 
 trait ZoomOptions extends BaseFlotOptions {
   def interactive: Box[Boolean] = Empty
@@ -204,6 +226,8 @@ trait FlotOptions extends BaseFlotOptions {
   def zoomOptions: Box[ZoomOptions] = Empty
   def panOptions: Box[PanOptions] = Empty
 
+  def crossHair : Box[FlotCrossHairOptions] = Empty
+
   def buildOptions =
   List(
     lines.map(v => ("lines", v.asJsObj)),
@@ -216,10 +240,22 @@ trait FlotOptions extends BaseFlotOptions {
     c("grid", grid),
     series.map(v => ("series", JsObj(v.toSeq: _*))),
     zoomOptions.map(v => ("zoom", v)),
-    panOptions.map(v => ("pan", v))
+    panOptions.map(v => ("pan", v)),
+    crossHair.map(v => ("crosshair", v.asJsObj))
   )
 
 }
+
+trait FlotCrossHairOptions extends BaseFlotOptions {
+  def mode : Box[String] = Empty
+  def crossHairColor : Box[String] = Empty
+
+  def buildOptions = List(
+      mode           map {m => ("mode", Str(m))}
+    , crossHairColor map {c => ("color", Str(c))}
+  )
+}
+
 
 }
 }

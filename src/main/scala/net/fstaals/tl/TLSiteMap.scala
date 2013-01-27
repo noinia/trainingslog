@@ -29,9 +29,13 @@ object TLSiteMap {
       >> User.AddUserMenusUnder
   , Menu.i("Activity") / "activity" / "index"
          submenus (
-        Menu.params[Activity]("View", "View",
+           Menu.params[Activity]("View", "View",
+                                objParser(Activity) _, idEncoder _)
+            / "activity" / "view"
+            >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
+         , Menu.params[Activity]("Graphs", "Graphs",
                               objParser(Activity) _, idEncoder _)
-          / "activity" / "view"
+          / "activity" / "graphs"
           >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
     )
   , Menu.i("Synchronize Device") / "activity" / "sync" submenus (
