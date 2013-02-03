@@ -51,8 +51,6 @@ trait MetaButton {
   def button(s: String, id: String)         : Button = button(s,Some(id))
 
   def render(x: NodeSeq) = {
-    println(x)
-
     val s = x.head.child.text
     val i = x.head attribute "id" map {_.head text}
 
