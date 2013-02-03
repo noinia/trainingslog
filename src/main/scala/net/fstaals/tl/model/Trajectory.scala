@@ -44,8 +44,24 @@ trait TrajectoryLike {
   def startPointOption = points.headOption map {_._2}
   def endPointOption   = points.lastOption map {_._2}
 
-  // this is almost groupBy, but not quite since we need to split each group
-  // into contiguous pieces as well.
+  /**
+   * This is similar to groupBy. However there are two important differences:
+   *
+   *  (1) we (need to) make sure that each group consists of contiguous pieces itself.
+
+   * (2) The last trajectoryPoint in each segment may *NOT* satisfy the
+   *  classification[1]. We do this to make sure we do not lose trajectory length.
+   *  I.e. if we were to split the trajectory in between vertices v_i and v_{i+1},
+   *  then we do not want to lose the the edge (v_i,v_{i+1}) itself.
+   *
+   * stated differently. The result of tr.segment(f) is a Map with key value pairs
+   * (k,vs), where vs is a list of trajectories with time interval of the form [s,e)
+   *
+   *
+   * [1] and in general will not satisfy this classification, the only segment that
+   * in which the last vertex of a segment will satisfy the classification is the last
+   * segment
+   */
   def segment[B](f : TrajectoryPoint => B) : Map[B,SegmentedTrajectory] = {
 
     val empty = SegmentedTrajectory(Nil)
@@ -54,9 +70,10 @@ trait TrajectoryLike {
       case Nil     => Map()
       case y :: ys => { val k         = f(y)
                         val (zs,rest) = ys span {x => k == f(x)}
+                        val zsp       = rest.headOption.toList
                         val m         = group(rest)
 
-                        m + (k -> (m.getOrElse(k,empty) :+ (y::zs)))
+                        m + (k -> (m.getOrElse(k,empty) :+ (y::zs++zsp)))
                       }
     }
 
@@ -148,5 +165,8 @@ case class SegmentedTrajectory(val pieces : List[Trajectory]) extends Trajectory
 
     pieces.foldRight(Map[B,SegmentedTrajectory]())({case (t,a)  => union(t.segment(f),a)})
   }
+
+
+
 
 }
