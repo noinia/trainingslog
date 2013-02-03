@@ -79,13 +79,13 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
   def show(x: MixableMappedField) =
     if (inEditMode) x.toForm else Full(x.asHtml)
 
-  def general = "#title"         #> show(activity.name)                             &
-                "#owner *"       #> (activity.owner.obj map {_.fullName} openOr "") &
-                "#isPublic *"    #> show(activity.isPublic)                         &
-                "#start"         #> activity.start                                  &
-                "#duration *"    #> HhMmSs(activity.duration)                       &
-                "#distance *"    #> Km(activity.distance)                           &
-                "#description *" #> show(activity.description)                      &
+  def general = ".title"         #> show(activity.name)                             &
+                ".owner *"       #> (activity.owner.obj map {_.fullName} openOr "") &
+                ".isPublic *"    #> show(activity.isPublic)                         &
+                ".start"         #> activity.start                                  &
+                ".duration *"    #> HhMmSs(activity.duration)                       &
+                ".distance *"    #> Km(activity.distance)                           &
+                ".description *" #> show(activity.description)                      &
                 tags
 
 
@@ -96,15 +96,15 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
     }
     val render = if (inEditMode) ts.render else ts.renderReadOnly
 
-    "#tags *" #> render
+    ".tags *" #> render
   }
 
   def timing = {
     val s = activity.speed
-    "#movingTime *"     #> "?" &
-    "#avgSpeed *"       #> Kmh(s map {_.avg}) &
-    "#avgMovingSpeed *" #> "?" &
-    "#maxSpeed *"       #> Kmh(s map {_.max})
+    ".movingTime *"     #> "?" &
+    ".avgSpeed *"       #> Kmh(s map {_.avg}) &
+    ".avgMovingSpeed *" #> "?" &
+    ".maxSpeed *"       #> Kmh(s map {_.max})
   }
 
 
@@ -124,31 +124,31 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
       "label *"   #> z.name.get &
       ".field *"  #> segmentationFormat(tr.duration)
     }) &
-    "#avgHR *"   #> Bpm(hr.avg)  &
-    "#maxHR *"   #> Bpm(hr.max)
+    ".avgHR *"   #> Bpm(hr.avg)  &
+    ".maxHR *"   #> Bpm(hr.max)
   }
 
   def power = orHide(activity.power)("#power") {p =>
-    "#avgPower *"  #> Watt(p.avg) &
-    "#maxPower *"  #> Watt(p.max)
+    ".avgPower *"  #> Watt(p.avg) &
+    ".maxPower *"  #> Watt(p.max)
   }
 
   def elevation = orHide(activity.elevation)("elevation") {e=>
-    "#elevationGain *"   #> Alt(e.gain) &
-    "#elevationLoss *"   #> Alt(None)   &
-    "#minElevation *"    #> Alt(e.min)  &
-    "#maxElevation *"    #> Alt(e.max)
+    ".elevationGain *"   #> Alt(e.gain) &
+    ".elevationLoss *"   #> Alt(None)   &
+    ".minElevation *"    #> Alt(e.min)  &
+    ".maxElevation *"    #> Alt(e.max)
   }
 
   def cadence = orHide(activity.cadence)("#cadence") {c=>
-    "#avgCad *" #> Rpm(c.avg) &
-    "#maxCad *" #> Rpm(c.max)
+    ".avgCad *" #> Rpm(c.avg) &
+    ".maxCad *" #> Rpm(c.max)
   }
 
   def temperature = orHide(activity.temperature)("#temperature") {t=>
-    "#avgTemp *" #> Celcius(t.avg) &
-    "#minTemp *" #> Celcius(t.min) &
-    "#maxTemp *" #> Celcius(t.max)
+    ".avgTemp *" #> Celcius(t.avg) &
+    ".minTemp *" #> Celcius(t.min) &
+    ".maxTemp *" #> Celcius(t.max)
   }
 
   def orHide[T](x: Option[T])(cssSel: String)(f: T => CssSel) = x match {
