@@ -122,10 +122,21 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
   def segmentsByHR =
     activity.trajectory.toList flatMap {_.segment(byHrZone).toList}
 
+  def segmentationFormat(x: Option[Duration]) =
+    (x,activity.trajectory flatMap {_.duration}) match {
+      case (Some(d),Some(totalDuration)) => {
+        val p = (100.0 * d.getMillis()) / totalDuration.getMillis()
+        "%s (%.1f%%)".format(HhMmSs(d), p)
+      }
+      case (Some(d),_)                   =>
+        HhMmSs(d) // not sure why this would ever happen
+      case _                             => ""
+  }
+
   def heartRate = orHide(activity.heartRate)("#heartRate") {hr=>
     ".hrzones *" #> (segmentsByHR map {case (z,tr) =>
       "label *"   #> z.name.get &
-      ".field *"  #> HhMmSs(tr.duration)
+      ".field *"  #> segmentationFormat(tr.duration)
     }) &
     "#avgHR *"   #> Bpm(hr.avg)  &
     "#maxHR *"   #> Bpm(hr.max)
