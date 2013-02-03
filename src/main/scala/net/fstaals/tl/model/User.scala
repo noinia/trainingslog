@@ -4,6 +4,8 @@ import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.common._
 
+import UnitTypes._
+
 class User extends MegaProtoUser[User] {
   def getSingleton = User
 
@@ -21,6 +23,13 @@ class User extends MegaProtoUser[User] {
   /* ********** other methods  ***************** */
 
   def fullName = firstName.get ++ " " ++ lastName.get
+
+  // find the zone corresponding to this heartrate
+  def findHRZone(hr: HeartRate) = hrZones filter {_.inZone(hr)} match {
+    case z :: _  => Some(z)
+    case _       => None
+  }
+
 
 }
 
@@ -60,6 +69,8 @@ class HRZone extends LongKeyedMapper[HRZone] with IdPK with HasOwner[HRZone] {
     val err = FieldError(lowerLimit,"HRZone needs: lowerLimit < upperLimit")
     (if (lowerLimit.get < upperLimit.get) Nil else List(err)) ++ super.validate
   }
+
+  def inZone(h: HeartRate) = lowerLimit.get <= h && h <= upperLimit.get
 }
 
 

@@ -9,6 +9,8 @@ import Trajectory._
 import net.liftweb.http.js._
 import JE._
 
+import org.joda.time.Duration
+
 object Trajectory {
 
   type Timestamp  = Long
@@ -32,6 +34,12 @@ trait TrajectoryLike {
   def startPoint = startPointOption.get
 
   def endPoint   = endPointOption.get
+
+  def duration = (points.headOption, points.lastOption) match {
+    case (Some((s,_)),Some((e,_))) => Some(new Duration(e - s))
+    case _                         => None
+  }
+
 
   def startPointOption = points.headOption map {_._2}
   def endPointOption   = points.lastOption map {_._2}
@@ -124,6 +132,10 @@ case class SegmentedTrajectory(val pieces : List[Trajectory]) extends Trajectory
 
 
   def points = pieces map {_.points} reduceRight {_++_}
+
+  override def duration =
+    Some((pieces flatMap {_.duration}).foldRight(Duration.ZERO)({case (d1,d2) =>
+                                                                  d1.plus(d2)}))
 
   override def segment[B](f: TrajectoryPoint => B) = {
 

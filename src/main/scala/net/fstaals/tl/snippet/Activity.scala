@@ -107,9 +107,28 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
     "#maxSpeed *"       #> Kmh(s map {_.max})
   }
 
+
+
+  def byHrZone(tp: TrajectoryPoint) : HRZone = {
+    val unknownZ = HRZone.create.name("Unknown")
+    tp.heartRate match {
+    case Some(h) => activity.owner.obj flatMap {_.findHRZone(h)} match {
+      case Full(z) => z
+      case _       => unknownZ
+    }
+    case _       => unknownZ
+  }}
+
+  def segmentsByHR =
+    activity.trajectory.toList flatMap {_.segment(byHrZone).toList}
+
   def heartRate = orHide(activity.heartRate)("#heartRate") {hr=>
-    "#avgHR *" #> Bpm(hr.avg)  &
-    "#maxHR *" #> Bpm(hr.max)
+    ".hrzones *" #> (segmentsByHR map {case (z,tr) =>
+      "label *"   #> z.name.get &
+      ".field *"  #> HhMmSs(tr.duration)
+    }) &
+    "#avgHR *"   #> Bpm(hr.avg)  &
+    "#maxHR *"   #> Bpm(hr.max)
   }
 
   def power = orHide(activity.power)("#power") {p =>
