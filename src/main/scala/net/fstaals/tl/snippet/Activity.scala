@@ -108,20 +108,6 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
   }
 
 
-
-  def byHrZone(tp: TrajectoryPoint) : HRZone = {
-    val unknownZ = HRZone.create.name("Unknown")
-    tp.heartRate match {
-    case Some(h) => activity.owner.obj flatMap {_.findHRZone(h)} match {
-      case Full(z) => z
-      case _       => unknownZ
-    }
-    case _       => unknownZ
-  }}
-
-  def segmentsByHR =
-    activity.trajectory.toList flatMap {_.segment(byHrZone).toList}
-
   def segmentationFormat(x: Option[Duration]) =
     (x,activity.trajectory flatMap {_.duration}) match {
       case (Some(d),Some(totalDuration)) => {
@@ -134,7 +120,7 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
   }
 
   def heartRate = orHide(activity.heartRate)("#heartRate") {hr=>
-    ".hrzones *" #> (segmentsByHR map {case (z,tr) =>
+    ".hrzones *" #> (activity.trajectorySegmentsByHRZone map {case (z,tr) =>
       "label *"   #> z.name.get &
       ".field *"  #> segmentationFormat(tr.duration)
     }) &

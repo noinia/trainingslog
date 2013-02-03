@@ -77,6 +77,21 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany with 
     }
   }
 
+
+  def trajectorySegmentsByHRZone = {
+    def byHrZone(tp: TrajectoryPoint) : HRZone = {
+      val unknownZ = HRZone.create.name("Other").lowerLimit(1000)
+      tp.heartRate match {
+        case Some(h) => owner.obj flatMap {_.findHRZone(h)} match {
+          case Full(z) => z
+          case _       => unknownZ
+        }
+        case _       => unknownZ
+      }}
+
+    trajectory.toList flatMap {_.segment(byHrZone).toList} sortBy {_._1.lowerLimit.get}
+  }
+
   /* ********** Access Control  ***************** */
 
 //  def isViewable = isPublic.get || isEditable
