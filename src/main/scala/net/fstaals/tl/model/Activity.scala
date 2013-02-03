@@ -11,18 +11,13 @@ import net.fstaals.tl.mapper._
 import org.joda.time.{Duration, DateTime}
 import org.scala_tools.time.Imports._
 
-class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany {
+class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany with HasOwner[Activity] {
 
   def getSingleton = Activity
 
 
   /* ********** The fields Stored together with an Activity  ***************** */
 
-  // Define a many-to-one (foreign key) relationship to the User class
-  object owner            extends MappedLongForeignKey(this, User) {
-    // add a database index for this column.
-    override def dbIndexed_? = true
-  }
   object isPublic         extends MappedBoolean(this) {
     override def defaultValue = false
   }

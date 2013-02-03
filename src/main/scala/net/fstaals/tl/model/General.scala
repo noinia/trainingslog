@@ -3,17 +3,26 @@ package net.fstaals.tl.model
 import net.liftweb.mapper._
 import net.liftweb.common._
 
-case class Color(val name: String)
 
-class Tag extends LongKeyedMapper[Tag] with IdPK with ManyToMany  {
+trait HasOwner[T <: HasOwner[T]] extends Mapper[T] {
+
+ self: T =>
+
+  object owner  extends MappedLongForeignKey[T,User](this, User) {
+    // add a database index for this column.
+    override def dbNotNull_?  = true
+  }
+
+}
+
+
+
+
+class Tag extends LongKeyedMapper[Tag] with IdPK with ManyToMany with HasOwner[Tag] {
   def getSingleton = Tag
 
   object tag    extends MappedString(this, 20) {
     override def dbIndexed_? = true
-  }
-  object owner  extends MappedLongForeignKey(this, User) {
-    // add a database index for this column.
-    override def dbNotNull_?  = true
   }
 
   object activities extends MappedManyToMany(ActivityTags, ActivityTags.tag,

@@ -40,16 +40,11 @@ object User extends User with MetaMegaProtoUser[User] {
 }
 
 
-class HRZone extends LongKeyedMapper[HRZone] with IdPK {
+class HRZone extends LongKeyedMapper[HRZone] with IdPK with HasOwner[HRZone] {
   def getSingleton = HRZone
 
   /* ********** The fields Stored together with an Activity  ***************** */
 
-  // Define a many-to-one (foreign key) relationship to the User class
-  object owner            extends MappedLongForeignKey(this, User) {
-    // add a database index for this column.
-    override def dbIndexed_? = true
-  }
   object lowerLimit extends MappedInt(this) {
     override def dbNotNull_? = true
   }
