@@ -22,6 +22,14 @@ object TLSiteMap {
 
   def objParser[T <: LongKeyedMapper[T]](x: LongKeyedMetaMapper[T])(xs: List[String]) : Box[T] = idParser(xs) flatMap x.find
 
+
+  case class IfOwnedByMe[T <: HasOwner[T]]() extends
+       IfValue((x:Box[T]) => x match {
+                       case Full(y) => (User.currentUser map {_.id}) === y.owner.get
+                       case _       => false
+                     }
+               , S ? "No access" )
+
   def sitemap = SiteMap(
     Menu.i("Home")       / "index"
   , Menu.i("User") / ""
@@ -47,6 +55,11 @@ object TLSiteMap {
         Menu.i("Add")                / "activity" / "add"
     )
   , Menu.i("Tags")  / "tags"
-  , Menu.i("HR Zones") / "hrzones"
+  , Menu.i("HR Zones") / "hrzone" / "index" submenus (
+           Menu.params[HRZone]("Edit", "Edit",
+                                objParser(HRZone) _, idEncoder _)
+            / "hrzone" / "edit"
+            >> IfOwnedByMe[HRZone]()
+    ) >> Hidden
   )
 }

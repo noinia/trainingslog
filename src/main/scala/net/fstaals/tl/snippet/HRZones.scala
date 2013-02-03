@@ -40,3 +40,23 @@ class HRZones {
 
 
 }
+
+class EditHRZone(z: HRZone) {
+
+  private def toInt(s: String, default: Int) = opt[Int](s.toInt) getOrElse default
+
+  def render =
+    "#name"  #> SHtml.text(z.name, z.name        := _)               &
+    "#color" #> SHtml.text(z.color, z.color      := _)              &
+    "#lower" #> SHtml.number(z.lowerLimit, (i:Int) => z.lowerLimit := i, 0, 1000) &
+    "#upper" #> SHtml.number(z.upperLimit, (i:Int) => z.upperLimit := i, 0, 1000) &
+    "#save"  #> SHtml.onSubmitUnit(save)
+
+
+  def save() = z.validate match {
+    case Nil => { z.save ; S.notice("Saved") }
+    case xs  => S.error(xs)
+  }
+
+
+}

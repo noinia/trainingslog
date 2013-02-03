@@ -1,0 +1,12 @@
+<lift:surround with="default" at="content">
+  <lift:surround with="block" at="blockcontent">
+    <lift:bind-at name="title">HR Zones</lift:bind-at>
+    <form class="lift:EditHRZone?form=post">
+      <label>Name:</label>        <input id="name" name="name" type="text">
+      <label>Color:</label>       <input id="color" name="color" type="color">
+      <label>Lower Limit:</label> <input id="lower" name="lower" type="number" min="0">
+      <label>Upper Limit:</label> <input id="upper" name="upper" type="number" min="0">
+      <input type="submit" value="Save" id="save">
+    </form>
+  </lift:surround>
+</lift:surround>
