@@ -91,7 +91,7 @@ object HhMmSs extends Showable[Duration] with Parseable[Duration] {
     val m : Int = (p - h.hours).minutes
     val s : Int = (p - h.hours - m.minutes).seconds
 
-    "%2d:%2d:%2d".format(h,m,s)
+    "%2d:%02d:%02d".format(h,m,s)
   }
 
   def parse(s: String) = s.split(":").toList flatMap Parseable.toInt match {
