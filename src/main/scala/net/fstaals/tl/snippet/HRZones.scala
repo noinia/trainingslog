@@ -22,8 +22,8 @@ class HRZones {
                                              z map {_.upperLimit(i)}})        &
     "#addZone" #> SHtml.onSubmitUnit(add)                                  &
     "#zones *" #> (currentZones map {zz =>
-              ".name *"       #> zz.name.get       &
-              ".color *"      #> zz.color.get      &
+              ".name *"  #> <a href={"/hrzone/edit/"+zz.id.get}>{zz.name.get}</a>  &
+              ".color *" #> zz.color.get      &
               ".lower *" #> zz.lowerLimit.get &
               ".upper *" #> zz.upperLimit.get })
 
