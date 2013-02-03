@@ -1,0 +1,28 @@
+<form class="lift:ActivitySnippet.exercises" id="exercises">
+  <lift:surround with="block">
+    <lift:bind-at name="title"  >Exercises</lift:bind-at>
+    <lift:bind-at name="blockcontent">
+      <h1>Exercises</h1>
+
+      <div id="exerciseList">
+        exercise template goes here
+      </div>
+
+      <div id="addNewExercise">
+        <h1>Add Exercise</h1>
+        <label>Name:</label>          <div id="name"></div>
+        <label>Start:</label>         <input type="text" id="start">
+        <label>End:</label>           <input type="text" id="end">
+        <label>RPE:</label>           <div id="rpe"></div>
+        <label>Description:</label>   <div id="exdescr"></div>
+        <div class="controls">
+          <div class="accept button" onClick="details.submit()">
+            <img src="/images/buttons/accept.png" alt="">
+            <input type="hidden" id="save" valu="">
+            Save
+          </div>
+        </div>
+      </div>
+    </lift:bind-at>
+  </lift:surround>
+</form>

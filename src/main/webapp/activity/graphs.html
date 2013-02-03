@@ -1,34 +1,3 @@
 <lift:surround with="default" at="content">
-  <div class="lift:ActivitySnippet.graphs" id="graphs">
-    <lift:surround with="block">
-      <lift:bind-at name="title"  >Graphs</lift:bind-at>
-      <lift:bind-at name="blockcontent">
-    <!-- <script language="javascript" type="text/javascript" -->
-    <!--         src="/js/flot/jquery.flot.js" /> -->
-    <!-- <script language="javascript" type="text/javascript" -->
-    <!--         src="/js/flot/jquery.flot.crosshair.js" /> -->
-
-        <div id="graphLegend">
-
-        </div>
-        <div id="graphIndicator" class="indicator">
-          Fooop
-        </div>
-        <div id="graphArea" class="area"></div>
-        <div class="lift:ActivitySnippet.plotGraphs"></div>
-        <script>
-          $("#graphArea").bind( "plotselected", function( event, ranges ) {
-            alert("You selected " + ranges.xaxis.from + " to " + ranges.xaxis.to)
-            // similar for yaxis - with multiple axes, the extra ones are in
-            // x2axis, x3axis, ...
-          });
-        </script>
-        <!-- <script language="javascript" type="text/javascript" -->
-        <!--         src="/js/flot/jquery.flot.crosshair.js" /> -->
-        <script language="javascript" type="text/javascript"
-                src="/js/flot/jquery.flot.selection.js" />
-
-      </lift:bind-at>
-  </div>
-
+  <lift:embed what="/templates-hidden/activity/graphs"></lift:embed>
 </lift:surround>
