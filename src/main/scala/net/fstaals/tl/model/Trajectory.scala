@@ -4,12 +4,32 @@ import scala.collection.SortedMap
 import de.saring.exerciseviewer.data._
 import net.fstaals.tl.model.UnitTypes._
 
+import net.liftweb.common._
+
+
 import Trajectory._
 
 import net.liftweb.http.js._
 import JE._
 
 import org.joda.time.Duration
+
+
+trait HasSummaryData {
+  def duration    : Option[Duration]
+  def speed       : Option[SpeedSummary]
+  def heartRate   : Option[HeartRateSummary]
+  def distance    : Option[Distance]
+  def altitude    : Option[AltitudeSummary]
+  def cadence     : Option[CadenceSummary]
+  def temperature : Option[TemperatureSummary]
+  def power       : Option[PowerSummary]
+
+  // get a trajectory for this thing
+  def trajectory  : Option[TrajectoryLike]
+}
+
+
 
 object Trajectory {
 
@@ -27,9 +47,11 @@ object Trajectory {
 
 case class Trajectory(val points : VertexList) extends TrajectoryLike
 
-trait TrajectoryLike {
+trait TrajectoryLike extends HasSummaryData {
 
   def points : VertexList
+
+  def trajectory = Some(this)
 
   def startPoint = startPointOption.get
 
@@ -40,9 +62,41 @@ trait TrajectoryLike {
     case _                         => None
   }
 
-
   def startPointOption = points.headOption map {_._2}
   def endPointOption   = points.lastOption map {_._2}
+
+  private def gather[X](f: TrajectoryPoint => Option[X]) : Option[List[X]] =
+    points.values.toList.flatMap(y => f(y).toList) match {
+      case Nil => None
+      case xs  => Some(xs)
+  }
+
+  private def avg(xs: Seq[Short])  : Short  = avg(xs).round.shortValue
+  private def avg(xs: Seq[Int])    : Int    = avg(xs).round
+  private def avg(xs: Seq[Double]) : Double = xs.sum / xs.length
+
+  def speed : Option[SpeedSummary]            =
+    gather(t => t.speed) map {xs => SpeedSummary(avg(xs),xs.sum)}
+
+  def distance : Option[Distance]              =
+    None // TODO
+
+  def heartRate : Option[HeartRateSummary] =
+    gather(t => t.heartRate) map { xs => HeartRateSummary(avg(xs),xs.max)}
+
+  def altitude : Option[AltitudeSummary]       =
+    gather(t => t.altitude) map {xs =>
+      AltitudeSummary(avg(xs),xs.min,xs.max,0)} //TODO: GAIN ?
+
+  def cadence : Option[CadenceSummary]         =
+    gather(t => t.cadence) map {xs => CadenceSummary(avg(xs), xs.max)}
+
+  def temperature : Option[TemperatureSummary] =
+    gather(t => t.temperature) map {xs =>
+      TemperatureSummary(avg(xs), xs.min,xs.max) }
+
+  def power : Option[PowerSummary] = None
+
 
   /**
    * This is similar to groupBy. However there are two important differences:
@@ -166,6 +220,29 @@ case class SegmentedTrajectory(val pieces : List[Trajectory]) extends Trajectory
     pieces.foldRight(Map[B,SegmentedTrajectory]())({case (t,a)  => union(t.segment(f),a)})
   }
 
+
+
+
+}
+
+
+
+object TrajectorySegmenters {
+
+  def byHrZone(tr: Trajectory, zones : List[HRZone]) = {
+
+    def zone(tp: TrajectoryPoint) : HRZone = {
+      val unknownZ = HRZone.create.name("Other").lowerLimit(1000)
+      tp.heartRate match {
+        case Some(h) => zones filter {_.inZone(h)} match {
+          case z :: _  => z
+          case _       => unknownZ
+        }
+        case _       => unknownZ
+      }}
+
+    tr.segment(zone _).toList sortBy {_._1.lowerLimit.get}
+  }
 
 
 

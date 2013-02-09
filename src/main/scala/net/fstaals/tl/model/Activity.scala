@@ -11,7 +11,13 @@ import net.fstaals.tl.mapper._
 import org.joda.time.{Duration, DateTime}
 import org.scala_tools.time.Imports._
 
-class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany with HasOwner[Activity] {
+import UnitTypes._
+
+class Activity extends LongKeyedMapper[Activity]
+               with IdPK
+               with ManyToMany
+               with HasOwner[Activity]
+               with HasSummaryData {
 
   def getSingleton = Activity
 
@@ -60,10 +66,10 @@ class Activity extends LongKeyedMapper[Activity] with IdPK with ManyToMany with 
   def cadence                   = af flatMap {_.cadence}
   def temperature               = af flatMap {_.temperature}
   def heartRate                 = af flatMap {_.heartRate}
-  def elevation                 = af flatMap {_.altitude}
+  def altitude                  = af flatMap {_.altitude}
   def power                     = af flatMap {_.power}
 
-  def trajectory                = af map {_.trajectory}
+  def trajectory : Option[TrajectoryLike] = af flatMap {_.trajectory}
 
   def newExercise = {
     // new exercise starts after the last exercise
@@ -175,10 +181,3 @@ class Exercise extends LongKeyedMapper[Exercise] with IdPK {
 }
 
 object Exercise extends Exercise with LongKeyedMetaMapper[Exercise]
-
-
-// class Exercise( val name : String
-//               , var rpe  : Option[UserProfile.RPE]
-//               , val description : String
-//               , val start : DateTime
-//               , val end   : DateTime)
