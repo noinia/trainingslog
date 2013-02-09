@@ -12,9 +12,11 @@ import net.liftweb.common._
 import net.liftweb.http._
 
 import net.fstaals.tl.model._
-import net.fstaals.tl.helpers.Helpers._
+// import net.fstaals.tl.helpers.Helpers._
 
 import net.liftmodules.widgets.flot._
+
+import Helpers._
 
 import UnitTypes._
 import Trajectory._
@@ -34,7 +36,7 @@ class ActivityGraphs(val a: Activity) {
       , a.speed       -> FlotGraph(tr,k,(p:T) => p.speed, xL, Kmh,
                                    "Speed", "#3669da", 2,
                                    Full(0.0), Full(60.0), Full("left")) //TODO fix max
-      , a.elevation   -> FlotGraph(tr,k,(p:T) => p.altitude, xL, Alt,
+      , a.altitude    -> FlotGraph(tr,k,(p:T) => p.altitude, xL, Alt,
                                    "Altitude", "#228400", 3,
                                    Empty, Empty, Full("right"))
       , a.power       -> FlotGraph(tr,k,(p:T) => p.power, xL, Watt,
@@ -88,12 +90,18 @@ class ActivityGraphs(val a: Activity) {
                   override val mode = Full(graphMode)
                 }, graphs map {_.axisOptions}), Flot.script(xhtml))
 
+  def selected = (new SummaryData(a,a.duration)).render // TODO
+
 }
+
+
+
+
 
 
 object FlotGraph {
 
-  def apply[X,Y]( tr : Trajectory
+  def apply[X,Y]( tr : TrajectoryLike
                 , k  : TrajectoryPoint => Option[X]
                 , f  : TrajectoryPoint => Option[Y]
                 , xLabeller   : Showable[X]
@@ -108,7 +116,7 @@ object FlotGraph {
     apply(tr, k, f, xLabeller, yLabeller, Full(label), Full(color),yAxisIdx,
           minY, maxY, axPosition)
 
-  def apply[X,Y]( tr : Trajectory
+  def apply[X,Y]( tr : TrajectoryLike
                 , k  : TrajectoryPoint => Option[X]
                 , f  : TrajectoryPoint => Option[Y]
                 , xLabeller : Showable[X]

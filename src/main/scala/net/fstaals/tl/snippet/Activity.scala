@@ -16,12 +16,14 @@ import org.joda.time.Duration
 import js._
 import JsCmds._
 
+
 class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   var inEditMode = false
 
   lazy val activityGraphs = new ActivityGraphs(activity)
   lazy val activityMap    = new ActivityMap(activity)
+  lazy val summaryData    = new SummaryData(activity,activity.duration)
 
   def dispatch = {
     case "summary"    => summary
@@ -68,10 +70,7 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   // --------------------- Summary ------------------------------
 
-  val summary = SHtml.memoize {
-    general & timing & heartRate & power & elevation & cadence & temperature &
-    saveButton
-  }
+  val summary = SHtml.memoize { general & summaryData.render & saveButton }
 
   def saveButton = if (inEditMode) "#save"        #> SHtml.onSubmitUnit(save)
                    else            "#saveSummary" #> ""
@@ -99,62 +98,6 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
     ".tags *" #> render
   }
 
-  def timing = {
-    val s = activity.speed
-    ".movingTime *"     #> "?" &
-    ".avgSpeed *"       #> Kmh(s map {_.avg}) &
-    ".avgMovingSpeed *" #> "?" &
-    ".maxSpeed *"       #> Kmh(s map {_.max})
-  }
-
-
-  def segmentationFormat(x: Option[Duration]) =
-    (x,activity.trajectory flatMap {_.duration}) match {
-      case (Some(d),Some(totalDuration)) => {
-        val p = (100.0 * d.getMillis()) / totalDuration.getMillis()
-        "%s (%.1f%%)".format(HhMmSs(d), p)
-      }
-      case (Some(d),_)                   =>
-        HhMmSs(d) // not sure why this would ever happen
-      case _                             => ""
-  }
-
-  def heartRate = orHide(activity.heartRate)("#heartRate") {hr=>
-    ".hrzones *" #> (activity.trajectorySegmentsByHRZone map {case (z,tr) =>
-      "label *"   #> z.name.get &
-      ".field *"  #> segmentationFormat(tr.duration)
-    }) &
-    ".avgHR *"   #> Bpm(hr.avg)  &
-    ".maxHR *"   #> Bpm(hr.max)
-  }
-
-  def power = orHide(activity.power)("#power") {p =>
-    ".avgPower *"  #> Watt(p.avg) &
-    ".maxPower *"  #> Watt(p.max)
-  }
-
-  def elevation = orHide(activity.elevation)("elevation") {e=>
-    ".elevationGain *"   #> Alt(e.gain) &
-    ".elevationLoss *"   #> Alt(None)   &
-    ".minElevation *"    #> Alt(e.min)  &
-    ".maxElevation *"    #> Alt(e.max)
-  }
-
-  def cadence = orHide(activity.cadence)("#cadence") {c=>
-    ".avgCad *" #> Rpm(c.avg) &
-    ".maxCad *" #> Rpm(c.max)
-  }
-
-  def temperature = orHide(activity.temperature)("#temperature") {t=>
-    ".avgTemp *" #> Celcius(t.avg) &
-    ".minTemp *" #> Celcius(t.min) &
-    ".maxTemp *" #> Celcius(t.max)
-  }
-
-  def orHide[T](x: Option[T])(cssSel: String)(f: T => CssSel) = x match {
-    case Some(y) => f(y)
-    case _       => (cssSel ++ " [class+]") #> "hidden"
-  }
 
   // --------------------- Graphs ------------------------------
 
@@ -180,6 +123,70 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
 
 }
+
+class SummaryData(val data     : HasSummaryData,
+                   total       : Option[Duration],
+                   val hrZones : List[HRZone]  = Nil,
+                   val pwrZones: List[PwrZone] = Nil) {
+
+  val totalDuration = total map {_.getMillis()}
+
+  def render = timing & heartRate & power & elevation & cadence & temperature
+
+  def timing =
+    ".movingTime *"     #> "?" &
+    ".avgSpeed *"       #> Kmh(data.speed map {_.avg}) &
+    ".avgMovingSpeed *" #> "?" &
+    ".maxSpeed *"       #> Kmh(data.speed map {_.max})
+
+  // displays the time and percentage of the total time of this segment.
+  def segmentationFormat(x: Option[Duration]) = (x,totalDuration) match {
+    case (Some(d),Some(t)) =>
+      "%s (%.1f%%)".format(HhMmSs(d), (100.0 * d.getMillis()) / t)
+    case (Some(d),_)       => HhMmSs(d)
+    case _                 => ""
+  }
+
+  def heartRate = orHide(data.heartRate)(".heartRate") {hr=>
+    ".hrzones *" #> // (data.trajectorySegmentsByHRZone map {case (z,tr) =>
+    //   "label *"   #> z.name.get &
+    //   ".field *"  #> segmentationFormat(tr.duration)
+    // }) &
+                                  "TODO"                      &
+    ".avgHR *"   #> Bpm(hr.avg)  &
+    ".maxHR *"   #> Bpm(hr.max)
+  }
+
+  def power = orHide(data.power)(".power") {p =>
+    ".avgPower *"  #> Watt(p.avg) &
+    ".maxPower *"  #> Watt(p.max)
+  }
+
+  def elevation = orHide(data.altitude)(".elevation") {e=>
+    ".elevationGain *"   #> Alt(e.gain) &
+    ".elevationLoss *"   #> Alt(None)   &
+    ".minElevation *"    #> Alt(e.min)  &
+    ".maxElevation *"    #> Alt(e.max)
+  }
+
+  def cadence = orHide(data.cadence)(".cadence") {c=>
+    ".avgCad *" #> Rpm(c.avg) &
+    ".maxCad *" #> Rpm(c.max)
+  }
+
+  def temperature = orHide(data.temperature)(".temperature") {t=>
+    ".avgTemp *" #> Celcius(t.avg) &
+    ".minTemp *" #> Celcius(t.min) &
+    ".maxTemp *" #> Celcius(t.max)
+  }
+
+  def orHide[T](x: Option[T])(cssSel: String)(f: T => CssSel) = x match {
+    case Some(y) => f(y)
+    case _       => (cssSel ++ " [class+]") #> "hidden"
+  }
+
+}
+
 
 class AddExercise(val e: Exercise) {
 
