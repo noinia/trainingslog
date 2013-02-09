@@ -229,7 +229,7 @@ case class SegmentedTrajectory(val pieces : List[Trajectory]) extends Trajectory
 
 object TrajectorySegmenters {
 
-  def byHrZone(tr: Trajectory, zones : List[HRZone]) = {
+  def byHrZone(tr: TrajectoryLike, zones : List[HRZone]) = {
 
     def zone(tp: TrajectoryPoint) : HRZone = {
       val unknownZ = HRZone.create.name("Other").lowerLimit(1000)

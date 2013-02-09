@@ -18,10 +18,16 @@ import net.liftmodules.widgets.flot._
 
 import Helpers._
 
+import js._
+import js.jquery._
+import JE._
+import JqJE._
+import JsCmds._
+
 import UnitTypes._
 import Trajectory._
 
-class ActivityGraphs(val a: Activity) {
+class ActivityGraphs(val a: Activity, val graphArea: String) {
 
 
 
@@ -84,13 +90,35 @@ class ActivityGraphs(val a: Activity) {
     activityGraphs(k,xL) map combineFst flatten
   }
 
-  def render(graphArea: String)(xhtml: NodeSeq) =
-    Flot.render(graphArea, graphs map {_.flotSerie},
-                globalOptions(new FlotAxisOptions {
-                  override val mode = Full(graphMode)
-                }, graphs map {_.axisOptions}), Flot.script(xhtml))
 
-  def selected = (new SummaryData(a,a.duration)).render // TODO
+  def render = renderGraph  &
+               bindSelected &
+               selected
+
+  def bindSelected = {
+    val handler = AnonFunc("event ranges", Alert("ranges.xaxis.from"))
+
+    "script *" #> (Jq(graphArea) ~> JsFunc("bind", "plotselected" , handler))
+  }
+
+
+  def renderGraph = new CssSel {
+    def apply(xhtml: NodeSeq) =
+      Flot.render(graphArea, graphs map {_.flotSerie},
+                  globalOptions(new FlotAxisOptions {
+                    override val mode = Full(graphMode)
+                  }, graphs map {_.axisOptions}), Flot.script(xhtml))
+  }
+
+
+  def selected = (new SummaryData(a,
+                                  a.duration,
+                                  a.owner.obj.toList flatMap {_.hrZones},
+                                  Nil // TODO: pwrZones
+                                  )).render // TODO
+
+
+
 
 }
 

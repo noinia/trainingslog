@@ -21,9 +21,11 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   var inEditMode = false
 
-  lazy val activityGraphs = new ActivityGraphs(activity)
+  lazy val activityGraphs = new ActivityGraphs(activity,"graphArea")
   lazy val activityMap    = new ActivityMap(activity)
-  lazy val summaryData    = new SummaryData(activity,activity.duration)
+  lazy val summaryData    = new SummaryData(activity,
+                                            activity.duration,
+                                            activity.owner.obj.toList flatMap {_.hrZones})
 
   def dispatch = {
     case "summary"    => summary
@@ -31,7 +33,6 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
     case "map"        => activityMap.render
     case "exercises"  => exercises
     case "controls"   => controls
-    case "plotGraphs" => activityGraphs.render("graphArea")
     case "laps"       => laps
   }
 
@@ -82,8 +83,7 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
                 ".owner *"       #> (activity.owner.obj map {_.fullName} openOr "") &
                 ".isPublic *"    #> show(activity.isPublic)                         &
                 ".start"         #> activity.start                                  &
-                ".duration *"    #> HhMmSs(activity.duration)                       &
-                ".distance *"    #> Km(activity.distance)                           &
+                // duration and distance included by summary data
                 ".description *" #> show(activity.description)                      &
                 tags
 
@@ -101,7 +101,8 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   // --------------------- Graphs ------------------------------
 
-  def graphs  = "#title"    #> "Graphs"
+  def graphs  = ".plotGraphs"      #> activityGraphs.renderGraph &
+                ".graphSelected *" #> activityGraphs.selected
 
   // --------------------- Exercises ---------------------------
 
@@ -134,9 +135,11 @@ class SummaryData(val data     : HasSummaryData,
   def render = timing & heartRate & power & elevation & cadence & temperature
 
   def timing =
-    ".movingTime *"     #> "?" &
+    ".duration *"       #> HhMmSs(data.duration)       &
+    ".distance *"       #> Km(data.distance)           &
+    ".movingTime *"     #> "?"                         &
     ".avgSpeed *"       #> Kmh(data.speed map {_.avg}) &
-    ".avgMovingSpeed *" #> "?" &
+    ".avgMovingSpeed *" #> "?"                         &
     ".maxSpeed *"       #> Kmh(data.speed map {_.max})
 
   // displays the time and percentage of the total time of this segment.
@@ -147,12 +150,14 @@ class SummaryData(val data     : HasSummaryData,
     case _                 => ""
   }
 
+  def segmentByHrZone =
+    data.trajectory.toList flatMap { TrajectorySegmenters.byHrZone(_,hrZones) }
+
   def heartRate = orHide(data.heartRate)(".heartRate") {hr=>
-    ".hrzones *" #> // (data.trajectorySegmentsByHRZone map {case (z,tr) =>
-    //   "label *"   #> z.name.get &
-    //   ".field *"  #> segmentationFormat(tr.duration)
-    // }) &
-                                  "TODO"                      &
+    ".hrzones *" #> (segmentByHrZone map {case (z,tr) =>
+      "label *"   #> z.name.get &
+      ".field *"  #> segmentationFormat(tr.duration)
+    }) &
     ".avgHR *"   #> Bpm(hr.avg)  &
     ".maxHR *"   #> Bpm(hr.max)
   }
