@@ -81,3 +81,8 @@ object HRZone extends HRZone with LongKeyedMetaMapper[HRZone] {
   def myHrZones = User.currentUser.toList flatMap {u => findAll(By(owner,u))}
 
 }
+
+
+class PwrZone {
+
+}
