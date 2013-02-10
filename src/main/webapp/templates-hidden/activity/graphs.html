@@ -11,7 +11,11 @@
       </div>
       <div id="graphIndicator" class="indicator">
 
-        <div class="graphSelected">
+        <div id="graphCrossHair">
+          values when hovering go here
+        </div>
+
+        <div id="graphSelected">
           <h3>Selected</h3>
 
           <div class="timing">
@@ -40,17 +44,13 @@
       </div>
       <div id="graphArea" class="area"></div>
       <div class="plotGraphs"></div>
-      <script>
-        $("#graphArea").bind( "plotselected", function( event, ranges ) {
-        alert("You selected " + ranges.xaxis.from + " to " + ranges.xaxis.to)
-        // similar for yaxis - with multiple axes, the extra ones are in
-        // x2axis, x3axis, ...
-        });
-      </script>
-      <!-- <script language="javascript" type="text/javascript" -->
-      <!--         src="/js/flot/jquery.flot.crosshair.js" /> -->
       <script language="javascript" type="text/javascript"
-              src="/js/flot/jquery.flot.selection.js" />
-
+              src="/js/flot/jquery.flot.crosshair.js"></script>
+      <script language="javascript" type="text/javascript"
+              src="/js/flot/jquery.flot.selection.js"></script>
+      <script language="javascript" type="text/javascript"
+              src="/js/graphs.js"></script>
+      <script class="bindSelector"></script>
     </lift:bind-at>
+
 </div>
