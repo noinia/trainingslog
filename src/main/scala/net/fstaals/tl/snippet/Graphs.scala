@@ -27,7 +27,7 @@ import JsCmds._
 import UnitTypes._
 import Trajectory._
 
-class ActivityGraphs(val a: Activity, val graphArea: String) {
+class ActivityGraphs(val a: Activity) {
 
 
 
@@ -91,32 +91,53 @@ class ActivityGraphs(val a: Activity, val graphArea: String) {
   }
 
 
-  def render = renderGraph  &
-               bindSelected &
-               selected
+  def selectedHandler(from: Double, to: Double) = a.trajectory match {
+    case Some(tr) => { val d  = tr.subtrajectory(from.round,to.round)
+                       Replace("graphSelected", selectedCss(d).applyAgain)
+                     }
+    case _        => Noop
+  }
+
 
   def bindSelected = {
-    val handler = AnonFunc("event ranges", Alert("ranges.xaxis.from"))
+    val body = JsRaw("""alert(from + " -> " + to)""")
 
-    "script *" #> (Jq(graphArea) ~> JsFunc("bind", "plotselected" , handler))
+    def prs(s: String) = s.split(",").toList match {
+      case x :: y :: Nil => (x.tail.trim.toDouble, y.init.trim.toDouble)
+    }
+
+    // "script *" #> ()
+    "script *" #> Call("flotSelection", AnonFunc("from, to",
+                    SHtml.ajaxCall(JsArray(JsVar("from"),JsVar("to")),
+                                   s => (selectedHandler _).tupled(prs(s)))))
   }
 
 
   def renderGraph = new CssSel {
     def apply(xhtml: NodeSeq) =
-      Flot.render(graphArea, graphs map {_.flotSerie},
+      Flot.render("graphArea", graphs map {_.flotSerie},
                   globalOptions(new FlotAxisOptions {
                     override val mode = Full(graphMode)
                   }, graphs map {_.axisOptions}), Flot.script(xhtml))
   }
 
+  def selected = selectedCss(a)
 
-  def selected = (new SummaryData(a,
-                                  a.duration,
-                                  a.owner.obj.toList flatMap {_.hrZones},
-                                  Nil // TODO: pwrZones
-                                  )).render // TODO
+  private var graphIndicator : MemoizeTransform = null
 
+  def selectedCss(d: HasSummaryData) = {
+    graphIndicator = SHtml.memoize {
+      "#graphIndicator *" #> (new SummaryData(d, d.duration,
+                                              a.owner.obj.toList flatMap {_.hrZones},
+                                              Nil // TODO: pwrZones
+                                              )).render // TODO
+    }
+    graphIndicator
+  }
+
+  def render =  ".plotGraphs"      #> renderGraph &
+                "#graphSelected *" #> selected    &
+                "script"           #> bindSelected
 
 
 

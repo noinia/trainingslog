@@ -21,7 +21,7 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   var inEditMode = false
 
-  lazy val activityGraphs = new ActivityGraphs(activity,"graphArea")
+  lazy val activityGraphs = new ActivityGraphs(activity)
   lazy val activityMap    = new ActivityMap(activity)
   lazy val summaryData    = new SummaryData(activity,
                                             activity.duration,
@@ -102,7 +102,10 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
   // --------------------- Graphs ------------------------------
 
   def graphs  = ".plotGraphs"      #> activityGraphs.renderGraph &
-                ".graphSelected *" #> activityGraphs.selected
+                "#graphSelected *" #> activityGraphs.selected &
+                "script" #> activityGraphs.bindSelected
+
+
 
   // --------------------- Exercises ---------------------------
 
