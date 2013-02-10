@@ -14,6 +14,53 @@ import JE._
 
 import org.joda.time.Duration
 
+// ----------------------------------------------------------------------------
+// Data available in each vertex
+
+
+case class TrajectoryPoint(
+    val timestamp   : Long                  // time since start in miliseconds
+  , val latitude    : Option[Double]       = None // in degrees
+  , val longitude   : Option[Double]       = None // in degrees
+  , val heartRate   : Option[HeartRate]    = None // in bpm
+  , val altitude    : Option[Altitude]     = None // in meters?
+  , val speed       : Option[Speed]        = None // in Km/h
+  , val cadence     : Option[Cadence]      = None // in rpm
+  , val power       : Option[Power]        = None // in watts ?
+  , val temperature : Option[Temperature]  = None // in degrees celcius
+  , val distance    : Option[Distance]     = None // since start in meters
+) {
+
+
+  // get a googleMaps LatLn js object representing this trajectory point
+  def toGoogleMapsLatLng : Option[JsExp] =
+    (latitude,longitude) match {
+      case (Some(lat),Some(long)) =>
+        Some(JsRaw("new google.maps.LatLng(%f,%f)".format(lat,long)))
+      case _                      => None
+    }
+
+
+}
+
+object TrajectoryPoint {
+  def fromExerciseSample(es : ExerciseSample) =
+    TrajectoryPoint( es.getTimestamp()
+                   , Option(es.getPosition())    map {_.getLatitude() }
+                   , Option(es.getPosition())    map {_.getLongitude()}
+                   , Option(es.getHeartRate())
+                   , Option(es.getAltitude())
+                   , Option(es.getSpeed())
+                   , Option(es.getCadence())
+                   , None // power
+                   , Option(es.getTemperature())
+                   , Option(es.getDistance())
+                   )
+
+
+}
+
+// ----------------------------------------------------------------------------
 
 trait HasSummaryData {
   def duration    : Option[Duration]
@@ -30,22 +77,8 @@ trait HasSummaryData {
 }
 
 
+// ----------------------------------------------------------------------------
 
-object Trajectory {
-
-  type Timestamp  = Long
-  type SM[T]      = SortedMap[Timestamp,T]
-  type VertexList = SortedMap[Timestamp,TrajectoryPoint]
-
-  def fromEVSamples(xs : List[ExerciseSample]) =
-    fromSeq(xs map TrajectoryPoint.fromExerciseSample)
-
-  def fromSeq(xs: Seq[TrajectoryPoint]) = Trajectory(
-    SortedMap.empty[Timestamp,TrajectoryPoint] ++ (xs map {p => (p.timestamp,p)}))
-
-}
-
-case class Trajectory(val points : VertexList) extends TrajectoryLike
 
 trait TrajectoryLike extends HasSummaryData {
 
@@ -97,6 +130,14 @@ trait TrajectoryLike extends HasSummaryData {
 
   def power : Option[PowerSummary] = None
 
+  def filter(p : TrajectoryPoint => Boolean) : TrajectoryLike =
+    segment(p).get(true).getOrElse(Trajectory.empty)
+    // note that we use segment since we also want to be able to do this on
+    // segmented trajectories
+
+  def subtrajectory(s: Timestamp, e: Timestamp) =
+    filter (t => s <= t.timestamp && t.timestamp <= e)
+
 
   /**
    * This is similar to groupBy. However there are two important differences:
@@ -147,51 +188,30 @@ trait TrajectoryLike extends HasSummaryData {
 
 }
 
-case class TrajectoryPoint(
-    val timestamp   : Long                  // time since start in miliseconds
-  , val latitude    : Option[Double]       = None // in degrees
-  , val longitude   : Option[Double]       = None // in degrees
-  , val heartRate   : Option[HeartRate]    = None // in bpm
-  , val altitude    : Option[Altitude]     = None // in meters?
-  , val speed       : Option[Speed]        = None // in Km/h
-  , val cadence     : Option[Cadence]      = None // in rpm
-  , val power       : Option[Power]        = None // in watts ?
-  , val temperature : Option[Temperature]  = None // in degrees celcius
-  , val distance    : Option[Distance]     = None // since start in meters
-) {
+// ----------------------------------------------------------------------------
+// Simple trajectory
 
+object Trajectory {
 
-  // get a googleMaps LatLn js object representing this trajectory point
-  def toGoogleMapsLatLng : Option[JsExp] =
-    (latitude,longitude) match {
-      case (Some(lat),Some(long)) =>
-        Some(JsRaw("new google.maps.LatLng(%f,%f)".format(lat,long)))
-      case _                      => None
-    }
+  type Timestamp  = Long
+  type SM[T]      = SortedMap[Timestamp,T]
+  type VertexList = SortedMap[Timestamp,TrajectoryPoint]
 
+  def empty = fromSeq(List())
+
+  def fromEVSamples(xs : List[ExerciseSample]) =
+    fromSeq(xs map TrajectoryPoint.fromExerciseSample)
+
+  def fromSeq(xs: Seq[TrajectoryPoint]) = Trajectory(
+    SortedMap.empty[Timestamp,TrajectoryPoint] ++ (xs map {p => (p.timestamp,p)}))
 
 }
 
-object TrajectoryPoint {
-  def fromExerciseSample(es : ExerciseSample) =
-    TrajectoryPoint( es.getTimestamp()
-                   , Option(es.getPosition())    map {_.getLatitude() }
-                   , Option(es.getPosition())    map {_.getLongitude()}
-                   , Option(es.getHeartRate())
-                   , Option(es.getAltitude())
-                   , Option(es.getSpeed())
-                   , Option(es.getCadence())
-                   , None // power
-                   , Option(es.getTemperature())
-                   , Option(es.getDistance())
-                   )
+case class Trajectory(val points : VertexList) extends TrajectoryLike
 
+// ----------------------------------------------------------------------------
+// Segmented Trajectory
 
-}
-
-
-
-// trait Segmentable
 
 case class SegmentedTrajectory(val pieces : List[Trajectory]) extends TrajectoryLike {
 
@@ -225,6 +245,8 @@ case class SegmentedTrajectory(val pieces : List[Trajectory]) extends Trajectory
 
 }
 
+// ----------------------------------------------------------------------------
+// Pre defined segmenters
 
 
 object TrajectorySegmenters {
