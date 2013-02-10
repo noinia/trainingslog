@@ -104,9 +104,12 @@ trait TrajectoryLike extends HasSummaryData {
       case xs  => Some(xs)
   }
 
-  private def avg(xs: Seq[Short])  : Short  = avg(xs).round.shortValue
-  private def avg(xs: Seq[Int])    : Int    = avg(xs).round
-  private def avg(xs: Seq[Double]) : Double = xs.sum / xs.length
+  private def avg(xs: Seq[Short])  : Short  = avgD(xs).round.shortValue
+  private def avg(xs: Seq[Int])    : Int    = avgD(xs).round.intValue
+  private def avg(xs: Seq[Double]) : Double = avgD(xs)
+
+  private def avgD[X](xs: Seq[X])(implicit num: Numeric[X]) : Double =
+    num.toDouble(xs.sum) / xs.length
 
   def speed : Option[SpeedSummary]            =
     gather(t => t.speed) map {xs => SpeedSummary(avg(xs),xs.sum)}

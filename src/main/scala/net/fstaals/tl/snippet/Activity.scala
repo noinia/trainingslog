@@ -101,11 +101,7 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   // --------------------- Graphs ------------------------------
 
-  def graphs  = ".plotGraphs"      #> activityGraphs.renderGraph &
-                "#graphSelected *" #> activityGraphs.selected &
-                "script" #> activityGraphs.bindSelected
-
-
+  def graphs  = activityGraphs.render
 
   // --------------------- Exercises ---------------------------
 

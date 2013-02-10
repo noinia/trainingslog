@@ -92,8 +92,8 @@ class ActivityGraphs(val a: Activity) {
 
 
   def selectedHandler(from: Double, to: Double) = a.trajectory match {
-    case Some(tr) => { val d  = tr.subtrajectory(from.round,to.round)
-                       Replace("graphSelected", selectedCss(d).applyAgain)
+    case Some(tr) => { selection  = Some(tr.subtrajectory(from.round,to.round))
+                       Replace("graphSelected", selected.applyAgain)
                      }
     case _        => Noop
   }
@@ -121,25 +121,25 @@ class ActivityGraphs(val a: Activity) {
                   }, graphs map {_.axisOptions}), Flot.script(xhtml))
   }
 
-  def selected = selectedCss(a)
 
-  private var graphIndicator : MemoizeTransform = null
+  var selection : Option[HasSummaryData] = None
+  // private var giTrans : Option[MemoizeTransform] = None
 
-  def selectedCss(d: HasSummaryData) = {
-    graphIndicator = SHtml.memoize {
-      "#graphIndicator *" #> (new SummaryData(d, d.duration,
-                                              a.owner.obj.toList flatMap {_.hrZones},
-                                              Nil // TODO: pwrZones
-                                              )).render // TODO
-    }
-    graphIndicator
+  val selected = SHtml.memoize {
+    "#graphSelected *" #> selectedCss
   }
 
-  def render =  ".plotGraphs"      #> renderGraph &
-                "#graphSelected *" #> selected    &
-                "script"           #> bindSelected
+  def selectedCss = selection match {
+    case Some(d) =>  (new SummaryData(d, d.duration,
+                                      a.owner.obj.toList flatMap {_.hrZones},
+                                      Nil // TODO: pwrZones
+                                      )).render // TODO
+    case _       => ("*" #> "")
+  }
 
-
+  def render = ".plotGraphs"      #> renderGraph &
+               "script"           #> bindSelected andThen
+               selected
 
 }
 
