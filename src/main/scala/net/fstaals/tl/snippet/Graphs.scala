@@ -98,6 +98,10 @@ class ActivityGraphs(val a: Activity) {
     case _        => Noop
   }
 
+  def unselectHandler() = {
+    selection = None
+    Replace("graphSelected", selected.applyAgain)
+  }
 
   def bindSelected = {
     val body = JsRaw("""alert(from + " -> " + to)""")
@@ -106,10 +110,13 @@ class ActivityGraphs(val a: Activity) {
       case x :: y :: Nil => (x.tail.trim.toDouble, y.init.trim.toDouble)
     }
 
+    val select = AnonFunc("from, to", SHtml.ajaxCall(JsArray(JsVar("from"),JsVar("to")),
+                          s => (selectedHandler _).tupled(prs(s))))
+
+    val unselect = AnonFunc(SHtml.ajaxInvoke(unselectHandler))
+
     // "script *" #> ()
-    "script *" #> Call("flotSelection", AnonFunc("from, to",
-                    SHtml.ajaxCall(JsArray(JsVar("from"),JsVar("to")),
-                                   s => (selectedHandler _).tupled(prs(s)))))
+    "script *" #> Call("flotSelection", select,  unselect )
   }
 
 
