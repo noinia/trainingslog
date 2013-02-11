@@ -11,9 +11,9 @@ function flotSelection(selectF, unselectF) {
         });
 
 
-        $("#graphArea").bind("plothover", function(event, postion, item) {
+        $("#graphArea").bind("plothover", function(event, position, item) {
             $("#graphCrossHair").contents().replaceWith(
-                position
+                "foo" + position.x
             )
         });
 

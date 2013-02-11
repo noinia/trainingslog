@@ -154,6 +154,7 @@ trait FlotGridOptions extends BaseFlotOptions {
   def coloredAreas: Box[String] = Empty // only (fn: plot area -> array of areas)
   def markings: Box[FlotMarkings] = Empty
 
+  def autoHighlight: Box[Boolean] = Empty
 
   def buildOptions =
   List(c("color", color),
@@ -164,6 +165,7 @@ trait FlotGridOptions extends BaseFlotOptions {
        borderWidth.map(v => ("borderWidth", v)),
        clickable.map(v => ("clickable", v)),
        hoverable.map(v => ("hoverable", v)),
+       autoHighlight.map(v => ("autoHighlight",v)),
        coloredAreas.map(v => ("coloredAreas", v))
   )
 
@@ -235,13 +237,13 @@ trait FlotOptions extends BaseFlotOptions {
     legend.map(v => ("legend", v.asJsObj)),
     xaxis.map(v => ("xaxis", v.asJsObj)),
     yaxes.map(lst => ("yaxes", JsArray(lst.toList map {_.asJsObj}))),
+    crossHair.map(v => ("crosshair", v.asJsObj)),
     modeSelection.map(v => ("selection", JsObj("mode" -> v))),
     c("shadowSize", shadowSize),
     c("grid", grid),
     series.map(v => ("series", JsObj(v.toSeq: _*))),
     zoomOptions.map(v => ("zoom", v)),
-    panOptions.map(v => ("pan", v)),
-    crossHair.map(v => ("crosshair", v.asJsObj))
+    panOptions.map(v => ("pan", v))
   )
 
 }

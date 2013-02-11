@@ -77,10 +77,11 @@ class ActivityGraphs(val a: Activity) {
       override val yaxes = Full(yAxes)
       override val modeSelection = Full("x")
       override val crossHair = Full(new FlotCrossHairOptions {
-        override val mode = Full("x")
+        override val mode          = Full("x")
       })
       override val grid = Full(new FlotGridOptions {
         override val hoverable = Full(true)
+        override val autoHighlight = Full(false)
       })
   }
 
