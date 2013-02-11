@@ -9,5 +9,13 @@ function flotSelection(selectF, unselectF) {
         $("#graphArea").bind( "plotunselected", function( event ) {
             unselectF()
         });
+
+
+        $("#graphArea").bind("plothover", function(event, postion, item) {
+            $("#graphCrossHair").contents().replaceWith(
+                position
+            )
+        });
+
     });
 }

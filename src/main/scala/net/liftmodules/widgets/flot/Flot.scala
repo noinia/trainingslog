@@ -231,6 +231,7 @@ object Flot {
          data.points.map(v => ("points", v.asJsObj)),
          data.bars.map(v => ("bars", v.asJsObj)),
          data.yaxis.map(v => ("yaxis", v)),
+         data.hoverable.map(v => ("hoverable",v)),
          data.color.map {
         case Left(c) => ("color", c)
         case Right(c) => ("color", c)

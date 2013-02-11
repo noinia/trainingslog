@@ -79,6 +79,9 @@ class ActivityGraphs(val a: Activity) {
       override val crossHair = Full(new FlotCrossHairOptions {
         override val mode = Full("x")
       })
+      override val grid = Full(new FlotGridOptions {
+        override val hoverable = Full(true)
+      })
   }
 
 
@@ -207,10 +210,10 @@ class FlotGraph[X,Y]( val data        : Iterable[(X,Y)]
     val l = label
     val c = color
     new FlotSerie() {
-      override val data = flotData
-      override val label = l
-      override val color = c map {s => Left(s)}
-      override val yaxis = Full(yAxisIdx)
+      override val data      = flotData
+      override val label     = l
+      override val color     = c map {s => Left(s)}
+      override val yaxis     = Full(yAxisIdx)
     }
   }
 

@@ -35,6 +35,7 @@ trait FlotSerie
   def color: Box[Either[String, Int]] = Empty
   def shadowSize: Box[Int] = Empty
   def yaxis: Box[Int] = Empty
+  def hoverable : Box[Boolean] = Empty
 }
 
 }
