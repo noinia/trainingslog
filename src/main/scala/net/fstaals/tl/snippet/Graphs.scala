@@ -107,38 +107,23 @@ class ActivityGraphs(val a: Activity) {
     Replace("graphSelected", selected.applyAgain)
   }
 
-  def bindSelected = {
-    val body = JsRaw("""alert(from + " -> " + to)""")
-
-    def prs(s: String) = s.split(",").toList match {
-      case x :: y :: Nil => (x.tail.trim.toDouble, y.init.trim.toDouble)
-    }
-
-    val select = AnonFunc("from, to", SHtml.ajaxCall(JsArray(JsVar("from"),JsVar("to")),
-                          s => (selectedHandler _).tupled(prs(s))))
-
-    val unselect = AnonFunc(SHtml.ajaxInvoke(unselectHandler))
-
-    // "script *" #> ()
-    "script *" #> Call("flotSelection", select,  unselect )
-  }
-
-
   def renderGraph = new CssSel {
     def apply(xhtml: NodeSeq) =
       Flot.render("graphArea", graphs map {_.flotSerie},
                   globalOptions(new FlotAxisOptions {
                     override val mode = Full(graphMode)
-                  }, graphs map {_.axisOptions}), Flot.script(xhtml))
+                  }, graphs map {_.axisOptions}),
+                  Flot.script(xhtml),
+                  FlotBindSelect((selectedHandler _).tupled),
+                  FlotBindUnSelect(SHtml.ajaxInvoke(unselectHandler)),
+                  FlotBindOnHover(Call("onHover",JsVar("plot_graphArea")))
+                )
   }
 
 
   var selection : Option[HasSummaryData] = None
-  // private var giTrans : Option[MemoizeTransform] = None
 
-  val selected = SHtml.memoize {
-    "#graphSelected *" #> selectedCss
-  }
+  val selected = SHtml.memoize { "*" #> selectedCss  }
 
   def selectedCss = selection match {
     case Some(d) =>  (new SummaryData(d, d.duration,
@@ -149,8 +134,7 @@ class ActivityGraphs(val a: Activity) {
   }
 
   def render = ".plotGraphs"      #> renderGraph &
-               "script"           #> bindSelected andThen
-               selected
+               "#graphSelected *" #> selected
 
 }
 
@@ -242,4 +226,55 @@ case class FlotXAxis[X,Y](generator: TrajectoryPoint => Option[X],
                           xL : Showable[X],
                           options : FlotAxisOptions)(implicit ord: Ordering[X]) {
 
+}
+
+
+case class FlotBindUnSelect(cmd: JsCmd) extends FlotCapability {
+
+  def render(flotInfo : FlotInfo) =
+    JsRaw("""
+      $(document).ready(function() {
+        $("#%s").bind( "plotunselected", function( event ) {
+          %s
+        })
+      })""".format(flotInfo.idPlaceholder, cmd.toJsCmd))
+
+  def renderHide() = Noop
+  def renderShow() = Noop
+}
+
+case class FlotBindSelect(selectedHandler: ((Double,Double)) => JsCmd)
+     extends FlotCapability {
+
+  def render(flotInfo : FlotInfo) =
+    JsRaw("""
+    $(document).ready(function() {
+      $("#%s").bind( "plotselected", function( event, ranges ) {
+        // from = ranges.xaxis.from, to = ranges.xaxis.to
+        // similar for yaxis - with multiple axes, the extra ones are in
+        // x2axis, x3axis, ...
+        %s
+      })
+    })""".format(flotInfo.idPlaceholder, select.toJsCmd))
+
+
+  def select = SHtml.ajaxCall(JsArray(JsVar("ranges.xaxis.from"),
+                                      JsVar("ranges.xaxis.to")),
+                              s => selectedHandler(prs(s)))
+
+  def renderHide() = Noop
+  def renderShow() = Noop
+
+  def prs(s: String) = s.split(",").toList match {
+    case x :: y :: Nil => (x.tail.trim.toDouble, y.init.trim.toDouble)
+  }
+
+}
+
+case class FlotBindOnHover(cmd: JsCmd) extends FlotCapability {
+
+  def render(flotInfo : FlotInfo) = cmd
+
+  def renderHide() = Noop
+  def renderShow() = Noop
 }

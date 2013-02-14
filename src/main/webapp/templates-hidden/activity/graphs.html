@@ -2,25 +2,41 @@
   <lift:surround with="block">
     <lift:bind-at name="title"  >Graphs</lift:bind-at>
     <lift:bind-at name="blockcontent">
-      <!-- <script language="javascript" type="text/javascript" -->
-      <!--         src="/js/flot/jquery.flot.js" /> -->
-      <!-- <script language="javascript" type="text/javascript" -->
-      <!--         src="/js/flot/jquery.flot.crosshair.js" /> -->
-
       <div id="graphLegend">
       </div>
       <div id="graphIndicator" class="indicator">
 
         <div id="graphCrossHair">
-          values when hovering go here
+          <div class="timing">
+            <label>Time:</label>                <div class="field time"></div>
+            <label>Speed:</label>               <div class="field speed"></div>
+          </div>
+
+          <div class="heartRate">
+            <label>Heart Rate:</label>          <div class="field hr"></div>
+          </div>
+
+          <div class="power">
+            <label>Power:</label>               <div class="field pwr"></div>
+          </div>
+
+          <div class="elevation">
+            <label>Elevation:</label>           <div class="field elev"></div>
+          </div>
+
+          <div class="temperature">
+            <label>Temperature:</label>         <div class="field temp"></div>
+          </div>
         </div>
 
         <div id="graphSelected">
           <h3>Selected</h3>
 
           <div class="timing">
-            <label>Time:</label>                <div class="field duration"></div>
-            <label>Moving Time:</label>         <div class="field movingTime"></div>
+            <label>Start:</label>               <div class="field start"></div>
+            <label>End:</label>                 <div class="field end"></div>
+            <label>Duration:</label>            <div class="field duration"></div>
+            <label>Moving Duration:</label>     <div class="field movingTime"></div>
             <label>Avg Speed:</label>           <div class="field avgSpeed"></div>
             <label>Max Speed:</label>           <div class="field maxSpeed"></div>
           </div>
@@ -42,15 +58,14 @@
 
 
       </div>
-      <div id="graphArea" class="area"></div>
-      <div class="plotGraphs"></div>
       <script language="javascript" type="text/javascript"
               src="/js/flot/jquery.flot.crosshair.js"></script>
       <script language="javascript" type="text/javascript"
               src="/js/flot/jquery.flot.selection.js"></script>
       <script language="javascript" type="text/javascript"
               src="/js/graphs.js"></script>
-      <script class="bindSelector"></script>
+      <div id="graphArea" class="area"></div>
+      <div class="plotGraphs"></div>
     </lift:bind-at>
 
 </div>
