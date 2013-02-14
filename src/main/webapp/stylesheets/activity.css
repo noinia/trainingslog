@@ -83,6 +83,16 @@
 
 }
 
+#graphCrossHair {
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+#graphSelected {
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
 .description {
     float: left;
 }
@@ -106,6 +116,6 @@
 
 
 h3 {
-    margin-top: 10px;
+    margin-bottom: 5px;
     clear: left;
 }
