@@ -103,3 +103,9 @@
     float: right;
     text-align: right;
 }
+
+
+h3 {
+    margin-top: 10px;
+    clear: left;
+}
