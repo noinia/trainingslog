@@ -3,12 +3,13 @@ function onHover(plot) {
     $("#graphArea").bind("plothover", function(event, position, item) {
 
 
-        var t = position.x
-        $(".time").text(""+t)
-        showFunction("Heart Rate",  ".heartRate",   ".hr",   t)
-        showFunction("Power",       ".power",       ".pwr",  t)
-        showFunction("Elevation",   ".elevation",   ".elev", t)
-        showFunction("Temperature", ".temperature", ".temp", t)
+        var t = Math.max(0,position.x)
+
+        $(".time").text(showDate(new Date(Math.floor(t))))
+        showFunction("Heart Rate",  "#graphIndicator .heartRate",   ".hr",   t)
+        showFunction("Power",       "#graphIndicator .power",       ".pwr",  t)
+        showFunction("Elevation",   "#graphIndicator .elevation",   ".elev", t)
+        showFunction("Temperature", "#graphIndicator .temperature", ".temp", t)
     })
 
     function showFunction(fLabel, sectionCssSel, valueCssSel, t) {
@@ -26,6 +27,14 @@ function onHover(plot) {
         // alert(plot == undefined)
 
         return null
+    }
+
+    function showDate(d) {
+        function pad(x) {
+            return ("0" + x).substr(-2,2)
+        }
+        // TODO: checkout the weird issue with the hours
+        return pad(d.getHours() - 1) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds())
     }
 })
 }
