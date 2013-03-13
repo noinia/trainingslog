@@ -6,18 +6,19 @@ function onHover(plot) {
         var t = Math.min(Math.max(axes.xaxis.min, position.x), axes.xaxis.max)
 
         $(".time").text(showDate(new Date(Math.floor(t))))
-        showFunction("Speed",       "#graphIndicator .timing",      ".speed",t)
-        showFunction("Heart Rate",  "#graphIndicator .heartRate",   ".hr",   t)
-        showFunction("Power",       "#graphIndicator .power",       ".pwr",  t)
-        showFunction("Altitude",    "#graphIndicator .elevation",   ".elev", t)
-        showFunction("Temperature", "#graphIndicator .temperature", ".temp", t)
+
+        showFunction("Speed",       "#graphIndicator .timing",      t)
+        showFunction("Heart Rate",  "#graphIndicator .heartRate",   t)
+        showFunction("Power",       "#graphIndicator .power",       t)
+        showFunction("Altitude",    "#graphIndicator .elevation",   t)
+        showFunction("Temperature", "#graphIndicator .temperature", t)
     })
 
-    function showFunction(fLabel, sectionCssSel, valueCssSel, t) {
+    function showFunction(fLabel, sectionCssSel, t) {
         var y = getValue(fLabel,t)
         if (y != null) {
             $(sectionCssSel).show()
-            $(valueCssSel).text(""+y)
+            $(sectionCssSel + " .value").text(""+y)
         } else
             $(sectionCssSel).hide()
     }

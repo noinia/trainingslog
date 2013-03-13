@@ -134,7 +134,11 @@ class ActivityGraphs(val a: Activity) {
   }
 
   def render = ".plotGraphs"      #> renderGraph &
-               "#graphSelected *" #> selected
+               "#graphSelected *" #> selected    &
+               "#graphCrossHair"  #> renderUnits
+
+  def renderUnits = ".unit *" #> ""
+  //TODO: make a mapping that looks up the right units
 
 }
 
