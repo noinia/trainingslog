@@ -6,6 +6,7 @@ function onHover(plot) {
         var t = Math.min(Math.max(axes.xaxis.min, position.x), axes.xaxis.max)
 
         $(".time").text(showDate(new Date(Math.floor(t))))
+        showFunction("Speed",       "#graphIndicator .timing",      ".speed",t)
         showFunction("Heart Rate",  "#graphIndicator .heartRate",   ".hr",   t)
         showFunction("Power",       "#graphIndicator .power",       ".pwr",  t)
         showFunction("Altitude",    "#graphIndicator .elevation",   ".elev", t)
