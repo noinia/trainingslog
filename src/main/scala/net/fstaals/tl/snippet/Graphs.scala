@@ -96,12 +96,7 @@ class ActivityGraphs(val a: Activity) {
 
 
   def selectedHandler(from: Double, to: Double) = a.trajectory match {
-    case Some(tr) => {
-      println("From: "+from + " to: "+to)
-      println("From: "+from + " to: "+to)
-      println(HhMmSs(new Duration(to.round - from.round)))
-
-                      selection  = Some(tr.subtrajectory(from.round,to.round))
+    case Some(tr) => { selection  = Some(tr.subtrajectory(from.round,to.round))
                        Replace("graphSelected", selected.applyAgain)
                      }
     case _        => Noop
