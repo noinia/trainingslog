@@ -94,6 +94,7 @@
 }
 
 .description {
+    clear: both;
     float: left;
 }
 
