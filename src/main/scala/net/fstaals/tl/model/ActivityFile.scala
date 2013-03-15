@@ -54,6 +54,9 @@ case class ActivityFile(val path : String) extends HasSummaryData {
   def duration: Option[Duration]                =
     trajec.endPointOption map {tp => new Duration(tp.timestamp.intValue) }
 
+  def startTime = Some(new Duration(0))
+  def endTime   = duration
+
   def speed : Option[SpeedSummary]             =
     activityData map {e => SpeedSummary.fromESpeed(e.getSpeed())}
 

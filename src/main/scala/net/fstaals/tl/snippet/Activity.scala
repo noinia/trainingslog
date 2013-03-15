@@ -135,6 +135,8 @@ class SummaryData(val data     : HasSummaryData,
 
   def timing =
     ".duration *"       #> HhMmSs(data.duration)       &
+    ".startTime *"      #> HhMmSs(data.startTime)      &
+    ".endTime *"        #> HhMmSs(data.endTime)        &
     ".distance *"       #> Km(data.distance)           &
     ".movingTime *"     #> "?"                         &
     ".avgSpeed *"       #> Kmh(data.speed map {_.avg}) &

@@ -72,6 +72,10 @@ trait HasSummaryData {
   def temperature : Option[TemperatureSummary]
   def power       : Option[PowerSummary]
 
+  // for sub-trajectories etc.
+  def startTime   : Option[Duration]
+  def endTime     : Option[Duration]
+
   // get a trajectory for this thing
   def trajectory  : Option[TrajectoryLike]
 }
@@ -95,6 +99,9 @@ trait TrajectoryLike extends HasSummaryData {
     case _                         => None
   }
 
+  def startTime = startPointOption map {p => new Duration(p.timestamp)}
+  def endTime   = endPointOption   map {p => new Duration(p.timestamp)}
+
   def startPointOption = points.headOption map {_._2}
   def endPointOption   = points.lastOption map {_._2}
 
@@ -112,7 +119,7 @@ trait TrajectoryLike extends HasSummaryData {
     num.toDouble(xs.sum) / xs.length
 
   def speed : Option[SpeedSummary]            =
-    gather(t => t.speed) map {xs => SpeedSummary(avg(xs),xs.sum)}
+    gather(t => t.speed) map {xs => SpeedSummary(avg(xs),xs.max)}
 
   def distance : Option[Distance]              =
     None // TODO

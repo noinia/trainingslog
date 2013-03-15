@@ -68,6 +68,8 @@ class Activity extends LongKeyedMapper[Activity]
   def heartRate                 = af flatMap {_.heartRate}
   def altitude                  = af flatMap {_.altitude}
   def power                     = af flatMap {_.power}
+  def startTime                 = af flatMap {_.startTime}
+  def endTime                   = af flatMap {_.endTime}
 
   def trajectory : Option[TrajectoryLike] = af flatMap {_.trajectory}
 
