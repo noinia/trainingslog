@@ -36,20 +36,17 @@ function drawMap(area,locations) {
 
         var startMarker = new google.maps.Marker({
               map       : map
-            , clickable : false
             , position  : positions[0]
             , title     : "Start"
         })
         var endMarker = new google.maps.Marker({
               map       : map
-            , clickable : false
             , position  : positions[positions.length-1]
             , title     : "End"
         })
 
         var currentPostion = new google.maps.Marker({
               map       : map
-            , clickable : false
             , position  : positions[0]
         })
 
