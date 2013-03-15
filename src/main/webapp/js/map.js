@@ -2,95 +2,62 @@
 
 function drawMap(area,locations) {
     $(document).ready(function () {
+        function zoomToFit(map, locs) {
+            var bounds = new google.maps.LatLngBounds()
+            for (var i=0 ; i < locs.length ; i++ )
+                bounds.extend(locs[i])
+            map.fitBounds(bounds)
+        }
+
+        function placeMarker(m, t) {
+            var i = 0
+            while( i < locations.length && locations[i].time <= t){
+                i++;
+            }
+            m.setPosition(locations[i-1].position)
+        }
 
 
-        var mapOptions = {
-          center: locations[0],
-          zoom: 12,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
+        var positions = locations.map(function (x) {return x.position})
 
-        var map = new google.maps.Map(area,
-            mapOptions);
+        var map = new google.maps.Map(area, {
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+        })
 
-        var flightPath = new google.maps.Polyline({
-            path: locations,
-            strokeColor: "#FF0000",
-            strokeOpacity: 1.0,
-            strokeWeight: 2
-        });
+        var path = new google.maps.Polyline({
+              path         : positions
+            , strokeColor  : "#FF0000"
+            , strokeOpacity: 1.0
+            , strokeWeight : 2
+            , map          : map
+        })
 
-        flightPath.setMap(map);
+        zoomToFit(map,positions)
 
-        // alert('woei2');
-    });
+        var startMarker = new google.maps.Marker({
+              map       : map
+            , clickable : false
+            , position  : positions[0]
+            , title     : "Start"
+        })
+        var endMarker = new google.maps.Marker({
+              map       : map
+            , clickable : false
+            , position  : positions[positions.length-1]
+            , title     : "End"
+        })
+
+        var currentPostion = new google.maps.Marker({
+              map       : map
+            , clickable : false
+            , position  : positions[0]
+        })
+
+        $("#graphArea").bind("plothover", function(event, position, item) {
+            // var axes = plot.getAxes()
+            // var t = Math.min(Math.max(axes.xaxis.min, position.x), axes.xaxis.max)
+            placeMarker(currentPostion,Math.round(position.x))
+        })
+
+    })
 }
-
-
-
-// function drawMap(area, locations) {
-//     $(document).ready(function() {
-//         $(area).gmap().bind('init', function(ev, map) {
-//             // $(area).gmap('addMarker',
-//             //              {'position': '57.7973333,12.0502107',
-//             //               'bounds': true});
-
-//             var points  = [];
-//             for(i=0; i<locations.loc.length; i++) {
-//                 var point = new google.maps.LatLng(locations.loc[i].lat,locations.loc[i].lng);
-//                 points.push(point);
-//             }
-
-//             var flightPlanCoordinates = [
-//                 new google.maps.LatLng(37.772323, -122.214897),
-//                 new google.maps.LatLng(21.291982, -157.821856),
-//                 new google.maps.LatLng(-18.142599, 178.431),
-//                 new google.maps.LatLng(-27.46758, 153.027892)
-//             ];
-
-
-//             // $(area).gmap('addMarker',
-//             //              {'position': '57.7973333,12.0502107',
-//             //               'bounds': true});
-
-//             // $(area).gmap('addMarker',
-//             //              {'position': points[0],
-//             //               'bounds': true});
-
-
-//             $('#map_canvas').gmap({'callback':function() {
-//                 $('#map_canvas').gmap('addShape', 'Circle', { 'strokeColor': "#FF0000", 'strokeOpacity': 0.8, 'strokeWeight': 2, 'fillColor': "#FF0000", 'fillOpacity': 0.35, 'center': new google.maps.LatLng(58.12, 12.01), 'radius': 2000 });
-//             }});
-
-//             // $(area).gmap('addShape', 'Polyline',
-//             //              {  'path': flightPlanCoordinates,
-//             //                 'strokeColor': "#FF0000",
-//             //                 'strokeOpacity': 1.0,
-//             //                 'strokeWeight': 3
-//             //              });
-
-
-//         });
-//     });
-// }
-
-
-
-
-//         // var myOptions = {
-//         //     zoom: 12,
-//         //     mapTypeId: google.maps.MapTypeId.ROADMAP
-//         // };
-
-//         // var mapArea = $(area);
-//         // var map = new google.maps.Map(mapArea.get(), myOptions);
-//         // initialLocation = new google.maps.LatLng(locations.loc[0].lat, locations.loc[0].lng);
-//         // map.setCenter(initialLocation);
-//         // for(i=0; i<locations.loc.length; i++) {
-//         //     var point = new google.maps.LatLng(locations.loc[i].lat,locations.loc[i].lng);
-
-//         //     var marker = new google.maps.Marker({position: point,
-//         //                                          title: locations.loc[i].title });
-//         //     marker.setMap(map);
-//         // }
-//         // alert("woei");

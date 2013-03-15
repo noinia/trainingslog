@@ -33,10 +33,12 @@ case class TrajectoryPoint(
 
 
   // get a googleMaps LatLn js object representing this trajectory point
-  def toGoogleMapsLatLng : Option[JsExp] =
+  def toGoogleMapsTP : Option[JsExp] =
     (latitude,longitude) match {
       case (Some(lat),Some(long)) =>
-        Some(JsRaw("new google.maps.LatLng(%f,%f)".format(lat,long)))
+        Some(JsObj(("time",     Num(timestamp))
+                  ,("position", JsRaw("new google.maps.LatLng(%f,%f)".format(lat,long)))
+                  ))
       case _                      => None
     }
 
@@ -193,7 +195,7 @@ trait TrajectoryLike extends HasSummaryData {
 
 
   def toGoogleMapsTrajectory =
-    JsArray(points.values.toList flatMap {_.toGoogleMapsLatLng})
+    JsArray(points.values.toList flatMap {_.toGoogleMapsTP})
 
 
 }
