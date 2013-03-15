@@ -96,7 +96,12 @@ class ActivityGraphs(val a: Activity) {
 
 
   def selectedHandler(from: Double, to: Double) = a.trajectory match {
-    case Some(tr) => { selection  = Some(tr.subtrajectory(from.round,to.round))
+    case Some(tr) => {
+      println("From: "+from + " to: "+to)
+      println("From: "+from + " to: "+to)
+      println(HhMmSs(new Duration(to.round - from.round)))
+
+                      selection  = Some(tr.subtrajectory(from.round,to.round))
                        Replace("graphSelected", selected.applyAgain)
                      }
     case _        => Noop
@@ -270,7 +275,7 @@ case class FlotBindSelect(selectedHandler: ((Double,Double)) => JsCmd)
   def renderShow() = Noop
 
   def prs(s: String) = s.split(",").toList match {
-    case x :: y :: Nil => (x.tail.trim.toDouble, y.init.trim.toDouble)
+    case x :: y :: Nil => (x.trim.toDouble, y.trim.toDouble)
   }
 
 }
