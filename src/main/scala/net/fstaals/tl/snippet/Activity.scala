@@ -28,12 +28,14 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
                                             activity.owner.obj.toList flatMap {_.hrZones})
 
   def dispatch = {
-    case "summary"    => summary
-    case "graphs"     => graphs
-    case "map"        => activityMap.render
-    case "exercises"  => exercises
-    case "controls"   => controls
-    case "laps"       => laps
+    case "saveActivity" => saveActivity
+    case "summary"      => summary
+    case "description"  => description
+    case "graphs"       => graphs
+    case "map"          => activityMap.render
+    case "exercises"    => exercises
+    case "controls"     => controls
+    case "laps"         => laps
   }
 
   def save() : JsCmd = activity.validate match {
@@ -46,35 +48,38 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
     // --------------------- Controls ------------------------------
 
-  def controls = toggleEdit
+  val controls = SHtml.memoize {
+    toggleEdit & saveButton
+  }
+
+  def saveButton = if (inEditMode) "dummy"        #> ""
+                   else            "#saveSummary" #> ""
+
+  def saveActivity = "#save" #> SHtml.onSubmitUnit(save)
 
   def toggleEdit : CssSel =
+    "#toggleEdit"           #> (if (inEditMode) cancelEditButton
+                                else            enableEditButton).render &
     "#toggleEdit [onclick]" #> SHtml.ajaxInvoke(() => toggleEditMode)
 
   val enableEditButton = Button.button("Edit","toggleEdit")
   val cancelEditButton = CancelButton.button("Cancel","toggleEdit")
-
-  def editModeText = (if (inEditMode)
-                       "*" #> cancelEditButton.render
-                     else
-                       "*" #> enableEditButton.render) andThen toggleEdit
 
   def toggleEditMode = {
     inEditMode = !inEditMode
 
     val dummy = SHtml.hidden(() => Noop)
 
-    Replace("toggleEdit", editModeText.apply(dummy)) & // the button replaces everything anyway
-    Replace("summary",   summary.applyAgain)       &
-    Replace("exercises", exercises.applyAgain)
+
+    Replace("controls",             controls.applyAgain)    &
+    Replace("summary",              summary.applyAgain)     &
+    Replace("activityDescription",  description.applyAgain) &
+    Replace("exercises",            exercises.applyAgain)
   }
 
   // --------------------- Summary ------------------------------
 
-  val summary = SHtml.memoize { general & summaryData.render & saveButton }
-
-  def saveButton = if (inEditMode) "#save"        #> SHtml.onSubmitUnit(save)
-                   else            "#saveSummary" #> ""
+  val summary = SHtml.memoize { general & summaryData.render }
 
   def show(x: MixableMappedField) =
     if (inEditMode) x.toForm else Full(x.asHtml)
@@ -84,8 +89,8 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
                 ".isPublic *"    #> show(activity.isPublic)                         &
                 ".start"         #> activity.start                                  &
                 // duration and distance included by summary data
-                ".description *" #> show(activity.description)                      &
                 tags
+
 
 
   def tags = {
@@ -98,6 +103,10 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
     ".tags *" #> render
   }
 
+
+  val description =  SHtml.memoize {
+    ".description *" #> show(activity.description)
+  }
 
   // --------------------- Graphs ------------------------------
 

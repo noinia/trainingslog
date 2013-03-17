@@ -1,82 +1,65 @@
-<form class="lift:form.ajax" id="summaryForm">
-  <div class="lift:ActivitySnippet.summary" id="summary">
-    <lift:surround with="block">
-      <lift:bind-at name="title"  ><span class="title"  >Title</span> </lift:bind-at>
-      <lift:bind-at name="blockcontent">
-        <div class="subblock" id="general">
-          <h1>General</h1>
-          <label>User:</label>               <div class="field owner"></div>
-          <label>Public:</label>             <div class="field isPublic"></div>
-          <label>Duration:</label>           <div class="field duration"></div>
-          <label>Distance:</label>           <div class="field distance"></div>
-          <label>Tags:</label>               <div class="field tags">
-            <span>No Tags.</span>
-          </div>
+<div class="lift:ActivitySnippet.summary" id="summary">
+  <lift:surround with="block">
+    <lift:bind-at name="title"  ><span class="title"  >Title</span> </lift:bind-at>
+    <lift:bind-at name="blockcontent">
+      <div class="subblock" id="general">
+        <h1>General</h1>
+        <label>User:</label>               <div class="field owner"></div>
+        <label>Public:</label>             <div class="field isPublic"></div>
+        <label>Duration:</label>           <div class="field duration"></div>
+        <label>Distance:</label>           <div class="field distance"></div>
+        <label>Tags:</label>               <div class="field tags">
+          <span>No Tags.</span>
         </div>
+      </div>
 
-        <div class="timing subblock">
-          <h1>Timing</h1>
-          <label>Time:</label>                <div class="field duration"></div>
-          <label>Moving Time:</label>         <div class="field movingTime"></div>
-          <label>Avg Speed:</label>           <div class="field avgSpeed"></div>
-          <label>Avg Moving Speed:</label>    <div class="field avgMovingSpeed"></div>
-          <label>Max Speed:</label>           <div class="field maxSpeed"></div>
+      <div class="timing subblock">
+        <h1>Timing</h1>
+        <label>Time:</label>                <div class="field duration"></div>
+        <label>Moving Time:</label>         <div class="field movingTime"></div>
+        <label>Avg Speed:</label>           <div class="field avgSpeed"></div>
+        <label>Avg Moving Speed:</label>    <div class="field avgMovingSpeed"></div>
+        <label>Max Speed:</label>           <div class="field maxSpeed"></div>
+      </div>
+
+      <div class="heartRate subblock">
+        <h1>Heart Rate</h1>
+        <div class="hrzones">
+          <label></label>                   <div class="field"></div>
         </div>
+        <label>Avg HR:</label>              <div class="field avgHR"></div>
+        <label>Max HR:</label>              <div class="field maxHR"></div>
+      </div>
 
-        <div class="heartRate subblock">
-          <h1>Heart Rate</h1>
-          <div class="hrzones">
-            <label></label>                   <div class="field"></div>
-          </div>
-          <label>Avg HR:</label>              <div class="field avgHR"></div>
-          <label>Max HR:</label>              <div class="field maxHR"></div>
-        </div>
+      <div class="power subblock">
+        <h1>Power</h1>
+        <label>Zone 1</label>               <div class="field pwrZone"></div>
+        <label>Avg Power:</label>           <div class="field avgPower"></div>
+        <label>Max Power:</label>           <div class="field maxPower"></div>
+      </div>
 
-        <div class="power subblock">
-          <h1>Power</h1>
-          <label>Zone 1</label>               <div class="field pwrZone"></div>
-          <label>Avg Power:</label>           <div class="field avgPower"></div>
-          <label>Max Power:</label>           <div class="field maxPower"></div>
-        </div>
+      <div class="elevation subblock">
+        <h1>Elevation</h1>
+        <label>Elevation Gain:</label>      <div class="field elevationGain"></div>
+        <label>Elevation Loss:</label>      <div class="field elevationLoss"></div>
+        <label>Min Altitude:</label>        <div class="field minElevation"></div>
+        <label>Max Altitude:</label>        <div class="field maxElevation"></div>
+      </div>
 
-        <div class="elevation subblock">
-          <h1>Elevation</h1>
-          <label>Elevation Gain:</label>      <div class="field elevationGain"></div>
-          <label>Elevation Loss:</label>      <div class="field elevationLoss"></div>
-          <label>Min Altitude:</label>        <div class="field minElevation"></div>
-          <label>Max Altitude:</label>        <div class="field maxElevation"></div>
-        </div>
+      <div class="cadence subblock">
+        <h1>Cadence</h1>
 
-        <div class="cadence subblock">
-          <h1>Cadence</h1>
+        <label>Min Cadence:</label>         <div class="field minCad"></div>
+        <label>Max Cadence:</label>         <div class="field maxCad"></div>
+      </div>
 
-          <label>Min Cadence:</label>         <div class="field minCad"></div>
-          <label>Max Cadence:</label>         <div class="field maxCad"></div>
-        </div>
+      <div class="temperature subblock">
+        <h1>Temperature:</h1>
 
-        <div class="temperature subblock">
-          <h1>Temperature:</h1>
-
-          <label>Avg Temperature:</label>     <div class="field avgTemp"></div>
-          <label>Min Temperature:</label>     <div class="field minTemp"></div>
-          <label>Max Temperature:</label>     <div class="field maxTemp"></div>
-        </div>
-
-        <div class="bigsubblock">
-          <div class="subblocktoggle"></div>
-          <label>Activity Description:</label><div class="description"></div>
-        </div>
-
-        <div class="accept button" id="saveSummary">
-          <script>$("#saveSummary").click(function(e) {
-            $(this).closest("form").submit()
-            })</script>
-
-          <img src="/images/buttons/accept.png" alt="">
-          <input type="hidden" id="save" value="">
-          Save
-        </div>
-      </lift:bind-at>
-    </lift:surround>
-  </div>
-</form>
+        <label>Avg Temperature:</label>     <div class="field avgTemp"></div>
+        <label>Min Temperature:</label>     <div class="field minTemp"></div>
+        <label>Max Temperature:</label>     <div class="field maxTemp"></div>
+      </div>
+    </lift:bind-at>
+  </lift:surround>
+</div>
