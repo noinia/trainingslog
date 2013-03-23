@@ -197,12 +197,16 @@ object Lap {
       case _                 => None
     }
 
+    val end = Option(new Duration(l.getTimeSplit() * 100))
     val dist = Option(l.getSpeed()) map {_.getDistance()}
 
-    lazy val subTrajectory = None // TODO        fullTraj.subTrajectory()
+    lazy val subTrajectory = (start,end,fullTraj) match {
+      case (Some(s),Some(e),Some(tr)) => Some(tr.subtrajectory(s.millis,e.millis))
+      case _                          => None
+    }
 
     Lap(i,
-        start, Option(new Duration(l.getTimeSplit() * 100)),
+        start, end,
         Option(l.getSpeed()) map {SpeedSummary.fromLSpeed(_)},
         startDist, dist,
         hr,
