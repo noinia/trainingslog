@@ -83,12 +83,12 @@
 
 }
 
-#graphCrossHair {
+.crossHair {
     margin-bottom: 20px;
     overflow: hidden;
 }
 
-#graphSelected {
+.selected {
     margin-bottom: 20px;
     overflow: hidden;
 }
@@ -106,7 +106,7 @@
     padding-bottom: 5px;
 }
 
-#graphIndicator label {
+.indicator label {
     width: auto;
 }
 

@@ -95,16 +95,16 @@ class ActivityGraphs(val a: Activity) {
   }
 
 
-  def selectedHandler(from: Double, to: Double) = a.trajectory match {
+  def selectedHandler(from: Double, to: Double) : JsCmd = a.trajectory match {
     case Some(tr) => { selection  = Some(tr.subtrajectory(from.round,to.round))
-                       Replace("graphSelected", selected.applyAgain)
+                      Jq(".selected") ~> JqReplace(selected.applyAgain)
                      }
     case _        => Noop
   }
 
-  def unselectHandler() = {
+  def unselectHandler() : JsCmd = {
     selection = None
-    Replace("graphSelected", selected.applyAgain)
+    Jq(".selected") ~> JqReplace(selected.applyAgain)
   }
 
   def renderGraph = new CssSel {
@@ -125,17 +125,24 @@ class ActivityGraphs(val a: Activity) {
 
   val selected = SHtml.memoize { "*" #> selectedCss  }
 
-  def selectedCss = selection match {
-    case Some(d) =>  (new SummaryData(d, d.duration,
-                                      a.owner.obj.toList flatMap {_.hrZones},
-                                      Nil // TODO: pwrZones
-                                      )).render // TODO
+  def selectedCss = { println("Woei") ; selection match {
+    case Some(d) => (new SummaryData(d, d.duration,
+                                     a.owner.obj.toList flatMap {_.hrZones},
+                                     Nil // TODO: pwrZones
+                                     )).render // TODO
     case _       => ("*" #> "")
   }
 
-  def render = ".plotGraphs"      #> renderGraph &
-               "#graphSelected *" #> selected    &
-               "#graphCrossHair"  #> renderUnits
+}
+
+  def render = ".plotGraphs"       #> renderGraph       &
+               "#graphIndicator *" #> indicatorTemplate
+
+  def indicatorTemplate =
+    Templates(List("templates-hidden","activity","indicator")) map indicator
+
+  def indicator = ".selected *"      #> selected    &
+                  ".crossHair"       #> renderUnits
 
   def renderUnits = ".unit *" #> ""
   //TODO: make a mapping that looks up the right units
