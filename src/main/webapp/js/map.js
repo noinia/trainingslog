@@ -1,11 +1,16 @@
 var myMapData
 
-function placeMarker(m, t, locations) {
+// get the last location with time <= t
+function getLocation(t, locations) {
     var i = 0
     while( i < locations.length && locations[i].time <= t){
         i++;
     }
-    m.setPosition(locations[i-1].position)
+    return locations[i-1]
+}
+
+function placeMarker(m, t, locations) {
+    m.setPosition(getLocation(t,locations).position)
 }
 
 function zoomToFit(map, locs) {
@@ -13,6 +18,11 @@ function zoomToFit(map, locs) {
     for (var i=0 ; i < locs.length ; i++ )
         bounds.extend(locs[i])
     map.fitBounds(bounds)
+}
+
+function posToTime(x,plot) {
+    var axes = plot.getAxes()
+    return Math.min(Math.max(axes.xaxis.min, x), axes.xaxis.max)
 }
 
 
@@ -88,10 +98,20 @@ function linkMapAndGraph(graphsData, mapData) {
 
         // Graphs -> Map
         $(graphsData.graphArea).bind("plothover", function(event, position, item) {
-            var axes = graphsData.plot.getAxes()
-            var t = Math.min(Math.max(axes.xaxis.min, position.x), axes.xaxis.max)
+            var t = posToTime(position.x,graphsData.plot)
             placeMarker(mapData.currentPosition,Math.round(t),mapData.locations)
         })
+
+        $(graphsData.graphArea).bind( "plotselected", function( event, ranges ) {
+            // from = ranges.xaxis.from, to = ranges.xaxis.to
+            // similar for yaxis - with multiple axes, the extra ones are in
+            // x2axis, x3axis, ...
+            var s = Math.round(posToTime(ranges.xaxis.from, graphsData.plot))
+            var e = Math.round(posToTime(ranges.xaxis.to, graphsData.plot))
+
+            //TODO: Finish
+        })
+
 
         // Map -> Graphs
         // TODO: we need a faster/better solution here

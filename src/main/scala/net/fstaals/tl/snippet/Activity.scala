@@ -15,6 +15,7 @@ import org.joda.time.Duration
 
 import js._
 import JsCmds._
+import JE._
 
 
 class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
@@ -128,13 +129,26 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   // --------------------- Laps ------------------------------
 
-  def laps = ".lapItem *" #> (activity.laps map { l =>
-    ".index *"    #> l.lapNumber         &
-    ".start *"    #> HhMmSs(l.startTime) &
-    ".end *"      #> HhMmSs(l.endTime)   &
-    ".duration *" #> HhMmSs(l.duration)  &
-    ".distance *" #> Km(l.distance)
+  def laps = ".lapItem" #> (activity.laps map { l =>
+    ".index *"     #> l.lapNumber         &
+    ".start *"     #> HhMmSs(l.startTime) &
+    ".end *"       #> HhMmSs(l.endTime)   &
+    ".duration *"  #> HhMmSs(l.duration)  &
+    ".distance *"  #> Km(l.distance)      &
+    "tr [onClick]" #> SHtml.ajaxInvoke(() => selectLap(l))
   })
+
+
+  def selectLap(l: Lap) = (l.startTime,l.endTime) match {
+    case (Some(sd),Some(ed)) => {
+      val s = sd.getMillis() ; val e = ed.getMillis()
+      val range = JsObj(("from",Num(s)),("to",Num(e)))
+      activityGraphs.selectedHandler(s, e) &
+      (JsVar("plot") ~> JsFunc("setSelection", range, JsTrue))
+
+}
+    case _                 => Noop
+  }
 
 
 }
