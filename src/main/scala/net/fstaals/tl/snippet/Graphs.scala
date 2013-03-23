@@ -116,7 +116,8 @@ class ActivityGraphs(val a: Activity) {
                   Flot.script(xhtml),
                   FlotBindSelect((selectedHandler _).tupled),
                   FlotBindUnSelect(SHtml.ajaxInvoke(unselectHandler)),
-                  FlotBindOnHover(Call("onHover",JsVar("plot_graphArea")))
+                  FlotBindOnHover(Call("onHover",JsVar("plot_graphArea"))),
+                  FlotLinkToMap
                 )
   }
 
@@ -125,15 +126,13 @@ class ActivityGraphs(val a: Activity) {
 
   val selected = SHtml.memoize { "*" #> selectedCss  }
 
-  def selectedCss = { println("Woei") ; selection match {
+  def selectedCss = selection match {
     case Some(d) => (new SummaryData(d, d.duration,
                                      a.owner.obj.toList flatMap {_.hrZones},
                                      Nil // TODO: pwrZones
                                      )).render // TODO
     case _       => ("*" #> "")
   }
-
-}
 
   def render = ".plotGraphs"       #> renderGraph       &
                "#graphIndicator *" #> indicatorTemplate
@@ -285,6 +284,24 @@ case class FlotBindSelect(selectedHandler: ((Double,Double)) => JsCmd)
 case class FlotBindOnHover(cmd: JsCmd) extends FlotCapability {
 
   def render(flotInfo : FlotInfo) = cmd
+
+  def renderHide() = Noop
+  def renderShow() = Noop
+}
+
+
+case object FlotLinkToMap extends FlotCapability {
+
+  def render(flotInfo: FlotInfo) = {
+    val graphsData = JsObj( ("graphArea", "#"+flotInfo.idPlaceholder)
+                          , ("plot",JsVar("plot_"+flotInfo.idPlaceholder))
+                          )
+    // val mapData    = JsObj( ("currentPosition",JsVar("currentPostion"))
+    //                       , ("map", JsVar("map"))
+    //                       , ("locations", JsVar("locations"))
+    //                       )
+    Call("linkMapAndGraph",graphsData,JsVar("myMapData"))
+  }
 
   def renderHide() = Noop
   def renderShow() = Noop

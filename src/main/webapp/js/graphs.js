@@ -1,7 +1,40 @@
+var myGraphsData
+
 function linear(p,q,alpha) { return (1 - alpha) * p + alpha * q }
+
+function showDate(d) {
+    function pad(x) {
+        return ("0" + x).substr(-2,2)
+    }
+    // TODO: checkout the weird issue with the hours
+    return pad(d.getHours() - 1) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds())
+}
+
+// given a series/function, retrieve the its value at time t
+function getValueFromSeries(series, t) {
+    function inBetween(p,q) {
+        return p == q ? p : linear(p[1],q[1], (t - p[0]) / (q[0] -p[0]))
+    }
+
+    var i = 0
+
+    while( i < series.data.length && series.data[i][0] <= t){
+        i++;
+    }
+
+    var p = series.data[i-1]
+    var q = series.data[Math.min(i,series.data.length-1)]
+
+    return inBetween(p,q).toFixed(1)
+}
+
 
 function onHover(plot) {
     $(document).ready( function() {
+    myGraphsData = { "graphArea" : "#graphArea"
+                   , "plot"      : plot
+                   }
+
     $("#graphArea").bind("plothover", function(event, position, item) {
 
         var axes = plot.getAxes()
@@ -9,11 +42,11 @@ function onHover(plot) {
 
         $(".time").text(showDate(new Date(Math.floor(t))))
 
-        showFunction("Speed",       "#graphIndicator .timing",      t)
-        showFunction("Heart Rate",  "#graphIndicator .heartRate",   t)
-        showFunction("Power",       "#graphIndicator .power",       t)
-        showFunction("Altitude",    "#graphIndicator .elevation",   t)
-        showFunction("Temperature", "#graphIndicator .temperature", t)
+        showFunction("Speed",       ".indicator .timing",      t)
+        showFunction("Heart Rate",  ".indicator .heartRate",   t)
+        showFunction("Power",       ".indicator .power",       t)
+        showFunction("Altitude",    ".indicator .elevation",   t)
+        showFunction("Temperature", ".indicator .temperature", t)
     })
 
     function showFunction(fLabel, sectionCssSel, t) {
@@ -35,33 +68,5 @@ function onHover(plot) {
         return null
     }
 
-    function getValueFromSeries(series, t) {
-        function inBetween(p,q) {
-            return p == q ? p : linear(p[1],q[1], (t - p[0]) / (q[0] -p[0]))
-        }
-
-        var i = 0
-
-        while( i < series.data.length && series.data[i][0] <= t){
-            i++;
-        }
-
-        // alert("i: "+ i + "[i-1]: "+ series.data[i-1] + " [i]: " + series.data[i])
-
-        var p = series.data[i-1]
-        var q = series.data[Math.min(i,series.data.length-1)]
-
-        // alert("p: "+p+" q: "+q)
-
-        return inBetween(p,q).toFixed(1)
-    }
-
-    function showDate(d) {
-        function pad(x) {
-            return ("0" + x).substr(-2,2)
-        }
-        // TODO: checkout the weird issue with the hours
-        return pad(d.getHours() - 1) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds())
-    }
 })
 }
