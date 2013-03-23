@@ -42,3 +42,6 @@ function autocomplete(selector, names, handler) {
   //     handler(ui.item.value);
   // }
 })};
+
+
+function linear(p,q,alpha) { return (1 - alpha) * p + alpha * q }
