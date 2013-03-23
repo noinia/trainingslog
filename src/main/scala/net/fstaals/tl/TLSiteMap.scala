@@ -50,6 +50,10 @@ object TLSiteMap {
                               objParser(Activity) _, idEncoder _)
           / "activity" / "summary"
           >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
+         , Menu.params[Activity]("Map", "Map",
+                              objParser(Activity) _, idEncoder _)
+          / "activity" / "map"
+          >> IfValue({_ map {_.isViewable} openOr false}, S ? "No access")
     )
   , Menu.i("Synchronize Device") / "activity" / "sync" submenus (
         Menu.i("Add")                / "activity" / "add"
