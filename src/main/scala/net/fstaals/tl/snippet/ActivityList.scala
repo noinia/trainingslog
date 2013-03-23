@@ -5,14 +5,25 @@ import net.liftweb.util._
 import net.liftweb.common._
 import Helpers._
 
+import net.liftmodules.widgets.tablesorter._
+
 import net.fstaals.tl.model._
 
 class ActivityList {
 
+  // sorting options
+  val sortingOptions = TableSorter.options(
+    // header specs
+      List((2,Sorter("isoDate")),(4,Sorter("float")))
+    // column orders
+    , List((2,Sorting.DSC))
+  )
 
   def visibleActivities = Activity.publicActivities ++ Activity.myActivities
 
-  def activities = "tr *" #> (visibleActivities map activity)
+  def activities = "tr *"          #> (visibleActivities map activity)
+
+  def tableSort = "*" #> TableSorter("#activityList", sortingOptions)
 
 
   def activity(a: Activity) =

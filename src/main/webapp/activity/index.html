@@ -3,14 +3,17 @@
   <lift:bind-at name="title"  >Activities</lift:bind-at>
   <lift:bind-at name="blockcontent">
     <div class="activities">
-      <table>
+      <div class="lift:ActivityList.tableSort">
+        <div class="sort"></div>
+      </div>
+      <table id="activityList" class="tablesorter">
         <thead>
           <tr>
-            <td class="operations">        </td>
-            <td class="name"      >Activity</td>
-            <td class="date"      >Date    </td>
-            <td class="duration"  >Duration</td>
-            <td class="distance"  >Distance</td>
+            <th class="operations">        </th>
+            <th class="name"      >Activity</th>
+            <th class="date"      >Date    </th>
+            <th class="duration"  >Duration</th>
+            <th class="distance"  >Distance</th>
           </tr>
         </thead>
         <tbody class="lift:ActivityList.activities">

@@ -1,12 +1,14 @@
 <lift:surround with="default" at="content">
-  <lift:surround with="block" at="blockcontent">
-    <h2>Woei</h2>
-    <div class="lift:ActivityList.activities">
-      <ul>
-        <activity:entry>
-          <activity:name></activity:name>
-        </activity:entry>
-      </ul>
-    </div>
+  <lift:surround with="block">
+    <lift:bind-at name="title">Activities</lift:bind-at>
+    <lift:bind-at name="blockcontent">
+      <div class="lift:ActivityList.activities">
+        <ul>
+          <activity:entry>
+            <activity:name></activity:name>
+          </activity:entry>
+        </ul>
+      </div>
+    </lift:bind-at>
   </lift:surround>
 </lift:surround>

@@ -19,6 +19,8 @@ import net.liftmodules.JQueryModule
 import net.liftmodules.widgets.flot._
 import net.liftmodules.widgets.autocomplete.AutoComplete
 
+import net.liftmodules.widgets.tablesorter.TableSorter
+
 /**
  * A class that's instantiated early and run.  It allows the application
  * to modify lift's environment
@@ -64,6 +66,8 @@ class Boot {
 
     // use flot
     Flot.init
+    // init the table sorter
+    TableSorter.init
 
     // autocomplete
     AutoComplete.init
