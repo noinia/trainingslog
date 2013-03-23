@@ -19,7 +19,7 @@ class ActivityList {
     "a .name *"      #> a.name.get                           &
     "a .name [href]" #> "/activity/view/%d".format(a.id.get) &
     ".date *"        #> a.start.get.toString                 &
-    ".duration *"    #> HhMmSs(a.duration.get)               &
+    ".duration *"    #> HhMmSs(a.duration)                   &
     ".distance *"    #> Km(a.distance)
 
 
