@@ -128,7 +128,13 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   // --------------------- Laps ------------------------------
 
-  def laps = "#title" #> "laps"
+  def laps = ".lapItem *" #> (activity.laps map { l =>
+    ".index *"    #> l.lapNumber         &
+    ".start *"    #> HhMmSs(l.startTime) &
+    ".end *"      #> HhMmSs(l.endTime)   &
+    ".duration *" #> HhMmSs(l.duration)  &
+    ".distance *" #> Km(l.distance)
+  })
 
 
 }

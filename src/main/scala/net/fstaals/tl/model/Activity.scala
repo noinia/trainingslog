@@ -73,6 +73,8 @@ class Activity extends LongKeyedMapper[Activity]
 
   def trajectory : Option[TrajectoryLike] = af flatMap {_.trajectory}
 
+  def laps = af.toList flatMap {_.laps}
+
   def newExercise = {
     // new exercise starts after the last exercise
     val s = ((Duration.ZERO) :: (exercises map {_.end.get})) maxBy {_.millis}

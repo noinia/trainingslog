@@ -19,6 +19,7 @@ object ActivityFile {
 }
 
 case class ActivityFile(val path : String) extends HasSummaryData {
+  import Lap.ELap
 
   private var activityData : Option[EVExercise] = None
 
@@ -77,18 +78,20 @@ case class ActivityFile(val path : String) extends HasSummaryData {
   lazy val laps : List[Lap] =
     activityData.toList flatMap {a => mkLaps(a.getLapList().toList)}
 
-  def mkLaps(ls: List[de.saring.exerciseviewer.data.Lap]) = {
+  def mkLaps(ls: List[ELap]) : List[Lap] = {
     def mkStart(t: Int) : Option[Duration] = Some(new Duration(t * 100))
 
-    val timestamps = 0 :: (ls map {_.getTimeSplit()})
-    val times      = (timestamps map mkStart) ++ List(duration)
-    val startEnds  = times zip times.tail
+    val z = (Lap(Some(0),mkStart(0),mkStart(0), None, Some(0), Some(0),
+                None, None, None, None, None, () => None), List[Lap]())
 
-    (ls zip startEnds).zipWithIndex map {case ((l,(s,e)),i) =>
-      Lap.fromELap(Some(i.shortValue()),s,e,l,trajectory)}
+    def f(t : ((Lap,List[Lap]),ELap)) = t match { case ((prev,xs),l)  => {
+      val nl = Lap.fromELap(prev.lapNumber map {_+1},
+                            prev.endTime, prev.endDistance, l, trajectory)
+      (nl,nl::xs)
+    }}
+
+    ls.foldLeft(z)({case t => f(t)})._2.reverse
   }
-
-
 
   def heartRate : Option[HeartRateSummary] =
     activityData map {e => {
@@ -155,14 +158,12 @@ object TemperatureSummary {
 
 }
 
-
-
-
-case class Lap( val lapNumber     : Option[Short]
+case class Lap( val lapNumber     : Option[Int]
               , val startTime     : Option[Duration]
               , val endTime       : Option[Duration]
               , val speed         : Option[SpeedSummary]
-              , val distance      : Option[Distance]
+              , val startDistance : Option[Distance]
+              , val endDistance   : Option[Distance]
               , val heartRate     : Option[HeartRateSummary]
               , val altitude      : Option[AltitudeSummary]
               , val cadence       : Option[CadenceSummary]
@@ -171,29 +172,39 @@ case class Lap( val lapNumber     : Option[Short]
               , val genTrajectory : () => Option[TrajectoryLike]
              ) extends HasSummaryData {
 
-  def duration = None // todo
+  def duration = (startTime,endTime) match {
+    case (Some(s),Some(e)) => Some(e - s)
+    case _                 => None
+  }
+
+  def distance = (startDistance,endDistance) match {
+    case (Some(s),Some(e)) => Some(e - s)
+    case _                 => None
+  }
 
   def trajectory = genTrajectory()
 
 }
 
 object Lap {
-  def fromELap(i: Option[Short], start: Option[Duration], end: Option[Duration],
-               l: de.saring.exerciseviewer.data.Lap,
-               fullTraj: Option[TrajectoryLike]) = {
+  type ELap = de.saring.exerciseviewer.data.Lap
+
+  def fromELap(i: Option[Int], start: Option[Duration], startDist: Option[Distance],
+               l: ELap, fullTraj: Option[TrajectoryLike]) = {
 
     val hr = (Option(l.getHeartRateAVG()),Option(l.getHeartRateMax())) match {
       case (Some(a),Some(m)) => Some(HeartRateSummary(a,m))
       case _                 => None
     }
 
-    val dist = Option(l.getSpeed().getDistance())
+    val dist = Option(l.getSpeed()) map {_.getDistance()}
 
     lazy val subTrajectory = None // TODO        fullTraj.subTrajectory()
 
-    Lap(i,start,end,
+    Lap(i,
+        start, Option(new Duration(l.getTimeSplit() * 100)),
         Option(l.getSpeed()) map {SpeedSummary.fromLSpeed(_)},
-        dist,
+        startDist, dist,
         hr,
         Option(l.getAltitude()) map {AltitudeSummary.fromLAltitude(_)},
         Option(l.getSpeed()) map {CadenceSummary.fromLSpeed(_)},

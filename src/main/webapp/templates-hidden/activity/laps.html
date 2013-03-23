@@ -2,7 +2,24 @@
   <lift:surround with="block">
     <lift:bind-at name="title"  >Laps</lift:bind-at>
     <lift:bind-at name="blockcontent">
-      Laps
+      <table class="laplist">
+        <thead>
+          <td>Lap</td>
+          <td>Start</td>
+          <td>End</td>
+          <td>Duration</td>
+          <td>Distance</td>
+        </thead>
+        <tbody>
+          <tr class="lapItem">
+            <td class="index field"   >Lap     </td>
+            <td class="start field"   >Start   </td>
+            <td class="end field"     >End     </td>
+            <td class="duration field">Duration</td>
+            <td class="distance field">Distance</td>
+          </tr>
+        </tbody>
+      </table>
     </lift:bind-at>
   </lift:surround>
 </div>
