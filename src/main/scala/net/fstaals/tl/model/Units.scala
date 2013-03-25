@@ -4,6 +4,8 @@ import net.liftweb.common._
 import org.joda.time.{Duration, Period}
 import org.scala_tools.time.Imports._
 
+import java.util.Date
+
 import UnitTypes._
 import Parseable._
 
@@ -98,4 +100,10 @@ object HhMmSs extends Showable[Duration] with Parseable[Duration] {
     case h :: m :: s :: Nil => Some(h.hours + m.minutes + s.seconds)
     case _                  => None
   }
+}
+
+object ShortDate extends Showable[Date] {
+  def unit = ""
+  override def strValue(d: Date) = d.toString
+
 }

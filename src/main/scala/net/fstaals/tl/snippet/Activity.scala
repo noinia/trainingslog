@@ -88,7 +88,7 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
   def general = ".title"         #> show(activity.name)                             &
                 ".owner *"       #> (activity.owner.obj map {_.fullName} openOr "") &
                 ".isPublic *"    #> show(activity.isPublic)                         &
-                ".start"         #> activity.start                                  &
+                ".start *"       #> ShortDate(activity.start.get)                   &
                 // duration and distance included by summary data
                 tags
 
