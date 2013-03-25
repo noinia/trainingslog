@@ -37,7 +37,7 @@ class Activity extends LongKeyedMapper[Activity]
   }
   //TODO: make this into a separate table/class. since most activities
   // will not have a description:
-  object description       extends MappedTextarea(this, 2048) {
+  object description       extends MappedTextarea(this, 10192) {
     override def textareaRows  = 10
     override def textareaCols  = 100
 
