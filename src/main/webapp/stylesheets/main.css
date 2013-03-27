@@ -12,16 +12,17 @@ body {
     margin-right: auto;
     margin-top: 10px;
     margin-bottom: 10px;
-    background-color: #eeeeee;
+    background-color: #ddddfb;
 }
 
 a {
     text-decoration: none;
-    color: #cc3334;
+    color: #5210c4;  /* #cc3334; */
 }
 
 a:hover {
     cursor: pointer;
+    color: #4b2096;
 }
 
 textarea {
@@ -272,6 +273,10 @@ textarea {
     float: none;
 }
 
+.blockarea p {
+    padding-bottom: 1em;
+}
+
 
 .blockarea .controls {
     clear: both;
@@ -281,6 +286,11 @@ textarea {
 .hidden {
     display: none;
 }
+
+th {
+    background-color: #ac82f5;
+}
+
 
 /* Autocomplete thingy */
 
