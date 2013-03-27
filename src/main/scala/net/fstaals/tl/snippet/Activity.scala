@@ -185,8 +185,8 @@ class SummaryData(val data     : HasSummaryData,
 
   def heartRate = orHide(data.heartRate)(".heartRate") {hr=>
     ".hrzones *" #> (segmentByHrZone map {case (z,tr) =>
-      "label *"   #> z.name.get &
-      ".field *"  #> segmentationFormat(tr.duration)
+      "label *"        #> z.nameAsHtml &
+      ".field *"       #> segmentationFormat(tr.duration)
     }) &
     ".avgHR *"   #> Bpm(hr.avg)  &
     ".maxHR *"   #> Bpm(hr.max)

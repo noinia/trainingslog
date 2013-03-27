@@ -71,6 +71,11 @@ class HRZone extends LongKeyedMapper[HRZone] with IdPK with HasOwner[HRZone] {
   }
 
   def inZone(h: HeartRate) = lowerLimit.get <= h && h <= upperLimit.get
+
+  def nameAsHtml =
+    <span class="hrzone"
+          style={"background-color: #%s".format(color.get)}>{name.get}</span>
+
 }
 
 

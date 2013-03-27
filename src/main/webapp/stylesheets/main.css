@@ -287,12 +287,20 @@ textarea {
     display: none;
 }
 
-th {
-    background-color: #ac82f5;
+thead th {
+    background-color: #d8c2ff;
+}
+
+tbody tr:nth-child(even) td, tbody tr.even td {
+    background-color: #ddddfb;
+}
+
+tr:hover, tr:nth-child(even):hover td, tr.even:hover td {
+    background-color: #c1a0fa;
 }
 
 
-/* Autocomplete thingy */
+/* autocomplete thingy */
 
 .autocomplete .list {
     width: auto;
@@ -321,4 +329,15 @@ th {
     cursor: pointer;
     background: url('/images/buttons/delete_on.png');
     background-repeat: no-repeat;
+}
+
+
+
+
+.hrzone {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 2px;
 }
