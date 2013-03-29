@@ -38,7 +38,7 @@ class ActivityGraphs(val a: Activity) {
     case Some(tr) => { type T = TrajectoryPoint ; type FAO = FlotAxisOptions ; List(
         a.heartRate   -> FlotGraph(tr,k,(p:T) => p.heartRate, xL, Bpm,
                                    "Heart Rate",  "#d22132", 1,
-                                   Full(0.0), Full(200.0) , Full("left")) //TODO fix max
+                                   Full(90.0), Full(200.0) , Full("left")) //TODO fix max
       , a.speed       -> FlotGraph(tr,k,(p:T) => p.speed, xL, Kmh,
                                    "Speed", "#3669da", 2,
                                    Full(0.0), Full(60.0), Full("left")) //TODO fix max
@@ -69,7 +69,7 @@ class ActivityGraphs(val a: Activity) {
 
   lazy val heartRateMarkings = (a.owner.obj.toList flatMap {_.hrZones}) map { z =>
     new FlotMarkings { override val ranges = List( FlotRange( "yaxis"
-                                                            , z.lowerLimit.get
+                                                            , z.lowerLimit.get - 1
                                                             , z.upperLimit.get
                                                            )
                                                  )
