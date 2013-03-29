@@ -21,6 +21,8 @@ import net.liftmodules.widgets.autocomplete.AutoComplete
 
 import net.liftmodules.widgets.tablesorter.TableSorter
 
+import net.liftmodules.widgets.calendars._
+
 /**
  * A class that's instantiated early and run.  It allows the application
  * to modify lift's environment
@@ -33,7 +35,7 @@ class Boot {
       val vendor =
     new StandardDBVendor(Props.get("db.driver") openOr "org.h2.Driver",
                          Props.get("db.url") openOr
-                         "jdbc:h2:~/training/tl/trainingslog;AUTO_SERVER=TRUE",
+                         "jdbc:h2:trainingslog;AUTO_SERVER=TRUE",
                          Props.get("db.user"), Props.get("db.password"))
 
       LiftRules.unloadHooks.append(vendor.closeAllConnections_! _)
@@ -68,6 +70,9 @@ class Boot {
     Flot.init
     // init the table sorter
     TableSorter.init
+
+    // Calendar
+    CalendarMonthView.init
 
     // autocomplete
     AutoComplete.init
