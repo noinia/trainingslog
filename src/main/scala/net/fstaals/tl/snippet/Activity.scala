@@ -4,9 +4,9 @@ import scala.xml.{NodeSeq, Text}
 import net.liftweb.util._
 import net.liftweb.common._
 import net.liftweb.http._
-import net.liftmodules.widgets.flot._
 import net.liftweb.mapper.MixableMappedField
 
+import net.liftmodules.widgets.tablesorter._
 
 import Helpers._
 import net.fstaals.tl.model._
@@ -129,14 +129,16 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
   // --------------------- Laps ------------------------------
 
-  def laps = ".lapItem" #> (activity.laps map { l =>
-    ".index *"     #> l.lapNumber         &
-    ".start *"     #> HhMmSs(l.startTime) &
-    ".end *"       #> HhMmSs(l.endTime)   &
-    ".duration *"  #> HhMmSs(l.duration)  &
-    ".distance *"  #> Km(l.distance)      &
-    "tr [onClick]" #> SHtml.ajaxInvoke(() => selectLap(l))
-  })
+  def laps = "#sortTable" #> TableSorter("#lapsList") &
+             ".lapItem"   #> (activity.laps map { l =>
+                 ".index *"     #> l.lapNumber         &
+                 ".start *"     #> HhMmSs(l.startTime) &
+                 ".end *"       #> HhMmSs(l.endTime)   &
+                 ".duration *"  #> HhMmSs(l.duration)  &
+                 ".distance *"  #> Km(l.distance)      &
+                 "tr [onClick]" #> SHtml.ajaxInvoke(() => selectLap(l))
+               })
+
 
 
   def selectLap(l: Lap) = (l.startTime,l.endTime) match {
