@@ -152,11 +152,11 @@ trait FlotGridOptions extends BaseFlotOptions {
   def clickable: Box[Boolean] = Empty
   def hoverable: Box[Boolean] = Empty
   def coloredAreas: Box[String] = Empty // only (fn: plot area -> array of areas)
-  def markings: Box[FlotMarkings] = Empty
+  def markings: List[FlotMarkings] = Nil
 
   def autoHighlight: Box[Boolean] = Empty
 
-  def buildOptions =
+  protected def buildOptions : List[Box[(String, JsExp)]] =
   List(c("color", color),
        backgroundColor.map(v => ("backgroundColor", v)),
        tickColor.map(v => ("tickColor", v)),
@@ -166,31 +166,32 @@ trait FlotGridOptions extends BaseFlotOptions {
        clickable.map(v => ("clickable", v)),
        hoverable.map(v => ("hoverable", v)),
        autoHighlight.map(v => ("autoHighlight",v)),
-       coloredAreas.map(v => ("coloredAreas", v))
+       coloredAreas.map(v => ("coloredAreas", v)),
+       buildMarkings
   )
+
+  def buildMarkings = if (markings.isEmpty) Empty else
+    Full("markings", JsArray(markings map {_.asJsObj} :_*))
 
   /* TODO
    coloredAreas: array of areas or (fn: plot area -> array of areas)
    */
 }
 
-trait FlotMarkings
-
-case class FlotMarkingAxis(axis: String, from: Double, to: Double) {
-
+case class FlotRange(axis: String, from: Double, to: Double) extends BaseFlotOptions {
+  def buildOptions = List( c("from", Full(from))
+                         , c("to",   Full(to))
+                         )
 }
 
-case class FlotMarking() extends FlotMarkings {
-  def axes: List[FlotMarkingAxis] = Nil
+
+trait FlotMarkings extends BaseFlotOptions {
+  def ranges: List[FlotRange] = Nil
   def color: Box[String] = Empty
+
+  def buildOptions = List(c("color",color)) ++ (ranges map {r => c(r.axis,Full(r))})
+
 }
-
-
-// case class FlotMarkingFunction(f: FlotAxis => List[FlotMarkingAxis]) {
-
-// }
-
-
 
 
 
