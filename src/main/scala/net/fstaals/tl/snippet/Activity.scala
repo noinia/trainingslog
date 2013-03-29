@@ -106,7 +106,7 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
 
 
   val description =  SHtml.memoize {
-    ".description *" #> show(activity.description)
+    ".description" #> show(activity.description)
   }
 
   // --------------------- Graphs ------------------------------
