@@ -35,3 +35,8 @@ libraryDependencies ++= {
 
 // for the sportstracker library stuff
 unmanagedBase <<= baseDirectory { base => base / "custom_lib" }
+
+
+seq(runModeSettings : _*)
+
+RunModeKeys.jettyVersion.in(Production) := JettyVersion.Jetty7Plus
