@@ -88,6 +88,9 @@ object HRZone extends HRZone with LongKeyedMetaMapper[HRZone] {
 }
 
 
+
+
+
 class PwrZone {
 
 }

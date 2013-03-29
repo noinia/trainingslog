@@ -5,7 +5,7 @@ import net.liftweb.common._
 import net.liftweb.http._
 
 import net.fstaals.tl.model._
-import net.fstaals.tl.helpers.Helpers._
+import net.fstaals.tl.util.ConversionHelpers._
 import Helpers._
 
 class HRZones {

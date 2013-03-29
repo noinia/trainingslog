@@ -18,7 +18,6 @@ import js.{JsObj, JE, JsCmd}
 import JE._
 
 import net.fstaals.tl.model._
-import net.fstaals.tl.helpers.Helpers._
 
 import Trajectory._
 

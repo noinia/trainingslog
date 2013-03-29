@@ -24,7 +24,7 @@ trait Parseable[T] {
 }
 
 object Parseable {
-  import net.fstaals.tl.helpers.Helpers._
+  import net.fstaals.tl.util.ConversionHelpers._
 
   def toInt(s: String)    = opt(s.trim.toInt)
   def toLong(s: String)   = opt(s.trim.toLong)

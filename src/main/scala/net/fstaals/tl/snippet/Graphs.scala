@@ -12,7 +12,7 @@ import net.liftweb.common._
 import net.liftweb.http._
 
 import net.fstaals.tl.model._
-// import net.fstaals.tl.helpers.Helpers._
+import net.fstaals.tl.util._
 
 import net.liftmodules.widgets.flot._
 
@@ -67,6 +67,16 @@ class ActivityGraphs(val a: Activity) {
 
   val graphs = graphsBy(byTime, simpleTS)
 
+  lazy val heartRateMarkings = (a.owner.obj.toList flatMap {_.hrZones}) map { z =>
+    new FlotMarkings { override val ranges = List( FlotRange( "yaxis"
+                                                            , z.lowerLimit.get
+                                                            , z.upperLimit.get
+                                                           )
+                                                 )
+                       override val color  =
+                         Full(ColorUtil.toBGColor("#"+z.color.get, 0.65)) }
+  }
+
   def globalOptions(xAxis : FlotAxisOptions, yAxes : Seq[FlotAxisOptions]) =
     new FlotOptions {
       override val legend = Full(new FlotLegendOptions {
@@ -80,8 +90,9 @@ class ActivityGraphs(val a: Activity) {
         override val mode          = Full("x")
       })
       override val grid = Full(new FlotGridOptions {
-        override val hoverable = Full(true)
+        override val hoverable     = Full(true)
         override val autoHighlight = Full(false)
+        override val markings      = heartRateMarkings
       })
   }
 
