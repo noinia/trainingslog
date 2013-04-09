@@ -34,6 +34,20 @@ class Activity extends LongKeyedMapper[Activity]
   object end               extends MappedDateTime(this)
   object activityFilePath  extends MappedString(this,500) {
     override def dbIndexed_? = true
+
+    def ownerDir = owner.obj map {_.id.get.toString} getOrElse ""
+    def userDir  =
+      if (Props.get("activityFile.userDir") map {_.toBoolean} getOrElse true)
+        ownerDir else ""
+
+    def afBaseDir =
+      (Props.get("activityFile.basedir") getOrElse "") ++ "/" ++ userDir ++ "/"
+
+    override def is = afBaseDir ++ super.is
+    override def get = {println(is) ; is}
+
+    override def setFilter = dropBaseDir _ :: super.setFilter
+    def dropBaseDir(s: String) = s.drop(afBaseDir.length)
   }
   //TODO: make this into a separate table/class. since most activities
   // will not have a description:
