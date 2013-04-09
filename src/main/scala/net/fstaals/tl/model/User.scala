@@ -32,6 +32,9 @@ class User extends MegaProtoUser[User] {
   }
 
 
+  def activityFileDirectory = if (Props.getBool("activityFile.userDir",true))
+                                  id.get.toString else ""
+
 }
 
 object User extends User with MetaMegaProtoUser[User] {
