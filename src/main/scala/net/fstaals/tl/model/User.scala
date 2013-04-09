@@ -1,5 +1,6 @@
 package net.fstaals.tl.model
 
+import net.fstaals.tl.mapper._
 import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.common._
@@ -46,6 +47,9 @@ object User extends User with MetaMegaProtoUser[User] {
   // comment this line out to require email validations
   override def skipEmailValidation = true
 
+  // disable user signup page
+  override def createUserMenuLoc = Empty
+
 }
 
 
@@ -61,9 +65,11 @@ class HRZone extends LongKeyedMapper[HRZone] with IdPK with HasOwner[HRZone] {
     override def dbNotNull_? = true
   }
   object name       extends MappedString(this,50)
-  object color      extends MappedString(this,6) {
-    //TODO: override the toForm stuff to get an input type=color
-  }
+  object color      extends MappedColor(this)
+
+// MappedString(this,6) {
+//     //TODO: override the toForm stuff to get an input type=color
+//   }
 
   override def validate = {
     val err = FieldError(lowerLimit,"HRZone needs: lowerLimit < upperLimit")
@@ -74,7 +80,7 @@ class HRZone extends LongKeyedMapper[HRZone] with IdPK with HasOwner[HRZone] {
 
   def nameAsHtml =
     <span class="hrzone"
-          style={"background-color: #%s".format(color.get)}>{name.get}</span>
+          style={"background-color: %s".format(color.get)}>{name.get}</span>
 
 }
 

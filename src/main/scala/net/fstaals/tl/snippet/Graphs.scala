@@ -74,7 +74,7 @@ class ActivityGraphs(val a: Activity) {
                                                            )
                                                  )
                        override val color  =
-                         Full(ColorUtil.toBGColor("#"+z.color.get, 0.65)) }
+                         Full(ColorUtil.toBGColor(z.color.get, 0.65)) }
   }
 
   def globalOptions(xAxis : FlotAxisOptions, yAxes : Seq[FlotAxisOptions]) =
