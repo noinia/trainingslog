@@ -28,6 +28,7 @@ libraryDependencies ++= {
   , "org.specs2"              %% "specs2"                 % "1.14"                 % "test"
   , "com.h2database"          %  "h2"                     % "1.3.167"
   , "com.github.nscala-time"  %% "nscala-time"            % "0.4.0"
+  , "org.codehaus.groovy"     %  "groovy"                 % "2.1.2"
   )
 }
 
