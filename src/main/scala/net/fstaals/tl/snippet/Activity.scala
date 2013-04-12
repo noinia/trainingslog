@@ -47,10 +47,10 @@ class ActivitySnippet(val activity: Activity) extends StatefulSnippet {
     case xs                         => {S.error(xs) }
   }
 
-    // --------------------- Controls ------------------------------
+  // --------------------- Controls ------------------------------
 
   val controls = SHtml.memoize {
-    toggleEdit & saveButton
+    if (activity.isEditable) toggleEdit & saveButton else "* " #> ""
   }
 
   def saveButton = if (inEditMode) "dummy"        #> ""

@@ -39,7 +39,7 @@ class Activity extends LongKeyedMapper[Activity]
     def afBaseDir = owner.obj map {_.activityFileDirectory} getOrElse ""
 
     override def is = afBaseDir ++ super.is
-    override def get = {println(is) ; is}
+    override def get = is
 
     override def setFilter = dropBaseDir _ :: super.setFilter
     def dropBaseDir(s: String) =
@@ -115,9 +115,9 @@ class Activity extends LongKeyedMapper[Activity]
 
   /* ********** Access Control  ***************** */
 
- def isViewable = isPublic.get || isEditable
+ def isViewable = isPublic.get || isEditable || Props.devMode
 
- def isEditable = (User.currentUser map {_.id}) === owner.get || Props.devMode
+ def isEditable = (User.currentUser map {_.id}) === owner.get //|| Props.devMode
 
 }
 
