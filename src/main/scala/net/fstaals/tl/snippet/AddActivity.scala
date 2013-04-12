@@ -12,6 +12,8 @@ import JsCmds._
 
 import net.fstaals.tl.model._
 
+import net.fstaals.tl.util.ConversionHelpers._
+
 import java.io.File
 
 
@@ -24,25 +26,28 @@ class SyncActivities {
   var existingActs = List[Activity]()
   var newActs      = List[Activity]()
 
-  def sync = {
-    var path : Option[String] = None
+  def listDir(path: Path) = opt(new File(path)).toList flatMap {_.listFiles()}
 
-    def process() = path match {
-      case Some(p) => try { addFiles((new File(p)).listFiles() map {_.getPath})
-                      } catch { case _ => {S.error("Error opening file")}}
-      case None    => {S.error("No such directory.")}
-    }
+  def directories = User.currentUser.toList flatMap {u =>
+    listDir(u.activityFileDirectory)}
 
-    "name=path"   #> SHtml.onSubmit({p => path = Some(p)}) &
-    "type=submit" #> SHtml.onSubmitUnit(process)
+  def syncDirectory(dir: File) = try {
+    addFiles(dir.listFiles() map {_.getPath})
+  } catch { case _ => {
+    S.error("Error opening file")
+    Noop
   }
+   }
 
+  def sync = ".directory *" #> (directories map {d =>
+    SHtml.a(<span>{d.getName}</span>)(syncDirectory(d))
+  })
 
   val newActivities      = SHtml.memoize { "div *" #> listActs(newActs) }
   val existingActivities = SHtml.memoize { "div *" #> listActs(existingActs) }
 
   def listActs(as: List[Activity]) = ".actList *" #> (as map {a =>
-    "li *" #> a.name.get
+    "li *" #> <a href={"/activity/view/"+a.id.get}>{a.name.get}</a>
   })
 
   def failures = SHtml.memoize("div *" #> (fails map {"li *" #> _._1}))
@@ -57,7 +62,7 @@ class SyncActivities {
       case Full(a)        => Left(Right(a))
       case Failure(e,_,_) => Left(Left((path,e)))
       case Empty      => Activity.fromPath(path) map {a => (a,a.validate)} match {
-        case Full((a,Nil))  => {a.save ; Right(a)}
+        case Full((a,Nil))  => { a.save ; Right(a)}
         case Full((_,es))   => Left(Left((path,es mkString "\n")))
         case Failure(e,_,_) => Left(Left((path,e)))
         case Empty          => Left(Left((path,"Unknown error.")))
@@ -80,16 +85,9 @@ class SyncActivities {
 
     S.notice("#fails: %d, #existing: %d, #new: %d".format(fails.size,existingActs.size,newActs.size))
 
-    println(existingActs)
-    val tmp = existingActivities.applyAgain
-    println("MEMOOIZE:")
-    println(tmp)
-
-    SHtml.ajaxInvoke(() => {
-      SetHtml("newActivities",      newActivities.applyAgain) &
-      SetHtml("existingActivities", tmp)                      &
-      SetHtml("failures",           failures.applyAgain)
-    })
+    Replace("newActivities",      newActivities.applyAgain)      &
+    Replace("existingActivities", existingActivities.applyAgain) &
+    Replace("failures",           failures.applyAgain)
   }
 }
 
@@ -111,7 +109,7 @@ object AddActivity {
   }
 
   def add(af : ActivityFile) = User.currentUser match {
-    case Full(u) => { val a = Activity.fromActivityFile(af).owner(u)
+    case Full(u) => { val a = Activity.fromActivityFile(u,af)
                      a.validate match {
                        case Nil => {
                          a.save

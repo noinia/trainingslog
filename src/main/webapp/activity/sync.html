@@ -2,44 +2,51 @@
   <lift:surround with="block">
     <lift:bind-at name="title"  >Synchronize from Directory</lift:bind-at>
     <lift:bind-at name="blockcontent">
-      <form class="lift:SyncActivities.sync">
-        <label>Directory</label><input name="path">
-        <input type="submit" value="Submit">
-      </form>
+      <div class="lift:SyncActivities.sync">
+        <ul>
+          <li class="directory"></li>
+        </ul>
+      </div>
     </lift:bind-at>
   </lift:surround>
 
-  <div class="lift:SyncActivities.newActivities" id="newActivities">
-    <lift:surround with="block">
-      <lift:bind-at name="title"  >New Activities</lift:bind-at>
-      <lift:bind-at name="blockcontent">
-        <ul class="actList">
-          <li></li>
-        </ul>
-      </lift:bind-at>
-    </lift:surround>
+  <div class="lift:SyncActivities.newActivities">
+    <div id="newActivities">
+      <lift:surround with="block">
+        <lift:bind-at name="title"  >New Activities</lift:bind-at>
+        <lift:bind-at name="blockcontent">
+          <ul class="actList">
+            <li></li>
+          </ul>
+        </lift:bind-at>
+      </lift:surround>
+    </div>
   </div>
 
-  <div class="lift:SyncActivities.existingActivities" id="existingActivities">
-    <lift:surround with="block">
-      <lift:bind-at name="title"  >Existing Activities</lift:bind-at>
-      <lift:bind-at name="blockcontent">
-        <ul class="actList">
-          <li></li>
-        </ul>
-      </lift:bind-at>
-    </lift:surround>
+  <div class="lift:SyncActivities.existingActivities">
+    <div id="existingActivities">
+      <lift:surround with="block">
+        <lift:bind-at name="title"  >Existing Activities</lift:bind-at>
+        <lift:bind-at name="blockcontent">
+          <ul class="actList">
+            <li></li>
+          </ul>
+        </lift:bind-at>
+      </lift:surround>
+    </div>
   </div>
 
-  <div classid="lift:SyncActivities.failures" id="failures">
-    <lift:surround with="block">
-      <lift:bind-at name="title"  >Failures</lift:bind-at>
-      <lift:bind-at name="blockcontent">
-        <ul class="failList">
-          <li></li>
-        </ul>
-      </lift:bind-at>
-    </lift:surround>
+  <div classid="lift:SyncActivities.failures">
+    <div id="failures">
+      <lift:surround with="block">
+        <lift:bind-at name="title"  >Failures</lift:bind-at>
+        <lift:bind-at name="blockcontent">
+          <ul class="failList">
+            <li></li>
+          </ul>
+        </lift:bind-at>
+      </lift:surround>
+    </div>
   </div>
 
 </lift:surround>

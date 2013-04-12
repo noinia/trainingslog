@@ -35,16 +35,15 @@ class Activity extends LongKeyedMapper[Activity]
   object activityFilePath  extends MappedString(this,500) {
     override def dbIndexed_? = true
 
-    def userDir = owner.obj map {_.activityFileDirectory} getOrElse ""
-
-    def afBaseDir = Props.get("activityFile.basedir","") ++ "/" ++ userDir ++ "/"
+    def afBaseDir = owner.obj map {_.activityFileDirectory} getOrElse ""
 
     override def is = afBaseDir ++ super.is
     override def get = {println(is) ; is}
 
     override def setFilter = dropBaseDir _ :: super.setFilter
     def dropBaseDir(s: String) =
-      if (s.startsWith(afBaseDir)) s.drop(afBaseDir.length) else s
+      owner.obj map {_.relativeActivityFilePath(s)} getOrElse s
+
   }
   //TODO: make this into a separate table/class. since most activities
   // will not have a description:
@@ -126,19 +125,23 @@ object Activity extends Activity with LongKeyedMetaMapper[Activity] {
   implicit def jodaDTtoDT(d : DateTime) = d.toDate()
   implicit def dtToJodaDt(d: java.util.Date) = new DateTime(d)
 
-  def fromActivityFile(af: ActivityFile) = create.activityFilePath(af.path)
-                                                 .start(af.start.getOrElse(DateTime.now))
-                                                 .end(af.end.getOrElse(DateTime.now))
-
+  def fromActivityFile(u: User, af: ActivityFile) =
+    create.owner(u)
+          .activityFilePath(af.path)
+          .start(af.start.getOrElse(DateTime.now))
+          .end(af.end.getOrElse(DateTime.now))
 
   def publicActivities = findAll(By(Activity.isPublic,true))
 
   def myActivities = User.currentUser.toList flatMap {u => findAll(By(owner,u))}
 
-  def existingFromPath(path: String) = find(By(Activity.activityFilePath,path))
+  def existingFromPath(path: String) = {
+    val p = User.currentUser map {_.relativeActivityFilePath(path)} getOrElse path
+    find(By(Activity.activityFilePath,p))
+  }
 
   def fromPath(path: String) = (User.currentUser,ActivityFile.fromPath(path)) match {
-    case (Full(u),Some(af)) => Full(fromActivityFile(af).owner(u))
+    case (Full(u),Some(af)) => Full(fromActivityFile(u,af))
     case (_,None)           => Failure("Failed to load activity.")
     case _                  => Failure("Not logged in.")
   }

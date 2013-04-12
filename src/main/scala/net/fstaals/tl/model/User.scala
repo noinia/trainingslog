@@ -5,6 +5,8 @@ import net.liftweb.mapper._
 import net.liftweb.util._
 import net.liftweb.common._
 
+import java.io.File
+
 import UnitTypes._
 
 class User extends MegaProtoUser[User] {
@@ -32,8 +34,21 @@ class User extends MegaProtoUser[User] {
   }
 
 
-  def activityFileDirectory = if (Props.getBool("activityFile.userDir",true))
-                                  id.get.toString else ""
+
+  lazy val activityFileDirectory = {
+    val userDir = if (Props.getBool("activityFile.userDir",true))
+                     id.get.toString else ""
+    // get a file to drop the double shashes we may have created
+
+    //TODO: Wrap this in a Try
+    val f = new File(Props.get("activityFile.basedir","") ++ "/" ++ userDir ++ "/")
+    f.getPath + "/"
+  }
+
+  def relativeActivityFilePath(p: String) = {
+    val s = activityFileDirectory
+    if (p.startsWith(s)) p.drop(s.length) else p
+  }
 
 }
 
