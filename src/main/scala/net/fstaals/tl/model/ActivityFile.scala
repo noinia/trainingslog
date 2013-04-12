@@ -7,7 +7,8 @@ import de.saring.exerciseviewer.parser.ExerciseParserFactory
 import net.fstaals.tl.model.UnitTypes._
 import org.joda.time.DateTime
 import org.joda.time.Duration
-import org.scala_tools.time.Imports._
+
+import com.github.nscala_time.time.Imports._
 
 object ActivityFile {
 

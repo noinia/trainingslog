@@ -1,7 +1,7 @@
 package net.fstaals.tl.mapper
 
 
-import org.scala_tools.time.Imports._
+import com.github.nscala_time.time.Imports._
 import org.joda.time.Duration
 
 import java.sql.Types

@@ -5,7 +5,7 @@ import scala.collection.SortedMap
 import scala.xml.NodeSeq
 
 import org.joda.time.Duration
-import org.scala_tools.time.Imports._
+import com.github.nscala_time.time.Imports._
 
 import net.liftweb.util._
 import net.liftweb.common._

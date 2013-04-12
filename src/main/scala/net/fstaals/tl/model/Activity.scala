@@ -4,12 +4,13 @@ import net.liftweb.common._
 import scala.xml._
 import net.liftweb.util._
 import net.liftweb.mapper._
-import net.liftweb.textile._
+import net.liftmodules.textile._
 
 import net.fstaals.tl.mapper._
 
 import org.joda.time.{Duration, DateTime}
-import org.scala_tools.time.Imports._
+
+import com.github.nscala_time.time.Imports._
 
 import UnitTypes._
 

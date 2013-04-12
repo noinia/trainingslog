@@ -2,19 +2,20 @@ package net.fstaals.tl.util
 
 import java.awt.Color
 
+import scala.util.Try
+
+
 object ConversionHelpers {
-  def opt[T](t : => T) = try { Some(t) } catch { case _  => None }
+  def opt[T](t : => T) = Try(t).toOption
 }
 
 object ColorUtil {
-  import ConversionHelpers._
-  // import com.jidesoft.utils.ColorUtils._
 
   def toAWTColor(color: String) = {
     val xs : List[Int] = color.toList.tail.grouped(2).toList flatMap {x =>
-      opt(Integer.parseInt(x.mkString(""),16)) }
+      Try(Integer.parseInt(x.mkString(""),16)).toOption }
     xs match {
-      case r :: g :: b :: Nil => opt(new Color(r,g,b))
+      case r :: g :: b :: Nil => Try(new Color(r,g,b)).toOption
       case _                  => None
   }}
 

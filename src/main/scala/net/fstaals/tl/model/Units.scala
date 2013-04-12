@@ -2,7 +2,8 @@ package net.fstaals.tl.model
 
 import net.liftweb.common._
 import org.joda.time.{Duration, Period}
-import org.scala_tools.time.Imports._
+
+import com.github.nscala_time.time.Imports._
 
 import java.util.Date
 
