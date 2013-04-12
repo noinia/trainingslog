@@ -115,9 +115,9 @@ class Activity extends LongKeyedMapper[Activity]
 
   /* ********** Access Control  ***************** */
 
- def isViewable = isPublic.get || isEditable || Props.devMode
+ def isViewable = isPublic.get || isEditable //|| Props.devMode
 
- def isEditable = (User.currentUser map {_.id}) === owner.get //|| Props.devMode
+ def isEditable = (User.currentUser map {_.id}) === owner.get || Props.devMode
 
 }
 
