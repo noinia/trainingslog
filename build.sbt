@@ -19,7 +19,7 @@ libraryDependencies ++= {
   Seq(
     "net.liftweb"             %% "lift-webkit"        % liftVersion            % "compile"
   , "net.liftweb"             %% "lift-mapper"        % liftVersion            % "compile"
-  , "net.liftweb"             %% "lift-textile"       % "2.4"                  % "compile->default"
+  , "net.liftmodules"         %% "textile_2.5"        % "1.3"                  % "compile->default"
   , "net.liftmodules"         %% "widgets"            % (liftVersion + "-1.1") % "compile->default"
   , "net.liftmodules"         %% "lift-jquery-module" % (liftVersion + "-2.0")
   , "org.eclipse.jetty"       % "jetty-webapp"        % "8.1.7.v20120910"      % "container,test"
@@ -39,4 +39,7 @@ unmanagedBase <<= baseDirectory { base => base / "custom_lib" }
 
 seq(runModeSettings : _*)
 
-RunModeKeys.jettyVersion.in(Production) := JettyVersion.Jetty7Plus
+RunModeKeys.jettyVersion in Production := JettyVersion.Jetty7Plus
+
+// // javacOptions.in(Production) ++= Seq("-target", "1.6")
+// javacOptions ++= Seq("-target", "1.6")
